@@ -4,13 +4,19 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-dm-sans)", "system-ui", "sans-serif"],
-        serif: ["var(--font-cormorant)", "Georgia", "serif"],
+        display:   ["var(--font-display)", "system-ui", "sans-serif"], // Outfit
+        sans:      ["var(--font-sans)", "system-ui", "sans-serif"],    // Plus Jakarta Sans
+        mono:      ["var(--font-syne-mono)", "monospace"],
+        cormorant: ["var(--font-cormorant)", "Georgia", "serif"],
       },
       colors: {
-        ink: "#0A0A0A",
-        paper: "#FFFFFF",
-        mist: "#9A9A9A",
+        bg:       "#F7F4EE",
+        fg:       "#14110C",
+        accent:   "#1A3EE0",
+        gold:     "#C48A0A",
+        surface:  "#EDE8DF",
+        surface2: "#E4DDD2",
+        muted:    "#8E8A84",
       },
     },
   },
