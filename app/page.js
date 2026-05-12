@@ -1,10 +1,5 @@
 "use client";
 
-// ═══════════════════════════════════════════════════════════════
-//  byCarlo — Full Redesign
-//  Fonts: Outfit (headings) · Plus Jakarta Sans (body) · Cormorant (hero brand)
-// ═══════════════════════════════════════════════════════════════
-
 import { useRef, useState, useEffect, useCallback } from "react";
 import {
   motion,
@@ -16,235 +11,236 @@ import {
   AnimatePresence,
 } from "framer-motion";
 
-// ─── Easing ──────────────────────────────────────
-const E = [0.22, 1, 0.36, 1];
+const E = [0.25, 1, 0.25, 1];
 
-// ─── Color palette ───────────────────────────────
-const C = {
-  bg:       "#F7F4EE",
-  fg:       "#14110C",
-  accent:   "#1A3EE0",
-  gold:     "#C48A0A",
-  surface:  "#EDE8DF",
-  surface2: "#E4DDD2",
-  muted:    "#8E8A84",
+const DARK = {
+  bg: "#0B0B0E",
+  surface: "#14141A",
+  text: "#EBEBF5",
+  muted: "#9898A8",
+  accent: "#00F0FF",
+  accent2: "#B24BF3",
+  border: "rgba(255,255,255,0.08)",
 };
 
-// CSS transition string shared across all section background transitions
-const BG_TRANSITION = "background-color 1s cubic-bezier(0.22, 1, 0.36, 1)";
+const LIGHT = {
+  bg: "#FFFFFF",
+  surface: "#F5F5F5",
+  text: "#0B0B0E",
+  muted: "#555555",
+  accent: "#00AABB",
+  accent2: "#8A2BE2",
+  border: "rgba(0,0,0,0.08)",
+};
 
-// ─── Projects data ────────────────────────────────
+function interpolateHex(c1, c2, t) {
+  const clamp = (v) => Math.max(0, Math.min(255, Math.round(v)));
+  const r1 = parseInt(c1.slice(1, 3), 16),
+    g1 = parseInt(c1.slice(3, 5), 16),
+    b1 = parseInt(c1.slice(5, 7), 16);
+  const r2 = parseInt(c2.slice(1, 3), 16),
+    g2 = parseInt(c2.slice(3, 5), 16),
+    b2 = parseInt(c2.slice(5, 7), 16);
+  return `rgb(${clamp(r1 + (r2 - r1) * t)},${clamp(g1 + (g2 - g1) * t)},${clamp(
+    b1 + (b2 - b1) * t
+  )})`;
+}
+
 const PROJECTS = [
   {
     id: "01",
-    title: "Vow & Verse",
-    type: "Wedding Website",
-    tags: ["Next.js", "Framer Motion", "Sanity CMS"],
-    year: "2024",
-    url: "#",
-    desc: "An intimate digital experience crafted for a wedding day — from invitation to gallery.",
-    colors: {
-      desktopFrom: "#FDF0ED",
-      desktopTo:   "#F0CCB8",
-      mobileFrom:  "#FDE8E4",
-      mobileTo:    "#EEC0B0",
-      accent:      "#B5634A",
-    },
+    title: "Helix Protocol",
+    cat: "Web3 Platform",
+    desc: "A next‑gen DeFi dashboard with real‑time data visualisation.",
+    tech: ["Solidity", "Next.js", "D3"],
+    live: "#",
+    colorAccent: "#00F0FF",
   },
   {
     id: "02",
-    title: "Luminara",
-    type: "Birthday Celebration",
-    tags: ["React", "Tailwind", "EmailJS"],
-    year: "2024",
-    url: "#",
-    desc: "A radiant celebration website that doubles as a glowing digital invitation.",
-    colors: {
-      desktopFrom: "#FFFBEE",
-      desktopTo:   "#FDE588",
-      mobileFrom:  "#FFF5D0",
-      mobileTo:    "#FADA7C",
-      accent:      "#C4870A",
-    },
+    title: "Mirage Events",
+    cat: "Experience Portal",
+    desc: "Immersive event microsite blending video and 3D ticketing.",
+    tech: ["Three.js", "GSAP", "Firebase"],
+    live: "#",
+    colorAccent: "#B24BF3",
   },
   {
     id: "03",
-    title: "Nexus Corp",
-    type: "Corporate Website",
-    tags: ["Next.js", "TypeScript", "Vercel"],
-    year: "2024",
-    url: "#",
-    desc: "Corporate authority made approachable through precision, hierarchy, and clean digital design.",
-    colors: {
-      desktopFrom: "#E8EFF8",
-      desktopTo:   "#BACCF2",
-      mobileFrom:  "#E4EDF8",
-      mobileTo:    "#B8CBF0",
-      accent:      "#1A40A0",
-    },
+    title: "Core Studio",
+    cat: "Agency Rebrand",
+    desc: "Brutalist portfolio for a creative studio moving into architecture.",
+    tech: ["Tailwind", "Framer Motion", "Storyblok"],
+    live: "#",
+    colorAccent: "#00F0FF",
   },
   {
     id: "04",
-    title: "Folio & Co",
-    type: "Business Portfolio",
-    tags: ["Next.js", "Sanity", "Analytics"],
-    year: "2024",
-    url: "#",
-    desc: "A portfolio built to convert first-time visitors into long-term clients.",
-    colors: {
-      desktopFrom: "#EAF3EC",
-      desktopTo:   "#BCDEC8",
-      mobileFrom:  "#E5F2E8",
-      mobileTo:    "#B8DAC4",
-      accent:      "#1A6B4A",
-    },
+    title: "Void Commerce",
+    cat: "Headless Store",
+    desc: "Product‑first shopping with AI search and zero‑click checkout.",
+    tech: ["Medusa", "Algolia", "Astro"],
+    live: "#",
+    colorAccent: "#B24BF3",
   },
 ];
 
 const TESTIMONIALS = [
   {
     quote:
-      "We handed Carlo a mood board and a deadline. He returned a website that felt like it cost ten times what we paid. Every detail — the typography, the transitions — felt considered.",
-    name: "Sofia Reyes",
-    role: "Bride · Vow & Verse",
+      "Working with this team felt like tapping into a future I didn't know existed. The result is still ahead of the market.",
+    name: "Nova Chen",
+    role: "Founder, Helix",
   },
   {
     quote:
-      "Most designers build websites. Carlo builds experiences. The difference is visible in the first three seconds a visitor lands on your page.",
-    name: "Daniel Fonseca",
-    role: "CEO · Nexus Corp",
+      "They don't just build pages – they engineer moments. Three weeks and our conversion increased by 43%.",
+    name: "Rafael Ortiz",
+    role: "VP Product, Mirage",
   },
   {
     quote:
-      "I was skeptical about the four-day timeline. Four days later I had a site I was genuinely proud to share with every client I've had since.",
-    name: "Marco Torres",
-    role: "Founder · Folio & Co",
+      "Unflinchingly modern. Every pixel has a reason. We've never received compliments like this on a website before.",
+    name: "Clara Jensen",
+    role: "Creative Director, Core",
   },
 ];
 
-// ═══════════════════════════════════════════════════════════════
-//  LOGO MARK
-// ═══════════════════════════════════════════════════════════════
+const NAV_LINKS = [
+  { id: "work", label: "Projects" },
+  { id: "about", label: "About" },
+  { id: "", label: "Services" },
+  { id: "manifesto", label: "Insights" },
+];
 
-function LogoMark({ size = 38 }) {
+// ─── GLASS NAVBAR ───────────────────────────────────
+function GlassNavbar() {
+  const [active, setActive] = useState("work");
+  const [hovered, setHovered] = useState(null);
+
+  const barLeft = useMotionValue(0);
+  const barWidth = useMotionValue(0);
+  const springL = useSpring(barLeft, { stiffness: 380, damping: 28 });
+  const springW = useSpring(barWidth, { stiffness: 380, damping: 28 });
+
+  const groupRef = useRef(null);
+  const linkRefs = useRef({});
+
+  const moveBar = useCallback(
+    (key) => {
+      const group = groupRef.current;
+      const link = linkRefs.current[key];
+      if (!group || !link) return;
+      const gRect = group.getBoundingClientRect();
+      const lRect = link.getBoundingClientRect();
+      barLeft.set(lRect.left - gRect.left);
+      barWidth.set(lRect.width);
+    },
+    [barLeft, barWidth]
+  );
+
+  useEffect(() => {
+    const onScroll = () => {
+      let current = "work";
+      document.querySelectorAll("section[id]").forEach((s) => {
+        if (s.getBoundingClientRect().top < window.innerHeight / 2) {
+          current = s.id;
+        }
+      });
+      setActive(current);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    requestAnimationFrame(() => moveBar(hovered ?? active));
+  }, [active, hovered, moveBar]);
+
+  useEffect(() => {
+    const onResize = () => moveBar(hovered ?? active);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [active, hovered, moveBar]);
+
   return (
-    <div className="flex flex-col items-center" style={{ gap: size > 40 ? 7 : 4 }}>
-      <div className="relative" style={{ width: size, height: size }}>
-        {/* Pulsing ambient glow */}
-        <motion.div
-          className="absolute inset-0 rounded-full"
-          style={{ backgroundColor: `${C.accent}14` }}
-          animate={{ scale: [1, 1.22, 1], opacity: [0.55, 0.12, 0.55] }}
-          transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
-        />
-
-        {/* Outer rotating dashed ring */}
-        <motion.svg
-          className="absolute inset-0"
-          width={size}
-          height={size}
-          viewBox={`0 0 ${size} ${size}`}
-          style={{ overflow: "visible" }}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 11, repeat: Infinity, ease: "linear" }}
+    <nav className="glass-nav">
+      <div className="max-w-7xl mx-auto flex items-center justify-between py-3 px-4 sm:px-6">
+        <a
+          href="#"
+          className="logo-gradient font-black no-underline leading-none select-none"
+          style={{ fontSize: "clamp(1.5rem, 4vw, 2rem)", fontFamily: "var(--font-display)" }}
         >
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={size / 2 - 1.5}
-            fill="none"
-            stroke={C.accent}
-            strokeWidth="1.2"
-            strokeDasharray="5 4"
-            strokeLinecap="round"
-            opacity="0.42"
-          />
-        </motion.svg>
+          V
+        </a>
 
-        {/* Inner counter-rotating dotted ring */}
-        <div className="absolute" style={{ top: 6, left: 6, right: 6, bottom: 6 }}>
-          <motion.svg
-            width="100%"
-            height="100%"
-            viewBox="0 0 26 26"
-            animate={{ rotate: -360 }}
-            transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-          >
-            <circle
-              cx="13" cy="13" r="11"
-              fill="none"
-              stroke={`${C.accent}38`}
-              strokeWidth="1"
-              strokeDasharray="2 4"
-            />
-          </motion.svg>
-        </div>
-
-        {/* Orbiting cobalt dot */}
-        <motion.div
-          className="absolute inset-0"
-          style={{ transformOrigin: "center" }}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+        <div
+          ref={groupRef}
+          className="glow-bar-track flex items-center gap-4 sm:gap-6 md:gap-8"
         >
-          <div
+          {NAV_LINKS.map(({ id, label }) => {
+            const key = id || label;
+            return (
+              <a
+                key={key}
+                ref={(el) => {
+                  if (el) linkRefs.current[key] = el;
+                }}
+                href={id ? `#${id}` : "#"}
+                onClick={(e) => {
+                  if (!id) e.preventDefault();
+                }}
+                onMouseEnter={() => setHovered(key)}
+                onMouseLeave={() => setHovered(null)}
+                className="no-underline pb-1 transition-colors duration-200 whitespace-nowrap"
+                style={{
+                  fontSize: "clamp(0.7rem, 2vw, 0.875rem)",
+                  fontWeight: 600,
+                  color: active === id ? "#ffffff" : "#999999",
+                  fontFamily: "var(--font-sans)",
+                }}
+              >
+                {label}
+              </a>
+            );
+          })}
+
+          <motion.div
             style={{
               position: "absolute",
-              width: size > 40 ? 5 : 4,
-              height: size > 40 ? 5 : 4,
-              borderRadius: "50%",
-              backgroundColor: C.accent,
-              top: 1,
-              left: "50%",
-              transform: "translateX(-50%)",
-              boxShadow: `0 0 7px ${C.accent}`,
+              bottom: -1,
+              left: springL,
+              width: springW,
+              height: 2,
+              borderRadius: 1,
+              background: "#ffffff",
+              boxShadow:
+                "0 0 8px rgba(255,255,255,0.7), 0 0 18px rgba(255,255,255,0.3)",
+              pointerEvents: "none",
             }}
           />
-        </motion.div>
-
-        {/* Logo PNG */}
-        <img
-          src="/png/logo.png"
-          alt="ByCarlo logo"
-          style={{ position: "absolute", top: 5, left: 5, right: 5, bottom: 5, objectFit: "contain" }}
-        />
+        </div>
       </div>
-
-      {/* ByCarlo wordmark — Cormorant Garamond */}
-      <span
-        style={{
-          fontFamily: "var(--font-cormorant), 'Cormorant Garamond', Georgia, serif",
-          fontWeight: 700,
-          fontSize: size > 40 ? 14 : 10,
-          letterSpacing: "0.22em",
-          color: C.fg,
-          lineHeight: 1,
-          userSelect: "none",
-        }}
-      >
-        ByCarlo
-      </span>
-    </div>
+    </nav>
   );
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  CUSTOM CURSOR
-// ═══════════════════════════════════════════════════════════════
-
+// ─── CUSTOM CURSOR ──────────────────────────────────
 function Cursor() {
-  const mx = useMotionValue(-100);
-  const my = useMotionValue(-100);
-  const sx = useSpring(mx, { stiffness: 380, damping: 26 });
-  const sy = useSpring(my, { stiffness: 380, damping: 26 });
-  const [hovering, setHovering] = useState(false);
-
+  const mx = useMotionValue(-100),
+    my = useMotionValue(-100);
+  const sx = useSpring(mx, { stiffness: 400, damping: 28 });
+  const sy = useSpring(my, { stiffness: 400, damping: 28 });
+  const [hover, setHover] = useState(false);
   useEffect(() => {
-    const move = (e) => { mx.set(e.clientX); my.set(e.clientY); };
+    const move = (e) => {
+      mx.set(e.clientX);
+      my.set(e.clientY);
+    };
     window.addEventListener("mousemove", move);
-
-    const onEnter = () => setHovering(true);
-    const onLeave = () => setHovering(false);
+    const onEnter = () => setHover(true);
+    const onLeave = () => setHover(false);
     const attach = () => {
       document.querySelectorAll("a, button, [data-hover]").forEach((el) => {
         el.addEventListener("mouseenter", onEnter);
@@ -252,878 +248,734 @@ function Cursor() {
       });
     };
     attach();
-
     const obs = new MutationObserver(attach);
     obs.observe(document.body, { childList: true, subtree: true });
-
-    return () => { window.removeEventListener("mousemove", move); obs.disconnect(); };
+    return () => {
+      window.removeEventListener("mousemove", move);
+      obs.disconnect();
+    };
   }, [mx, my]);
-
   return (
     <motion.div
-      className="fixed top-0 left-0 pointer-events-none z-[99999] hidden md:block"
+      className="fixed top-0 left-0 pointer-events-none z-[9999] hidden md:block"
       style={{ x: sx, y: sy, translateX: "-50%", translateY: "-50%" }}
     >
       <motion.div
-        className="rounded-full"
         animate={{
-          width: hovering ? 44 : 18,
-          height: hovering ? 44 : 18,
-          backgroundColor: hovering ? `${C.accent}10` : "transparent",
-          borderColor: hovering ? C.accent : `${C.fg}40`,
-          borderWidth: 1,
+          width: hover ? 48 : 12,
+          height: hover ? 48 : 12,
+          backgroundColor: hover ? `${DARK.accent}18` : DARK.accent,
+          borderColor: hover ? DARK.accent : "transparent",
+          borderWidth: hover ? 1.5 : 0,
         }}
-        style={{ borderStyle: "solid" }}
+        style={{ borderRadius: "50%", borderStyle: "solid" }}
         transition={{ duration: 0.15, ease: "easeOut" }}
       />
     </motion.div>
   );
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  DEVICE MOCKUPS
-// ═══════════════════════════════════════════════════════════════
+// ─── DEVICE MOCKUPS ─────────────────────────────────
+function DeviceMockup({ accent = "#00F0FF", themeProgress }) {
+  const frameBg = useTransform(themeProgress, [0, 1], [DARK.surface, LIGHT.surface]);
+  const screenBg = useTransform(themeProgress, [0, 1], [DARK.bg, LIGHT.bg]);
+  const barColor = useTransform(themeProgress, [0, 1], [
+    "rgba(255,255,255,0.1)",
+    "rgba(0,0,0,0.05)",
+  ]);
 
-function DesktopMockup({ colors, title }) {
-  const slug = title.toLowerCase().replace(/[^a-z0-9]/g, "");
   return (
-    <div
-      className="rounded-xl overflow-hidden w-full"
-      style={{ border: `1px solid ${C.fg}10`, boxShadow: `0 8px 28px ${C.fg}0a` }}
-    >
-      <div className="flex items-center gap-1.5 px-2.5 py-2" style={{ backgroundColor: C.surface2 }}>
-        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#E06060", opacity: 0.75 }} />
-        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#E0B040", opacity: 0.75 }} />
-        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#50C060", opacity: 0.75 }} />
-        <div
-          className="flex-1 mx-2 rounded text-center"
-          style={{ backgroundColor: "rgba(255,255,255,0.5)", fontSize: 6, padding: "1.5px 5px", color: `${C.fg}50`, fontFamily: "monospace" }}
+    <div className="mt-6 mb-12">
+      <div className="relative mx-auto" style={{ maxWidth: "600px" }}>
+        <motion.div
+          className="rounded-xl overflow-hidden border w-full aspect-video"
+          style={{ borderColor: DARK.border, backgroundColor: frameBg }}
+          animate={{
+            boxShadow: [
+              `0 0 15px ${accent}30`,
+              `0 0 25px ${accent}50`,
+              `0 0 15px ${accent}30`,
+            ],
+          }}
+          transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
         >
-          {slug}.bycarlo.com
-        </div>
-      </div>
-      <div
-        className="relative overflow-hidden"
-        style={{ height: 145, background: `linear-gradient(140deg, ${colors.desktopFrom} 0%, ${colors.desktopTo} 100%)` }}
-      >
-        <div
-          className="absolute rounded-full opacity-20"
-          style={{ width: 110, height: 110, right: -18, top: -22, background: `radial-gradient(circle, ${colors.accent}, transparent 72%)` }}
-        />
-        <div className="absolute top-3 left-4 right-4 flex items-center justify-between">
-          <div style={{ width: 26, height: 4, backgroundColor: colors.accent, opacity: 0.55, borderRadius: 2 }} />
-          <div className="flex gap-2">
-            {[0, 1, 2].map((i) => (
-              <div key={i} style={{ width: 16, height: 2.5, backgroundColor: colors.accent, opacity: 0.2, borderRadius: 1 }} />
-            ))}
+          <div
+            className="flex items-center gap-1.5 px-4 py-2"
+            style={{ backgroundColor: barColor }}
+          >
+            <div className="w-2.5 h-2.5 rounded-full bg-red-400 opacity-70" />
+            <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-70" />
+            <div className="w-2.5 h-2.5 rounded-full bg-green-400 opacity-70" />
           </div>
-        </div>
-        <div className="absolute inset-0 flex flex-col justify-center pl-4 gap-2">
-          <div style={{ width: 72, height: 9, backgroundColor: colors.accent, opacity: 0.42, borderRadius: 2 }} />
-          <div style={{ width: 110, height: 6, backgroundColor: colors.accent, opacity: 0.24, borderRadius: 2 }} />
-          <div style={{ width: 90, height: 5, backgroundColor: colors.accent, opacity: 0.16, borderRadius: 2 }} />
-          <div className="rounded flex items-center justify-center" style={{ width: 42, height: 13, backgroundColor: colors.accent, opacity: 0.65, marginTop: 2 }}>
-            <div style={{ width: 26, height: 2.5, backgroundColor: "#fff", borderRadius: 1, opacity: 0.9 }} />
+          <motion.div
+            className="flex-1 p-4 flex flex-col gap-2 h-full"
+            style={{ backgroundColor: screenBg }}
+          >
+            <div
+              className="w-2/3 h-3 rounded"
+              style={{ backgroundColor: accent, opacity: 0.3 }}
+            />
+            <div
+              className="w-1/2 h-3 rounded"
+              style={{ backgroundColor: accent, opacity: 0.15 }}
+            />
+            <div
+              className="w-1/4 h-8 rounded mt-auto"
+              style={{ backgroundColor: accent, opacity: 0.4 }}
+            />
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          className="absolute bottom-[-24px] right-[-12px] w-24 rounded-2xl overflow-hidden border shadow-xl z-10"
+          style={{ borderColor: DARK.border, backgroundColor: frameBg }}
+          animate={{
+            boxShadow: [
+              `0 0 10px ${accent}30`,
+              `0 0 20px ${accent}50`,
+              `0 0 10px ${accent}30`,
+            ],
+          }}
+          transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut", delay: 0.2 }}
+        >
+          <div
+            className="flex justify-center py-1.5"
+            style={{ backgroundColor: barColor }}
+          >
+            <div className="w-3 h-1 rounded-full bg-gray-500 opacity-60" />
           </div>
-        </div>
+          <motion.div
+            className="h-32 p-2 flex flex-col gap-1.5"
+            style={{ backgroundColor: screenBg }}
+          >
+            <div
+              className="w-full h-2 rounded"
+              style={{ backgroundColor: accent, opacity: 0.3 }}
+            />
+            <div
+              className="w-3/4 h-2 rounded"
+              style={{ backgroundColor: accent, opacity: 0.2 }}
+            />
+            <div
+              className="w-1/2 h-4 rounded mt-auto"
+              style={{ backgroundColor: accent, opacity: 0.4 }}
+            />
+          </motion.div>
+          <div
+            className="flex justify-center py-1.5"
+            style={{ backgroundColor: barColor }}
+          >
+            <div className="w-2 h-1 rounded-full bg-gray-500 opacity-60" />
+          </div>
+        </motion.div>
       </div>
     </div>
   );
 }
 
-function MobileMockup({ colors }) {
-  return (
-    <div
-      className="flex-shrink-0 rounded-2xl overflow-hidden"
-      style={{ width: 64, border: `1.5px solid ${C.fg}14`, boxShadow: `0 8px 22px ${C.fg}0c`, backgroundColor: C.surface2 }}
-    >
-      <div className="flex justify-center items-center py-1.5" style={{ backgroundColor: C.surface2 }}>
-        <div style={{ width: 18, height: 3, backgroundColor: `${C.fg}22`, borderRadius: 2 }} />
-      </div>
-      <div style={{ height: 102, background: `linear-gradient(160deg, ${colors.mobileFrom} 0%, ${colors.mobileTo} 100%)` }}>
-        <div className="flex flex-col items-center justify-center h-full gap-1.5 p-2">
-          <div style={{ width: 28, height: 3, backgroundColor: colors.accent, opacity: 0.5, borderRadius: 1 }} />
-          <div style={{ width: 42, height: 7, backgroundColor: colors.accent, opacity: 0.32, borderRadius: 1 }} />
-          <div style={{ width: 34, height: 4, backgroundColor: colors.accent, opacity: 0.18, borderRadius: 1 }} />
-          <div className="rounded flex items-center justify-center" style={{ width: 28, height: 9, backgroundColor: colors.accent, opacity: 0.6, marginTop: 2 }}>
-            <div style={{ width: 16, height: 2.5, backgroundColor: "#fff", borderRadius: 1, opacity: 0.85 }} />
-          </div>
-        </div>
-      </div>
-      <div className="flex justify-center items-center py-1.5" style={{ backgroundColor: C.surface2 }}>
-        <div style={{ width: 16, height: 2, backgroundColor: `${C.fg}20`, borderRadius: 1 }} />
-      </div>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  HERO
-//  Receives manifestoBg → transitions its own backgroundColor
-// ═══════════════════════════════════════════════════════════════
-
-function Hero({ manifestoBg }) {
+// ─── HERO ────────────────────────────────────────────
+function Hero({ globalProgress }) {
   const ref = useRef(null);
-  const [spot, setSpot] = useState({ x: 0, y: 0, active: false });
-
+  const [, setMouse] = useState({ x: 0.5, y: 0.5 });
   const handleMouse = useCallback((e) => {
     const r = ref.current?.getBoundingClientRect();
     if (!r) return;
-    setSpot({ x: e.clientX - r.left, y: e.clientY - r.top, active: true });
+    setMouse({
+      x: (e.clientX - r.left) / r.width,
+      y: (e.clientY - r.top) / r.height,
+    });
   }, []);
 
+  const bgY = useTransform(globalProgress, [0, 0.4], [0, -100]);
+
   return (
-    <section
+    <motion.section
       ref={ref}
       onMouseMove={handleMouse}
-      className="relative w-full min-h-screen flex flex-col overflow-hidden"
-      // ↓ FIX: transitions between warm bg and accent blue
-      style={{ backgroundColor: manifestoBg ? C.accent : C.bg, transition: BG_TRANSITION }}
+      className="relative min-h-screen flex flex-col justify-center items-start px-6 md:px-20 overflow-hidden pt-20"
+      style={{ backgroundColor: DARK.bg }}
     >
-      {/* Ambient background blobs */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: `
-            radial-gradient(ellipse 55% 45% at 12% 88%, ${C.accent}06 0%, transparent 60%),
-            radial-gradient(ellipse 40% 50% at 88% 10%, ${C.gold}06 0%, transparent 55%)
-          `,
-        }}
-      />
+      <motion.div className="absolute top-0 left-0 w-full h-full z-0" style={{ y: bgY }}>
+        <motion.div
+          className="absolute -top-20 -right-20 w-[50vw] h-[50vw] rounded-full opacity-10 blur-3xl"
+          style={{
+            background: `radial-gradient(circle, ${DARK.accent}, transparent 70%)`,
+            y: useTransform(globalProgress, [0, 0.5], [0, -80]),
+          }}
+        />
+        <motion.div
+          className="absolute -bottom-20 -left-20 w-[40vw] h-[40vw] rounded-full opacity-10 blur-3xl"
+          style={{
+            background: `radial-gradient(circle, ${DARK.accent2}, transparent 70%)`,
+            y: useTransform(globalProgress, [0, 0.5], [0, 80]),
+          }}
+        />
+      </motion.div>
 
-      {/* Mouse spotlight */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        animate={{ opacity: spot.active ? 1 : 0 }}
-        transition={{ duration: 0.45 }}
-        style={{
-          background: `radial-gradient(550px circle at ${spot.x}px ${spot.y}px, ${C.accent}05, transparent 52%)`,
-        }}
-      />
-
-      {/* ─── Top navigation bar ─── */}
-      <div
-        className="relative z-10 flex items-center justify-between px-6 md:px-14 h-16 shrink-0"
-        style={{ borderBottom: `1px solid ${C.fg}08` }}
-      >
-        <LogoMark size={36} />
-
-        <div className="hidden md:flex items-center gap-2">
-          <motion.span
-            className="w-1.5 h-1.5 rounded-full block"
-            style={{ backgroundColor: "#1A6B4A", boxShadow: "0 0 6px rgba(26,107,74,0.7)" }}
-            animate={{ opacity: [1, 0.4, 1] }}
-            transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <span className="font-mono text-[8.5px] tracking-[0.34em] uppercase" style={{ color: `${C.fg}70` }}>
-            Available for projects
-          </span>
-        </div>
-
-        <a
-          href="#contact"
-          className="font-sans text-[9px] tracking-[0.28em] uppercase"
-          style={{ color: `${C.fg}CC`, transition: "color 0.2s ease" }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = C.accent)}
-          onMouseLeave={(e) => (e.currentTarget.style.color = `${C.fg}CC`)}
+      <div className="relative z-10 flex flex-col gap-6 md:gap-8">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: E }}
+          className="flex items-center gap-3"
         >
-          Get in touch →
-        </a>
+          <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+          <span
+            className="text-[11px] tracking-[0.35em] uppercase font-medium"
+            style={{ color: DARK.muted }}
+          >
+            Studio · Est. 2025
+          </span>
+        </motion.div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 60 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.4, ease: E }}
+          className="text-[clamp(2.8rem,10vw,7rem)] font-display font-bold leading-[0.9] tracking-tight"
+        >
+          <span className="block" style={{ color: DARK.text }}>
+            Crafting
+          </span>
+          <span className="block">
+            <span style={{ color: DARK.accent }}>Digital</span>
+            <br />
+            <span className="bg-gradient-to-r from-accent to-accent-2 bg-clip-text text-transparent">
+              Realities
+            </span>
+            <span style={{ color: DARK.accent }}>.</span>
+          </span>
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.7, ease: E }}
+          className="max-w-xl text-[clamp(1rem,2.5vw,1.3rem)] leading-relaxed"
+          style={{ color: DARK.muted }}
+        >
+          We build immersive, high‑performing websites that merge design with code – before you
+          even know you need them.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 1.0, ease: E }}
+          className="flex gap-4 mt-4"
+        >
+          <a
+            href="#work"
+            className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide"
+            style={{ background: DARK.accent, color: "#0B0B0E" }}
+          >
+            See work →
+          </a>
+          <a
+            href="#contact"
+            className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide border"
+            style={{ borderColor: DARK.border, color: DARK.text }}
+          >
+            Get in touch
+          </a>
+        </motion.div>
       </div>
 
-      {/* ─── BYCARLO Reveal ─── */}
-      <div className="relative z-10 flex-1 flex flex-col justify-center px-6 py-16 md:px-20 md:py-16">
-        <div>
-          <div className="hero-brand">
-            <span>BYCARL</span>
-            <span style={{ color: C.accent }}>O</span>
-          </div>
-          <div className="hero-tagline">
-            DIGITAL EXPERIENCES
-          </div>
-        </div>
-      </div>
-
-      {/* ─── Bottom bar ─── */}
       <motion.div
-        className="relative z-10 flex items-center justify-between px-6 md:px-14 h-14 shrink-0"
-        style={{ borderTop: `1px solid ${C.fg}08` }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.52, duration: 0.8 }}
+        transition={{ delay: 2, duration: 0.8 }}
       >
-        <span className="font-mono text-[8px] tracking-[0.36em] uppercase" style={{ color: `${C.fg}44` }}>
-          001 / Hero
+        <span
+          className="text-[9px] tracking-[0.3em] uppercase"
+          style={{ color: DARK.muted }}
+        >
+          Scroll
         </span>
-        <div className="flex items-center gap-2.5">
-          <div className="relative overflow-hidden" style={{ width: 1, height: 28, backgroundColor: `${C.fg}0a` }}>
-            <motion.div
-              className="absolute inset-x-0 top-0"
-              style={{ height: "100%", backgroundColor: C.accent, opacity: 0.4 }}
-              animate={{ y: ["-100%", "100%"] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeIn", repeatDelay: 1.0 }}
-            />
-          </div>
-          <span className="font-mono text-[7.5px] tracking-[0.36em] uppercase" style={{ color: `${C.fg}44` }}>
-            Scroll
-          </span>
-        </div>
+        <motion.div
+          className="w-4 h-8 rounded-full border flex justify-center p-1"
+          style={{ borderColor: DARK.border }}
+        >
+          <motion.div
+            className="w-1.5 h-1.5 rounded-full bg-accent"
+            animate={{ y: [0, 10, 0] }}
+            transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
+          />
+        </motion.div>
       </motion.div>
-    </section>
+    </motion.section>
   );
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  PROJECTS
-//  Receives manifestoBg → transitions its own backgroundColor
-// ═══════════════════════════════════════════════════════════════
-
-function ProjectCard({ project, index, inView }) {
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <motion.div
-      className="relative overflow-hidden rounded-2xl"
-      style={{
-        backgroundColor: C.bg,
-        border: `1px solid ${C.fg}08`,
-        boxShadow: hovered ? `0 20px 56px ${C.fg}0e` : `0 2px 10px ${C.fg}05`,
-        transition: "box-shadow 0.38s ease",
-      }}
-      initial={{ opacity: 0, y: 28 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.65, delay: index * 0.12, ease: E }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      <motion.div
-        className="absolute top-0 left-0 right-0 h-0.5 z-10"
-        style={{ background: `linear-gradient(90deg, ${project.colors.accent}, ${C.accent})`, transformOrigin: "left" }}
-        animate={{ scaleX: hovered ? 1 : 0 }}
-        transition={{ duration: 0.38, ease: E }}
-      />
-
-      <div className="p-5 md:p-7">
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className="font-mono text-[7px] tracking-[0.32em] uppercase" style={{ color: `${C.accent}90` }}>
-                {project.id}
-              </span>
-              <span
-                className="font-mono text-[6.5px] tracking-wider uppercase px-1.5 py-0.5 rounded-full"
-                style={{ backgroundColor: `${C.accent}0e`, color: C.accent, border: `1px solid ${C.accent}20` }}
-              >
-                {project.type}
-              </span>
-            </div>
-            <h3
-              className="font-display italic"
-              style={{ fontSize: "clamp(1.55rem, 3.2vw, 2.6rem)", letterSpacing: "-0.02em", color: C.fg, lineHeight: 1 }}
-            >
-              {project.title}
-            </h3>
-          </div>
-          <span className="font-mono text-[7.5px]" style={{ color: `${C.fg}55`, marginTop: 2 }}>
-            {project.year}
-          </span>
-        </div>
-
-        <p className="font-sans mb-5" style={{ fontSize: 13, lineHeight: 1.72, color: `${C.fg}99`, maxWidth: 310, fontWeight: 500 }}>
-          {project.desc}
-        </p>
-
-        <div className="flex items-end gap-3 mb-5">
-          <div className="flex-1 min-w-0">
-            <DesktopMockup colors={project.colors} title={project.title} />
-          </div>
-          <MobileMockup colors={project.colors} />
-        </div>
-
-        <div className="flex items-center justify-between gap-3 flex-wrap">
-          <div className="flex flex-wrap gap-1.5">
-            {project.tags.map((tag) => (
-              <span
-                key={tag}
-                className="font-mono text-[6px] tracking-wider uppercase px-2 py-1 rounded-full"
-                style={{ backgroundColor: `${C.fg}05`, color: `${C.fg}70`, border: `1px solid ${C.fg}0c` }}
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-          <motion.a
-            href={project.url}
-            animate={{ x: hovered ? 3 : 0 }}
-            transition={{ duration: 0.2 }}
-            className="font-mono text-[7.5px] tracking-[0.22em] uppercase shrink-0"
-            style={{ color: C.accent }}
-          >
-            View ↗
-          </motion.a>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-function Projects({ manifestoBg }) {
+// ─── PROJECTS ────────────────────────────────────────
+function Projects({ globalProgress, themeProgress }) {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-8%" });
+  const inView = useInView(ref, { once: true, margin: "-10%" });
+
+  const sectionBg = useTransform(themeProgress, [0, 1], [DARK.surface, LIGHT.surface]);
+  const textColor = useTransform(themeProgress, [0, 1], [DARK.text, LIGHT.text]);
+  const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
+  const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
+  const borderColor = useTransform(themeProgress, [0, 1], [DARK.border, LIGHT.border]);
 
   return (
-    // ↓ FIX: transitions between warm surface and accent blue
-    <section ref={ref} className="py-24 md:py-36" style={{ backgroundColor: manifestoBg ? C.accent : C.surface, transition: BG_TRANSITION }}>
-      <div
-        className="flex items-baseline justify-between px-6 md:px-14 mb-12 pb-5"
-        style={{ borderBottom: `1px solid ${C.fg}07` }}
-      >
+    <motion.section
+      ref={ref}
+      id="work"
+      className="relative py-28 md:py-44 px-6 md:px-14"
+      style={{ backgroundColor: sectionBg }}
+    >
+      <div className="mb-20">
         <motion.span
-          className="font-mono text-[9px] tracking-[0.42em] uppercase"
-          style={{ color: `${C.fg}66` }}
+          className="text-[11px] tracking-[0.4em] uppercase block mb-4"
+          style={{ color: mutedColor }}
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.5 }}
         >
-          002 / Selected Work
+          Selected Work
         </motion.span>
-        <motion.span
-          className="font-display italic text-sm"
-          style={{ color: `${C.fg}55` }}
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.5, delay: 0.1 }}
+        <motion.h2
+          className="text-[clamp(2.2rem,6vw,4.5rem)] font-bold tracking-tight leading-[1.1]"
+          style={{ color: textColor, fontFamily: "var(--font-display)" }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.2, ease: E }}
         >
-          {PROJECTS.length} projects
-        </motion.span>
+          Projects that define
+          <br />
+          the <span style={{ color: accentColor }}>future</span>
+          <span style={{ color: accentColor }}>.</span>
+        </motion.h2>
       </div>
 
-      <div className="px-6 md:px-14 grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12">
         {PROJECTS.map((p, i) => (
-          <ProjectCard key={p.id} project={p} index={i} inView={inView} />
+          <motion.div
+            key={p.id}
+            initial={{ opacity: 0, y: 50 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: i * 0.15 + 0.3, duration: 0.8, ease: E }}
+            className="group"
+          >
+            <DeviceMockup accent={p.colorAccent} themeProgress={themeProgress} />
+
+            <div>
+              <div className="flex items-center justify-between">
+                <motion.span
+                  className="text-[10px] tracking-[0.25em] uppercase"
+                  style={{ color: accentColor }}
+                >
+                  {p.cat}
+                </motion.span>
+                <motion.span
+                  className="text-[10px] tracking-widest opacity-50 font-mono"
+                  style={{ color: mutedColor }}
+                >
+                  {p.id}
+                </motion.span>
+              </div>
+              <motion.h3
+                className="text-2xl md:text-3xl font-display font-semibold mt-1"
+                style={{ color: textColor }}
+              >
+                {p.title}
+              </motion.h3>
+              <motion.p
+                className="text-base leading-relaxed mt-2"
+                style={{ color: mutedColor }}
+              >
+                {p.desc}
+              </motion.p>
+              <div className="flex flex-wrap gap-2 mt-4">
+                {p.tech.map((t) => (
+                  <motion.span
+                    key={t}
+                    className="text-[10px] tracking-wider px-3 py-1.5 rounded-full border"
+                    style={{ borderColor: borderColor, color: mutedColor }}
+                  >
+                    {t}
+                  </motion.span>
+                ))}
+              </div>
+              <motion.a
+                href={p.live}
+                className="inline-flex items-center gap-2 mt-6 text-sm font-semibold transition-colors"
+                style={{ color: accentColor }}
+              >
+                View project{" "}
+                <span className="group-hover:translate-x-1 transition-transform">&rarr;</span>
+              </motion.a>
+            </div>
+          </motion.div>
         ))}
       </div>
-    </section>
+    </motion.section>
   );
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  MANIFESTO
-//  FIX 1: Removed top gradient blend div (was: surface → transparent)
-//  FIX 2: Removed bottom gradient blend div (was: bg → transparent)
-//  FIX 3: Removed ambient background blobs
-//  Result: truly solid #1A3EE0 background, no visual gradients
-// ═══════════════════════════════════════════════════════════════
+// ─── MANIFESTO ───────────────────────────────────────
+function Manifesto({ globalProgress, manifestoRef, themeProgress }) {
+  const inView = useInView(manifestoRef, { once: true, margin: "-5%" });
+  const sectionBg = useTransform(themeProgress, [0, 1], [DARK.bg, LIGHT.bg]);
+  const textColor = useTransform(themeProgress, [0, 1], [DARK.text, LIGHT.text]);
+  const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
+  const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
 
-function Manifesto({ onBgChange }) {
-  const ref = useRef(null);
-
-  const inView = useInView(ref, { once: true, margin: "-5%" });
-  const bgInView = useInView(ref, { once: false, margin: "-15% 0px -15% 0px" });
-
-  useEffect(() => {
-    onBgChange?.(bgInView);
-  }, [bgInView, onBgChange]);
+  const bgY = useTransform(globalProgress, [0.3, 0.7], [0, -80]);
 
   const lines = [
-    { text: "Shipped in days,", bright: false },
-    { text: "not months.",      bright: true  },
-    { text: "Built to convert.", bright: false },
-    { text: "Every pixel",      bright: false },
-    { text: "earns its place.", bright: true  },
-    { text: "No templates.",    bright: false },
-    { text: "No compromise.",   bright: true  },
+    "We ship in weeks,",
+    "not years.",
+    "We design for the",
+    "borderless age.",
+    "No templates.",
+    "No bullshit.",
+    "Just clarity.",
   ];
 
   return (
-    <section
-      ref={ref}
-      className="relative py-28 md:py-44 px-6 md:px-14 overflow-hidden"
-      // ↓ Solid blue — no gradients overlaid on top of this
-      style={{ backgroundColor: C.accent }}
+    <motion.section
+      ref={manifestoRef}
+      id="manifesto"
+      className="relative py-28 md:py-44 px-6 md:px-20 overflow-hidden"
+      style={{ backgroundColor: sectionBg }}
     >
-      {/*
-        ── REMOVED: top blend gradient div ──────────────────────────
-        Was: <div style={{ background: `linear-gradient(to bottom, ${C.surface}, transparent)` }} />
-        This was the cause of the gradient appearance at the top of the section.
-
-        ── REMOVED: bottom blend gradient div ───────────────────────
-        Was: <div style={{ background: `linear-gradient(to top, ${C.bg}, transparent)` }} />
-        This was the cause of the gradient appearance at the bottom.
-
-        ── REMOVED: ambient background blobs ────────────────────────
-        Was: radial-gradient blobs adding white/gold tints.
-        All three removals together give a perfectly solid cobalt blue.
-      */}
+      <motion.div
+        className="absolute top-0 left-0 w-full h-full pointer-events-none"
+        style={{ y: bgY }}
+      >
+        <div
+          className="absolute top-[20%] right-[10%] w-[40%] h-[60%] rounded-full blur-3xl opacity-10"
+          style={{ background: `radial-gradient(circle, ${DARK.accent2}, transparent 70%)` }}
+        />
+        <div
+          className="absolute bottom-[10%] left-[5%] w-[30%] h-[40%] rounded-full blur-3xl opacity-10"
+          style={{ background: `radial-gradient(circle, ${DARK.accent}, transparent 70%)` }}
+        />
+      </motion.div>
 
       <motion.span
-        className="font-mono text-[9px] tracking-[0.42em] uppercase block mb-16 relative z-10"
-        style={{ color: "rgba(247,244,238,0.72)" }}
+        className="text-[10px] tracking-[0.4em] uppercase mb-16 relative z-10 block"
+        style={{ color: mutedColor }}
         initial={{ opacity: 0 }}
         animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 0.5 }}
       >
-        003 / Why byCarlo
+        Manifesto
       </motion.span>
 
-      <div className="relative z-10">
+      <div className="relative z-10 max-w-5xl">
         {lines.map((line, i) => (
           <div key={i} className="overflow-hidden">
             <motion.p
+              className="font-display font-bold leading-[1.05]"
               style={{
-                fontSize: "clamp(2.1rem, 9vw, 9.5rem)",
-                lineHeight: 0.88,
-                letterSpacing: "-0.03em",
-                color: line.bright ? C.bg : "rgba(247,244,238,0.85)",
-                fontFamily: "var(--font-display), sans-serif",
-                fontStyle: "italic",
-                fontWeight: i % 2 === 0 ? 400 : 300,
+                fontSize: "clamp(2.4rem, 8vw, 6.5rem)",
+                color: i % 2 === 0 ? textColor : accentColor,
+                letterSpacing: "-0.02em",
               }}
-              initial={{ y: "108%" }}
-              animate={inView ? { y: "0%" } : {}}
-              transition={{ duration: 0.88, delay: 0.08 + i * 0.07, ease: E }}
+              initial={{ y: "120%", opacity: 0 }}
+              animate={inView ? { y: "0%", opacity: 1 } : {}}
+              transition={{ duration: 1, delay: i * 0.06, ease: E }}
             >
-              {line.text}
+              {line}{" "}
+              {line.endsWith(".") && i === lines.length - 1 ? (
+                <span style={{ color: accentColor }}>.</span>
+              ) : null}
             </motion.p>
           </div>
         ))}
       </div>
-    </section>
+    </motion.section>
   );
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  STORY
-//  Receives manifestoBg → transitions its own backgroundColor
-// ═══════════════════════════════════════════════════════════════
-
-function Story({ manifestoBg }) {
+// ─── STORY ───────────────────────────────────────────
+function Story({ themeProgress }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const lineH = useTransform(scrollYProgress, [0.1, 0.9], ["0%", "100%"]);
+  const sectionBg = useTransform(themeProgress, [0, 1], [DARK.surface, LIGHT.surface]);
+  const textColor = useTransform(themeProgress, [0, 1], [DARK.text, LIGHT.text]);
+  const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
+  const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
 
   return (
-    // ↓ FIX: transitions between warm bg and accent blue
-    <section ref={ref} className="relative py-28 md:py-44 overflow-hidden" style={{ backgroundColor: manifestoBg ? C.accent : C.bg, transition: BG_TRANSITION }}>
-      <div
-        className="absolute left-[2.5rem] md:left-[3.5rem] top-0 bottom-0 pointer-events-none"
-        style={{ width: 1, backgroundColor: `${C.fg}06` }}
+    <motion.section
+      ref={ref}
+      id="about"
+      className="py-28 md:py-44 px-6 md:px-20"
+      style={{ backgroundColor: sectionBg }}
+    >
+      <motion.span
+        className="text-[10px] tracking-[0.4em] uppercase block mb-10"
+        style={{ color: mutedColor }}
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: 1 } : {}}
       >
-        <motion.div
-          className="absolute top-0 left-0 right-0"
-          style={{ height: lineH, backgroundColor: C.accent, opacity: 0.22 }}
-        />
-      </div>
-
-      <div className="px-6 md:px-14 lg:px-24">
-        <motion.span
-          className="font-mono text-[9px] tracking-[0.42em] uppercase block mb-16"
-          style={{ color: `${C.fg}66` }}
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.5 }}
-        >
-          004 / The Person Behind the Work
-        </motion.span>
-
+        About
+      </motion.span>
+      <div className="max-w-4xl">
         <motion.p
-          className="font-display italic leading-[1.22] mb-16"
-          style={{ fontSize: "clamp(1.48rem, 3.3vw, 2.9rem)", letterSpacing: "-0.02em", maxWidth: "52rem", color: C.fg }}
-          initial={{ opacity: 0, y: 26 }}
+          className="text-[clamp(1.5rem,4vw,2.8rem)] font-display font-semibold leading-[1.3] tracking-tight"
+          style={{ color: textColor }}
+          initial={{ opacity: 0, y: 40 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.9, delay: 0.1, ease: E }}
+          transition={{ delay: 0.2, duration: 0.9, ease: E }}
         >
-          "A great website should feel{" "}
-          <em style={{ color: C.accent, fontStyle: "normal" }}>inevitable</em>{" "}
-          — like nothing else could have looked quite this way for quite this brand."
+          We are a remote collective of designers and engineers obsessed with the{" "}
+          <span style={{ color: accentColor }}>edge</span> of web performance and aesthetics.
         </motion.p>
-
-        <motion.div
-          className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 max-w-[52rem]"
-          initial={{ opacity: 0, y: 22 }}
+        <motion.p
+          className="mt-8 text-lg leading-relaxed max-w-2xl"
+          style={{ color: mutedColor }}
+          initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.85, delay: 0.28, ease: E }}
+          transition={{ delay: 0.3 }}
         >
-          <p className="font-sans leading-[1.9]" style={{ fontSize: 15, color: `${C.fg}99`, fontWeight: 500 }}>
-            I didn't start in an agency. I started with a blank screen, a lot of questions, and an
-            obsessive need to understand why some websites stop you mid-scroll — and why others
-            disappear the moment you close the tab.
-          </p>
-          <p className="font-sans leading-[1.9]" style={{ fontSize: 15, color: `${C.fg}88`, fontWeight: 500 }}>
-            I work with couples building the first public face of their marriage, with founders
-            launching something they've believed in for years, and with businesses who are tired of
-            websites that look exactly like their competitors.
-          </p>
-        </motion.div>
-
-        <motion.div
-          className="mt-12 flex items-center gap-4"
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.7, delay: 0.5, ease: E }}
-        >
-          <div style={{ width: 24, height: 1, backgroundColor: `${C.fg}16` }} />
-          <span className="font-display italic text-xl" style={{ color: `${C.fg}66` }}>
-            Carlo
-          </span>
-        </motion.div>
-
-        <motion.div
-          className="flex gap-px mt-14 w-fit rounded-xl overflow-hidden"
-          style={{ backgroundColor: `${C.fg}06` }}
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.7, delay: 0.6, ease: E }}
-        >
-          {[
-            { n: "4–7", label: "Days avg. delivery" },
-            { n: "100%", label: "Custom built" },
-          ].map(({ n, label }) => (
-            <div key={n} className="p-6" style={{ backgroundColor: C.bg }}>
-              <p
-                className="font-display italic"
-                style={{ fontSize: "clamp(1.35rem, 2.8vw, 2.3rem)", letterSpacing: "-0.02em", color: C.accent }}
-              >
-                {n}
-              </p>
-              <p className="font-mono text-[7.5px] tracking-wider uppercase mt-1.5" style={{ color: `${C.fg}66` }}>
-                {label}
-              </p>
-            </div>
-          ))}
-        </motion.div>
+          Started in 2025 with a single belief – that a website should feel like a part of your
+          brand&apos;s nervous system, not a static brochure.
+        </motion.p>
       </div>
-    </section>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20">
+        {[
+          { n: "14", label: "Projects" },
+          { n: "8", label: "Clients" },
+          { n: "100%", label: "Custom" },
+          { n: "3+", label: "Countries" },
+        ].map((s) => (
+          <motion.div
+            key={s.label}
+            className="text-center p-4 rounded-xl"
+            style={{
+              border: `1px solid`,
+              borderColor: useTransform(themeProgress, [0, 1], [DARK.border, LIGHT.border]),
+              backgroundColor: useTransform(themeProgress, [0, 1], [DARK.bg, LIGHT.bg]),
+            }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.4 }}
+          >
+            <p
+              className="text-3xl md:text-4xl font-display font-bold"
+              style={{ color: accentColor }}
+            >
+              {s.n}
+            </p>
+            <p className="text-xs tracking-wider uppercase mt-2" style={{ color: mutedColor }}>
+              {s.label}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+    </motion.section>
   );
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  TESTIMONIALS
-//  Receives manifestoBg → transitions its own backgroundColor
-// ═══════════════════════════════════════════════════════════════
-
-function Testimonials({ manifestoBg }) {
+// ─── TESTIMONIALS ────────────────────────────────────
+function Testimonials({ themeProgress }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
   const [active, setActive] = useState(0);
-  const total = TESTIMONIALS.length;
+  const t = TESTIMONIALS[active];
+  const sectionBg = useTransform(themeProgress, [0, 1], [DARK.bg, LIGHT.bg]);
+  const textColor = useTransform(themeProgress, [0, 1], [DARK.text, LIGHT.text]);
+  const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
+  const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
+
+  const quoteY = useTransform(
+    useScroll({ target: ref, offset: ["start end", "end start"] }).scrollYProgress,
+    [0, 1],
+    [40, -40]
+  );
 
   return (
-    // ↓ FIX: transitions between warm surface and accent blue
-    <section ref={ref} className="py-28 md:py-44 px-6 md:px-14" style={{ backgroundColor: manifestoBg ? C.accent : C.surface, transition: BG_TRANSITION }}>
-      <div
-        className="flex items-center justify-between pb-5 mb-16"
-        style={{ borderBottom: `1px solid ${C.fg}07` }}
+    <motion.section
+      ref={ref}
+      className="py-28 md:py-44 px-6 md:px-20"
+      style={{ backgroundColor: sectionBg }}
+    >
+      <motion.span
+        className="text-[10px] tracking-[0.4em] uppercase block mb-16"
+        style={{ color: mutedColor }}
+        initial={{ opacity: 0 }}
+        animate={inView ? { opacity: 1 } : {}}
       >
+        Testimonials
+      </motion.span>
+      <div className="max-w-3xl relative">
         <motion.span
-          className="font-mono text-[9px] tracking-[0.42em] uppercase"
-          style={{ color: `${C.fg}66` }}
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
+          className="absolute top-0 left-0 text-[10rem] font-display opacity-10 select-none"
+          style={{ y: quoteY, color: accentColor }}
         >
-          005 / Testimonials
+          &quot;
         </motion.span>
-        <motion.span
-          className="font-mono text-[9px]"
-          style={{ color: `${C.fg}55` }}
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.1 }}
-        >
-          {String(active + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-        </motion.span>
-      </div>
-
-      <div className="max-w-[58rem]">
-        <motion.span
-          className="font-display italic block"
-          style={{ fontSize: "clamp(4rem, 8vw, 7rem)", lineHeight: 0.75, marginBottom: "0.3rem", color: C.accent, opacity: 0.14 }}
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 0.14 } : {}}
-          transition={{ duration: 0.5 }}
-        >
-          &ldquo;
-        </motion.span>
-
         <AnimatePresence mode="wait">
           <motion.div
             key={active}
-            initial={{ opacity: 0, y: 18 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -14 }}
-            transition={{ duration: 0.42, ease: E }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.4, ease: E }}
           >
-            <p
-              className="font-display italic font-light leading-[1.62]"
-              style={{ fontSize: "clamp(1.12rem, 2.5vw, 1.95rem)", letterSpacing: "-0.01em", color: C.fg }}
+            <motion.p
+              className="text-[clamp(1.3rem,4vw,2.2rem)] font-display font-medium leading-[1.5] italic relative z-10"
+              style={{ color: textColor }}
             >
-              {TESTIMONIALS[active].quote}
-            </p>
-
-            <div className="flex items-center gap-4 mt-8">
+              &quot;{t.quote}&quot;
+            </motion.p>
+            <div className="mt-8 flex items-center gap-4">
               <div
-                className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
-                style={{ backgroundColor: `${C.accent}10`, border: `1px solid ${C.accent}25` }}
+                className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
+                style={{ background: accentColor, color: DARK.bg }}
               >
-                <span className="font-mono text-[7px]" style={{ color: C.accent }}>
-                  {TESTIMONIALS[active].name.split(" ").map((n) => n[0]).join("")}
-                </span>
+                {t.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
               </div>
               <div>
-                <p className="font-sans text-[10px] tracking-wider" style={{ color: `${C.fg}CC`, fontWeight: 600 }}>
-                  {TESTIMONIALS[active].name}
-                </p>
-                <p className="font-mono text-[8.5px] tracking-wider mt-0.5" style={{ color: `${C.fg}66` }}>
-                  {TESTIMONIALS[active].role}
-                </p>
+                <motion.p className="font-semibold" style={{ color: textColor }}>
+                  {t.name}
+                </motion.p>
+                <motion.p className="text-xs tracking-wider" style={{ color: mutedColor }}>
+                  {t.role}
+                </motion.p>
               </div>
             </div>
           </motion.div>
         </AnimatePresence>
-
-        <div className="flex items-center gap-2 mt-12">
+        <div className="flex gap-4 mt-12">
           {TESTIMONIALS.map((_, i) => (
             <button
               key={i}
               onClick={() => setActive(i)}
-              aria-label={`Testimonial ${i + 1}`}
+              className="h-1.5 rounded-full transition-all duration-300"
               style={{
-                height: 1.5,
-                width: i === active ? 36 : 12,
-                backgroundColor: i === active ? C.accent : `${C.fg}20`,
+                width: i === active ? 32 : 12,
+                background: i === active ? accentColor : "rgba(255,255,255,0.15)",
                 border: "none",
-                borderRadius: 1,
-                padding: 0,
                 cursor: "pointer",
               }}
+              aria-label={`Testimonial ${i + 1}`}
             />
           ))}
-          <div className="ml-auto flex gap-5">
-            {[
-              { label: "← Prev", action: () => setActive((p) => (p - 1 + total) % total) },
-              { label: "Next →", action: () => setActive((p) => (p + 1) % total) },
-            ].map(({ label, action }) => (
-              <button
-                key={label}
-                onClick={action}
-                className="font-mono text-[8px] tracking-[0.28em] uppercase"
-                style={{ color: `${C.fg}66`, background: "none", border: "none", cursor: "pointer", transition: "color 0.2s ease" }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = C.accent)}
-                onMouseLeave={(e) => (e.currentTarget.style.color = `${C.fg}66`)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  CONTACT
-//  Receives manifestoBg → transitions its own backgroundColor
-// ═══════════════════════════════════════════════════════════════
-
-const ViberIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 2C6.48 2 2 6.28 2 11.5c0 2.19.75 4.2 2 5.78V22l4.5-2.25A10.3 10.3 0 0012 20.5c5.52 0 10-4.28 10-9.5S17.52 2 12 2z" />
-    <path d="M9.5 10s.4-1.2 1.8-1.2c.9 0 1.5.6 1.7 1.1l.1.4c.1.7-.3 1.2-.9 1.5-.5.3-.7.9-.2 1.7.4.7 1.3 1.4 2 1.5" />
-  </svg>
-);
-
-const InstagramIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="2" width="20" height="20" rx="5" />
-    <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" />
-    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-  </svg>
-);
-
-const FacebookIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
-  </svg>
-);
-
-function Contact({ manifestoBg }) {
+// ─── CONTACT ─────────────────────────────────────────
+function Contact({ themeProgress }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
-  const [hovered, setHovered] = useState(null);
-
-  const links = [
-    { id: "01", label: "Viber",     handle: "@bycarlo", href: "viber://chat?number=%2Bbycarlo",  Icon: ViberIcon     },
-    { id: "02", label: "Instagram", handle: "@bycarlo", href: "https://instagram.com/bycarlo",    Icon: InstagramIcon },
-    { id: "03", label: "Facebook",  handle: "@bycarlo", href: "https://facebook.com/bycarlo",     Icon: FacebookIcon  },
-  ];
+  const sectionBg = useTransform(themeProgress, [0, 1], [DARK.surface, LIGHT.surface]);
+  const textColor = useTransform(themeProgress, [0, 1], [DARK.text, LIGHT.text]);
+  const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
+  const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
 
   return (
-    // ↓ FIX: transitions between warm bg and accent blue
-    <section ref={ref} id="contact" className="py-28 md:py-44 px-6 md:px-14" style={{ backgroundColor: manifestoBg ? C.accent : C.bg, transition: BG_TRANSITION }}>
-      <motion.span
-        className="font-mono text-[9px] tracking-[0.42em] uppercase block mb-14"
-        style={{ color: `${C.fg}55` }}
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 0.5 }}
-      >
-        006 / Get in Touch
-      </motion.span>
-
-      <div className="overflow-hidden mb-20">
+    <motion.section
+      ref={ref}
+      id="contact"
+      className="py-28 md:py-44 px-6 md:px-20"
+      style={{ backgroundColor: sectionBg }}
+    >
+      <div className="max-w-3xl">
         <motion.h2
-          className="font-display"
-          style={{ fontSize: "clamp(3.4rem, 15vw, 16rem)", lineHeight: 0.85, letterSpacing: "-0.032em", fontStyle: "italic", color: C.fg }}
-          initial={{ y: "108%" }}
-          animate={inView ? { y: "0%" } : {}}
-          transition={{ duration: 1.1, ease: E }}
+          className="text-[clamp(3rem,10vw,7rem)] font-display font-bold leading-[0.95] tracking-tight mb-8"
+          style={{ color: textColor }}
+          initial={{ y: 40, opacity: 0 }}
+          animate={inView ? { y: 0, opacity: 1 } : {}}
+          transition={{ duration: 0.8, ease: E }}
         >
-          Let&apos;s
+          Let&apos;s make
           <br />
-          <span style={{ color: C.accent }}>
-            talk.
+          <span style={{ color: accentColor, whiteSpace: "nowrap" }}>
+            something cool
+            <span style={{ color: accentColor }}>.</span>
             <motion.span
-              className="inline-block align-middle ml-1"
-              style={{ width: "0.05em", height: "0.78em", backgroundColor: C.accent, display: "inline-block", verticalAlign: "middle" }}
+              style={{
+                display: "inline-block",
+                width: "0.18em",
+                height: "0.75em",
+                backgroundColor: accentColor,
+                marginLeft: "0.08em",
+                verticalAlign: "baseline",
+              }}
               animate={{ opacity: [1, 0, 1] }}
-              transition={{ duration: 1.05, repeat: Infinity, ease: "linear" }}
+              transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
             />
           </span>
         </motion.h2>
+        <motion.a
+          href="mailto:hello@bycarlo.dev"
+          className="inline-flex items-center gap-3 mt-8 text-lg font-semibold transition-all"
+          style={{ color: accentColor }}
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ delay: 0.4 }}
+        >
+          hello@bycarlo.dev <span className="text-2xl">&rarr;</span>
+        </motion.a>
       </div>
-
-      <div className="max-w-md">
-        {links.map((link, i) => (
-          <motion.a
-            key={link.id}
-            href={link.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-5 py-5"
-            style={{ borderBottom: `1px solid ${C.fg}06` }}
-            initial={{ opacity: 0, x: -14 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.55, delay: i * 0.1 + 0.6, ease: E }}
-            onMouseEnter={() => setHovered(i)}
-            onMouseLeave={() => setHovered(null)}
-          >
-            <span className="font-mono text-[8px]" style={{ color: `${C.fg}55`, width: 20 }}>
-              {link.id}
-            </span>
-            <motion.span
-              className="flex items-center justify-center w-8 h-8 rounded-full shrink-0"
-              animate={{
-                backgroundColor: hovered === i ? `${C.accent}12` : "transparent",
-                borderColor:     hovered === i ? `${C.accent}35` : `${C.fg}20`,
-                color:           hovered === i ? C.accent : `${C.fg}66`,
-              }}
-              style={{ border: "1px solid", transition: "all 0.18s ease" }}
-            >
-              <link.Icon />
-            </motion.span>
-            <div className="flex-1">
-              <span
-                className="font-sans text-[9.5px] tracking-[0.26em] uppercase block font-semibold"
-                style={{ color: hovered === i ? C.accent : `${C.fg}BB`, transition: "color 0.18s ease" }}
-              >
-                {link.label}
-              </span>
-              <span className="font-mono text-[8px] mt-0.5 block" style={{ color: `${C.fg}55` }}>
-                {link.handle}
-              </span>
-            </div>
-            <motion.span
-              className="font-sans text-base"
-              animate={{ opacity: hovered === i ? 1 : 0, x: hovered === i ? 0 : -8, color: C.accent }}
-              transition={{ duration: 0.18 }}
-            >
-              →
-            </motion.span>
-          </motion.a>
-        ))}
-      </div>
-
       <motion.footer
-        className="mt-24 pt-7 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2"
-        style={{ borderTop: `1px solid ${C.fg}06` }}
+        className="mt-32 flex flex-col md:flex-row justify-between text-xs tracking-widest uppercase"
+        style={{ color: mutedColor }}
         initial={{ opacity: 0 }}
         animate={inView ? { opacity: 1 } : {}}
-        transition={{ delay: 1.3, duration: 0.85 }}
+        transition={{ delay: 1 }}
       >
-        <span className="font-mono text-[7.5px] tracking-widest" style={{ color: `${C.fg}44` }}>
-          byCarlo © {new Date().getFullYear()}
-        </span>
-        <span className="font-mono text-[7.5px] tracking-widest" style={{ color: `${C.fg}44` }}>
-          Web Design Studio · Philippines
-        </span>
+        <span>© 2025 ByCarlo Studio</span>
+        <span>Manila · Remote · Worldwide</span>
       </motion.footer>
-    </section>
+    </motion.section>
   );
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  ROOT PAGE
-//
-//  FIX SUMMARY — two issues resolved:
-//
-//  1. Page background not actually turning blue:
-//     The old approach only changed html + body backgroundColor, but
-//     every <section> has its own opaque backgroundColor inline style
-//     that covers the body entirely. The body color was never visible.
-//     Fix: pass manifestoBg as a prop to every section. Each section
-//     now transitions its own backgroundColor between its normal color
-//     and C.accent when the manifesto scrolls into view.
-//
-//  2. useEffect cleanup bug causing a flash:
-//     The single combined useEffect ran cleanup (removing backgroundColor)
-//     before setting the new color on every manifestoBg change. Split
-//     into two effects: one that sets the transition on mount/unmount
-//     only, and one that updates the color value without cleanup.
-// ═══════════════════════════════════════════════════════════════
-
+// ─── ROOT PAGE ────────────────────────────────────────
 export default function Page() {
-  const [manifestoBg, setManifestoBg] = useState(false);
+  const manifestoRef = useRef(null);
+  const containerRef = useRef(null);
 
-  // ── Effect 1: set transition on html + body ONCE on mount ──
-  // Cleans up fully only when the component unmounts.
-  // This avoids the flash caused by clearing backgroundColor in cleanup
-  // before the next render sets the new one.
+  const { scrollYProgress: globalScroll } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+  const globalProgress = useSpring(globalScroll, { stiffness: 50, damping: 25, mass: 0.3 });
+
+  const { scrollYProgress: manifestoScroll } = useScroll({
+    target: manifestoRef,
+    offset: ["start start", "end start"],
+  });
+  const rawThemeProgress = useTransform(manifestoScroll, [0, 0.15, 1], [0, 1, 1]);
+  const themeProgress = useSpring(rawThemeProgress, { stiffness: 40, damping: 20, mass: 0.3 });
+
   useEffect(() => {
-    const html = document.documentElement;
-    const body = document.body;
-    html.style.transition = BG_TRANSITION;
-    body.style.transition = BG_TRANSITION;
-
-    return () => {
-      html.style.transition = "";
-      html.style.backgroundColor = "";
-      body.style.transition = "";
-      body.style.backgroundColor = "";
+    const changeBg = (v) => {
+      const bg = interpolateHex(DARK.bg, LIGHT.bg, v);
+      document.body.style.backgroundColor = bg;
+      document.documentElement.style.backgroundColor = bg;
     };
-  }, []); // ← empty dep array: runs once on mount, cleans up on unmount
-
-  // ── Effect 2: update html + body color whenever manifestoBg changes ──
-  // No cleanup here — we don't want to clear the color between renders.
-  // This covers overscroll bounce areas and the scrollbar track.
-  useEffect(() => {
-    const color = manifestoBg ? C.accent : C.bg;
-    document.documentElement.style.backgroundColor = color;
-    document.body.style.backgroundColor = color;
-  }, [manifestoBg]); // ← only runs when manifestoBg flips
+    const unsub = themeProgress.on("change", changeBg);
+    return () => unsub();
+  }, [themeProgress]);
 
   return (
     <>
       <Cursor />
-      <main className="overflow-x-hidden">
-        {/* Every section receives manifestoBg so it can transition its own background */}
-        <Hero          manifestoBg={manifestoBg} />
-        <Projects      manifestoBg={manifestoBg} />
-        <Manifesto     onBgChange={setManifestoBg} />
-        <Story         manifestoBg={manifestoBg} />
-        <Testimonials  manifestoBg={manifestoBg} />
-        <Contact       manifestoBg={manifestoBg} />
+      <GlassNavbar />
+      <main ref={containerRef}>
+        <Hero globalProgress={globalProgress} />
+        <Projects globalProgress={globalProgress} themeProgress={themeProgress} />
+        <Manifesto
+          globalProgress={globalProgress}
+          manifestoRef={manifestoRef}
+          themeProgress={themeProgress}
+        />
+        <Story themeProgress={themeProgress} />
+        <Testimonials themeProgress={themeProgress} />
+        <Contact themeProgress={themeProgress} />
       </main>
     </>
   );
