@@ -1,3 +1,4 @@
+/* globals.css */
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
@@ -20,6 +21,12 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /*
+    Promote to its own compositor layer and hint
+    that background-color will change frequently.
+  */
+  will-change: background-color;
+  transform: translateZ(0);
 }
 
 body {
@@ -30,11 +37,12 @@ body {
   line-height: 1.6;
   overflow-x: hidden;
   background: var(--bg-primary);
-  /* Smooth momentum scrolling on iOS */
   -webkit-overflow-scrolling: touch;
+  will-change: background-color;
+  transform: translateZ(0);
 }
 
-/* ── Noise overlay (desktop only — too expensive on mobile) ──────────────── */
+/* ── Noise overlay (desktop only) ── */
 @media (min-width: 768px) {
   body::after {
     content: "";
@@ -47,7 +55,7 @@ body {
   }
 }
 
-/* ── Custom cursor (desktop only) ───────────────────────────────────────── */
+/* ── Custom cursor (desktop only) ── */
 @media (pointer: fine) {
   * { cursor: none !important; }
 }
@@ -68,36 +76,36 @@ button, a {
   }
 }
 
-/* ── GPU compositing hints for scroll-animated sections ─────────────────── */
-section {
+/*
+  Sections that participate in the dark‑to‑light transition.
+  Layer promotion + paint containment prevents the whole
+  page from repainting on every scroll frame.
+*/
+.theme-section {
+  will-change: background-color, transform;
+  contain: paint;
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
 
-/* ── Mobile performance tweaks ──────────────────────────────────────────── */
+/* ── Mobile performance tweaks ── */
 @media (max-width: 767px) {
-  /*
-    Tailwind's blur-3xl = blur(64px). Halving it on mobile cuts GPU cost
-    significantly while keeping the glow orbs readable.
-  */
+  /* Halve the blur radius on glowing orbs */
   .blur-3xl {
     --tw-blur: blur(32px) !important;
     filter: blur(32px) !important;
   }
 
-  /*
-    Promote glow orb containers to their own compositor layer so they don't
-    repaint the rest of the page on every scroll tick.
-  */
+  /* Glow orbs on their own layer */
   .glow-orb {
     will-change: transform;
     -webkit-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
   }
 
-  /* Ensure tap targets meet 44 × 44 px minimum */
+  /* Ensure tap targets meet 44 × 44 px */
   a, button {
     min-height: 44px;
     display: inline-flex;
@@ -105,7 +113,7 @@ section {
   }
 }
 
-/* ── Glass navbar ────────────────────────────────────────────────────────── */
+/* ── Glass navbar ── */
 .glass-nav {
   position: fixed;
   top: 0; left: 0;
@@ -123,7 +131,6 @@ section {
     0 8px 32px rgba(0,0,0,0.5),
     inset 0 1px 0 rgba(255,255,255,0.15),
     inset 0 -1px 0 rgba(255,255,255,0.05);
-  /* Promote navbar to its own layer — avoids repaints on scroll */
   will-change: transform;
   -webkit-transform: translateZ(0);
   transform: translateZ(0);

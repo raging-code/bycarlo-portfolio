@@ -48,61 +48,39 @@ function interpolateHex(c1, c2, t) {
 
 const PROJECTS = [
   {
-    id: "01",
-    title: "Helix Protocol",
-    cat: "Web3 Platform",
+    id: "01", title: "Helix Protocol", cat: "Web3 Platform",
     desc: "A next-gen DeFi dashboard with real-time data visualisation.",
-    tech: ["Solidity", "Next.js", "D3"],
-    live: "#",
-    colorAccent: "#00F0FF",
+    tech: ["Solidity", "Next.js", "D3"], live: "#", colorAccent: "#00F0FF"
   },
   {
-    id: "02",
-    title: "Mirage Events",
-    cat: "Experience Portal",
+    id: "02", title: "Mirage Events", cat: "Experience Portal",
     desc: "Immersive event microsite blending video and 3D ticketing.",
-    tech: ["Three.js", "GSAP", "Firebase"],
-    live: "#",
-    colorAccent: "#B24BF3",
+    tech: ["Three.js", "GSAP", "Firebase"], live: "#", colorAccent: "#B24BF3"
   },
   {
-    id: "03",
-    title: "Core Studio",
-    cat: "Agency Rebrand",
+    id: "03", title: "Core Studio", cat: "Agency Rebrand",
     desc: "Brutalist portfolio for a creative studio moving into architecture.",
-    tech: ["Tailwind", "Framer Motion", "Storyblok"],
-    live: "#",
-    colorAccent: "#00F0FF",
+    tech: ["Tailwind", "Framer Motion", "Storyblok"], live: "#", colorAccent: "#00F0FF"
   },
   {
-    id: "04",
-    title: "Void Commerce",
-    cat: "Headless Store",
+    id: "04", title: "Void Commerce", cat: "Headless Store",
     desc: "Product-first shopping with AI search and zero-click checkout.",
-    tech: ["Medusa", "Algolia", "Astro"],
-    live: "#",
-    colorAccent: "#B24BF3",
+    tech: ["Medusa", "Algolia", "Astro"], live: "#", colorAccent: "#B24BF3"
   },
 ];
 
 const TESTIMONIALS = [
   {
-    quote:
-      "Working with this team felt like tapping into a future I didn't know existed. The result is still ahead of the market.",
-    name: "Nova Chen",
-    role: "Founder, Helix",
+    quote: "Working with this team felt like tapping into a future I didn't know existed. The result is still ahead of the market.",
+    name: "Nova Chen", role: "Founder, Helix"
   },
   {
-    quote:
-      "They don't just build pages - they engineer moments. Three weeks and our conversion increased by 43%.",
-    name: "Rafael Ortiz",
-    role: "VP Product, Mirage",
+    quote: "They don't just build pages - they engineer moments. Three weeks and our conversion increased by 43%.",
+    name: "Rafael Ortiz", role: "VP Product, Mirage"
   },
   {
-    quote:
-      "Unflinchingly modern. Every pixel has a reason. We've never received compliments like this on a website before.",
-    name: "Clara Jensen",
-    role: "Creative Director, Core",
+    quote: "Unflinchingly modern. Every pixel has a reason. We've never received compliments like this on a website before.",
+    name: "Clara Jensen", role: "Creative Director, Core"
   },
 ];
 
@@ -125,6 +103,7 @@ function useIsMobile() {
   return isMobile;
 }
 
+/* ── GlassNavbar ──────────────────────────────────── */
 function GlassNavbar() {
   const [active, setActive] = useState("work");
   const [hovered, setHovered] = useState(null);
@@ -178,10 +157,17 @@ function GlassNavbar() {
 
   return (
     <nav className="glass-nav">
-      <div className="flex justify-center px-6" style={{ paddingTop: isMobile ? "12px" : "16px", paddingBottom: isMobile ? "12px" : "16px" }}>
+      <div
+        className="flex justify-center px-6"
+        style={{
+          paddingTop: isMobile ? "12px" : "16px",
+          paddingBottom: isMobile ? "12px" : "16px",
+        }}
+      >
+        {/* min-w-0 allows the flex container to shrink, preventing horizontal scroll */}
         <div
           ref={groupRef}
-          className="glow-bar-track nav-links-scroll flex items-center gap-6 overflow-x-auto"
+          className="glow-bar-track nav-links-scroll flex items-center gap-6 overflow-x-auto min-w-0"
         >
           {NAV_LINKS.map(({ id, label }) => {
             const key = id || label;
@@ -233,6 +219,7 @@ function GlassNavbar() {
   );
 }
 
+/* ── Custom Cursor (desktop only) ────────────────── */
 function Cursor() {
   const mx = useMotionValue(-100);
   const my = useMotionValue(-100);
@@ -283,6 +270,7 @@ function Cursor() {
   );
 }
 
+/* ── Device Mockup ───────────────────────────────── */
 function DeviceMockup({ accent, themeProgress, isMobile }) {
   const acc = accent || "#00F0FF";
   const frameBg = useTransform(themeProgress, [0, 1], [DARK.surface, LIGHT.surface]);
@@ -295,7 +283,6 @@ function DeviceMockup({ accent, themeProgress, isMobile }) {
   const laptopAnimate = isMobile
     ? { boxShadow: `0 0 22px ${acc}45` }
     : { boxShadow: [`0 0 15px ${acc}30`, `0 0 25px ${acc}50`, `0 0 15px ${acc}30`] };
-
   const laptopTransition = isMobile
     ? {}
     : { repeat: Infinity, duration: 2.5, ease: "easeInOut" };
@@ -303,7 +290,6 @@ function DeviceMockup({ accent, themeProgress, isMobile }) {
   const phoneAnimate = isMobile
     ? { boxShadow: `0 0 14px ${acc}40` }
     : { boxShadow: [`0 0 10px ${acc}30`, `0 0 20px ${acc}50`, `0 0 10px ${acc}30`] };
-
   const phoneTransition = isMobile
     ? {}
     : { repeat: Infinity, duration: 2.5, ease: "easeInOut", delay: 0.2 };
@@ -361,6 +347,7 @@ function DeviceMockup({ accent, themeProgress, isMobile }) {
   );
 }
 
+/* ── Hero ────────────────────────────────────────── */
 function Hero({ globalProgress, isMobile }) {
   const ref = useRef(null);
   const [, setMouse] = useState({ x: 0.5, y: 0.5 });
@@ -461,7 +448,6 @@ function Hero({ globalProgress, isMobile }) {
           transition={{ duration: 0.7, delay: 1.0, ease: E }}
           className="flex flex-wrap gap-3 mt-4"
         >
-          {/* ✅ FIX 3: restored opening <a tag for both hero CTA buttons */}
           <a
             href="#work"
             className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide"
@@ -503,6 +489,7 @@ function Hero({ globalProgress, isMobile }) {
   );
 }
 
+/* ── Projects ────────────────────────────────────── */
 function Projects({ globalProgress, themeProgress, isMobile }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
@@ -517,7 +504,7 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
     <motion.section
       ref={ref}
       id="work"
-      className="relative py-28 md:py-44 px-6 md:px-14"
+      className="relative py-28 md:py-44 px-6 md:px-14 theme-section"
       style={{ backgroundColor: sectionBg }}
     >
       <div className="mb-20">
@@ -552,11 +539,7 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
             transition={{ delay: i * 0.15 + 0.3, duration: 0.8, ease: E }}
             className="group"
           >
-            <DeviceMockup
-              accent={p.colorAccent}
-              themeProgress={themeProgress}
-              isMobile={isMobile}
-            />
+            <DeviceMockup accent={p.colorAccent} themeProgress={themeProgress} isMobile={isMobile} />
 
             <div>
               <div className="flex items-center justify-between">
@@ -579,10 +562,7 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
               >
                 {p.title}
               </motion.h3>
-              <motion.p
-                className="text-base leading-relaxed mt-2"
-                style={{ color: mutedColor }}
-              >
+              <motion.p className="text-base leading-relaxed mt-2" style={{ color: mutedColor }}>
                 {p.desc}
               </motion.p>
               <div className="flex flex-wrap gap-2 mt-4">
@@ -612,6 +592,7 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
   );
 }
 
+/* ── Manifesto ───────────────────────────────────── */
 function Manifesto({ globalProgress, manifestoRef, themeProgress, isMobile }) {
   const inView = useInView(manifestoRef, { once: true, margin: "-5%" });
   const sectionBg = useTransform(themeProgress, [0, 1], [DARK.bg, LIGHT.bg]);
@@ -635,7 +616,7 @@ function Manifesto({ globalProgress, manifestoRef, themeProgress, isMobile }) {
     <motion.section
       ref={manifestoRef}
       id="manifesto"
-      className="relative py-28 md:py-44 px-6 md:px-20 overflow-hidden"
+      className="relative py-28 md:py-44 px-6 md:px-20 overflow-hidden theme-section"
       style={{ backgroundColor: sectionBg }}
     >
       <motion.div
@@ -684,6 +665,7 @@ function Manifesto({ globalProgress, manifestoRef, themeProgress, isMobile }) {
   );
 }
 
+/* ── Story / About ───────────────────────────────── */
 function Story({ themeProgress }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
@@ -696,7 +678,7 @@ function Story({ themeProgress }) {
     <motion.section
       ref={ref}
       id="about"
-      className="py-28 md:py-44 px-6 md:px-20"
+      className="py-28 md:py-44 px-6 md:px-20 theme-section"
       style={{ backgroundColor: sectionBg }}
     >
       <motion.span
@@ -748,10 +730,7 @@ function Story({ themeProgress }) {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.4 }}
           >
-            <p
-              className="text-3xl md:text-4xl font-display font-bold"
-              style={{ color: accentColor }}
-            >
+            <p className="text-3xl md:text-4xl font-display font-bold" style={{ color: accentColor }}>
               {s.n}
             </p>
             <p className="text-xs tracking-wider uppercase mt-2" style={{ color: mutedColor }}>
@@ -764,6 +743,7 @@ function Story({ themeProgress }) {
   );
 }
 
+/* ── Testimonials ────────────────────────────────── */
 function Testimonials({ themeProgress }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
@@ -783,7 +763,7 @@ function Testimonials({ themeProgress }) {
   return (
     <motion.section
       ref={ref}
-      className="py-28 md:py-44 px-6 md:px-20"
+      className="py-28 md:py-44 px-6 md:px-20 theme-section"
       style={{ backgroundColor: sectionBg }}
     >
       <motion.span
@@ -857,7 +837,8 @@ function Testimonials({ themeProgress }) {
   );
 }
 
-function Contact({ themeProgress }) {
+/* ── Contact (with mobile line‑break + cursor) ───── */
+function Contact({ themeProgress, isMobile }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
   const sectionBg = useTransform(themeProgress, [0, 1], [DARK.surface, LIGHT.surface]);
@@ -869,7 +850,7 @@ function Contact({ themeProgress }) {
     <motion.section
       ref={ref}
       id="contact"
-      className="py-28 md:py-44 px-6 md:px-20"
+      className="py-28 md:py-44 px-6 md:px-20 theme-section"
       style={{ backgroundColor: sectionBg }}
     >
       <div className="max-w-3xl">
@@ -882,8 +863,8 @@ function Contact({ themeProgress }) {
         >
           Let&apos;s make
           <br />
-          <span style={{ color: accentColor, whiteSpace: "nowrap" }}>
-            something cool.
+          <span style={{ color: accentColor, whiteSpace: isMobile ? "normal" : "nowrap" }}>
+            something{isMobile && <br />} cool.
             <motion.span
               style={{
                 display: "inline-block",
@@ -923,6 +904,7 @@ function Contact({ themeProgress }) {
   );
 }
 
+/* ── Page root ───────────────────────────────────── */
 export default function Page() {
   const manifestoRef = useRef(null);
   const containerRef = useRef(null);
@@ -944,8 +926,6 @@ export default function Page() {
     offset: ["start center", "end start"],
   });
 
-  // 0 = manifesto top just reached viewport center
-  // 0.25 = transition fully complete (light mode), stays light for the rest of the section
   const rawThemeProgress = useTransform(manifestoScroll, [0, 0.25, 1], [0, 1, 1]);
 
   const themeProgress = useSpring(rawThemeProgress, {
@@ -970,20 +950,11 @@ export default function Page() {
       <GlassNavbar />
       <main ref={containerRef}>
         <Hero globalProgress={globalProgress} isMobile={isMobile} />
-        <Projects
-          globalProgress={globalProgress}
-          themeProgress={themeProgress}
-          isMobile={isMobile}
-        />
-        <Manifesto
-          globalProgress={globalProgress}
-          manifestoRef={manifestoRef}
-          themeProgress={themeProgress}
-          isMobile={isMobile}
-        />
+        <Projects globalProgress={globalProgress} themeProgress={themeProgress} isMobile={isMobile} />
+        <Manifesto globalProgress={globalProgress} manifestoRef={manifestoRef} themeProgress={themeProgress} isMobile={isMobile} />
         <Story themeProgress={themeProgress} />
         <Testimonials themeProgress={themeProgress} />
-        <Contact themeProgress={themeProgress} />
+        <Contact themeProgress={themeProgress} isMobile={isMobile} />
       </main>
     </>
   );
