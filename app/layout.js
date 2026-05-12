@@ -6,7 +6,6 @@ import {
   Cormorant_Garamond,
 } from "next/font/google";
 
-// Outfit → headings / display
 const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-display",
@@ -14,7 +13,6 @@ const outfit = Outfit({
   display: "swap",
 });
 
-// Plus Jakarta Sans → body / sans
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
@@ -44,12 +42,26 @@ export const metadata = {
     "Wedding, birthday, corporate, and business websites. Crafted from first principles. Shipped in days.",
 };
 
+// ── Viewport exported separately per Next.js App Router spec ──────────────
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
       className={`${outfit.variable} ${plusJakartaSans.variable} ${syneMono.variable} ${cormorantGaramond.variable}`}
     >
+      {/*
+        Explicit meta is a belt-and-suspenders fallback for older Next.js builds
+        that may not honour the viewport export above.
+      */}
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+      </head>
       <body>{children}</body>
     </html>
   );

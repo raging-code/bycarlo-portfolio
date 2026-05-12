@@ -19,6 +19,7 @@
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -28,9 +29,25 @@ body {
   font-size: 18px;
   line-height: 1.6;
   overflow-x: hidden;
-  background: var(--bg-primary); /* will be overridden by JS */
+  background: var(--bg-primary);
+  /* Smooth momentum scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
 }
 
+/* ── Noise overlay (desktop only — too expensive on mobile) ──────────────── */
+@media (min-width: 768px) {
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10000;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  }
+}
+
+/* ── Custom cursor (desktop only) ───────────────────────────────────────── */
 @media (pointer: fine) {
   * { cursor: none !important; }
 }
@@ -38,16 +55,6 @@ body {
 ::selection {
   background: var(--accent);
   color: #0B0B0E;
-}
-
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 10000;
-  opacity: 0.025;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
 }
 
 button, a {
@@ -61,6 +68,44 @@ button, a {
   }
 }
 
+/* ── GPU compositing hints for scroll-animated sections ─────────────────── */
+section {
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* ── Mobile performance tweaks ──────────────────────────────────────────── */
+@media (max-width: 767px) {
+  /*
+    Tailwind's blur-3xl = blur(64px). Halving it on mobile cuts GPU cost
+    significantly while keeping the glow orbs readable.
+  */
+  .blur-3xl {
+    --tw-blur: blur(32px) !important;
+    filter: blur(32px) !important;
+  }
+
+  /*
+    Promote glow orb containers to their own compositor layer so they don't
+    repaint the rest of the page on every scroll tick.
+  */
+  .glow-orb {
+    will-change: transform;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+
+  /* Ensure tap targets meet 44 × 44 px minimum */
+  a, button {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+/* ── Glass navbar ────────────────────────────────────────────────────────── */
 .glass-nav {
   position: fixed;
   top: 0; left: 0;
@@ -78,6 +123,10 @@ button, a {
     0 8px 32px rgba(0,0,0,0.5),
     inset 0 1px 0 rgba(255,255,255,0.15),
     inset 0 -1px 0 rgba(255,255,255,0.05);
+  /* Promote navbar to its own layer — avoids repaints on scroll */
+  will-change: transform;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 .logo-gradient {
@@ -89,4 +138,13 @@ button, a {
 
 .glow-bar-track {
   position: relative;
+}
+
+/* Hide scrollbar on mobile nav overflow container */
+.nav-links-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.nav-links-scroll::-webkit-scrollbar {
+  display: none;
 }
