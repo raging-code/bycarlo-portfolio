@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback, useLayoutEffect } from "react";
 import {
   motion,
   useScroll,
@@ -103,7 +103,7 @@ function useIsMobile() {
   return isMobile;
 }
 
-/* ── GlassNavbar ──────────────────────────────────── */
+/* ── GlassNavbar (always fixed at top) ───────────── */
 function GlassNavbar() {
   const [active, setActive] = useState("work");
   const [hovered, setHovered] = useState(null);
@@ -134,9 +134,7 @@ function GlassNavbar() {
     const onScroll = () => {
       let current = "work";
       document.querySelectorAll("section[id]").forEach((s) => {
-        if (s.getBoundingClientRect().top < window.innerHeight / 2) {
-          current = s.id;
-        }
+        if (s.getBoundingClientRect().top < window.innerHeight / 2) current = s.id;
       });
       setActive(current);
     };
@@ -164,7 +162,6 @@ function GlassNavbar() {
           paddingBottom: isMobile ? "12px" : "16px",
         }}
       >
-        {/* min-w-0 allows the flex container to shrink, preventing horizontal scroll */}
         <div
           ref={groupRef}
           className="glow-bar-track nav-links-scroll flex items-center gap-6 overflow-x-auto min-w-0"
@@ -174,13 +171,9 @@ function GlassNavbar() {
             return (
               <a
                 key={key}
-                ref={(el) => {
-                  if (el) linkRefs.current[key] = el;
-                }}
+                ref={(el) => { if (el) linkRefs.current[key] = el; }}
                 href={id ? `#${id}` : "#"}
-                onClick={(e) => {
-                  if (!id) e.preventDefault();
-                }}
+                onClick={(e) => { if (!id) e.preventDefault(); }}
                 onMouseEnter={() => setHovered(key)}
                 onMouseLeave={() => setHovered(null)}
                 className="no-underline transition-colors duration-200 whitespace-nowrap flex-shrink-0"
@@ -208,8 +201,7 @@ function GlassNavbar() {
               height: 2,
               borderRadius: 1,
               background: "#ffffff",
-              boxShadow:
-                "0 0 8px rgba(255,255,255,0.7), 0 0 18px rgba(255,255,255,0.3)",
+              boxShadow: "0 0 8px rgba(255,255,255,0.7), 0 0 18px rgba(255,255,255,0.3)",
               pointerEvents: "none",
             }}
           />
@@ -303,18 +295,12 @@ function DeviceMockup({ accent, themeProgress, isMobile }) {
           animate={laptopAnimate}
           transition={laptopTransition}
         >
-          <div
-            className="flex items-center gap-1.5 px-4 py-2"
-            style={{ backgroundColor: barColor }}
-          >
+          <div className="flex items-center gap-1.5 px-4 py-2" style={{ backgroundColor: barColor }}>
             <div className="w-2.5 h-2.5 rounded-full bg-red-400 opacity-70" />
             <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-70" />
             <div className="w-2.5 h-2.5 rounded-full bg-green-400 opacity-70" />
           </div>
-          <motion.div
-            className="flex-1 p-4 flex flex-col gap-2 h-full"
-            style={{ backgroundColor: screenBg }}
-          >
+          <motion.div className="flex-1 p-4 flex flex-col gap-2 h-full" style={{ backgroundColor: screenBg }}>
             <div className="w-2/3 h-3 rounded" style={{ backgroundColor: acc, opacity: 0.3 }} />
             <div className="w-1/2 h-3 rounded" style={{ backgroundColor: acc, opacity: 0.15 }} />
             <div className="w-1/4 h-8 rounded mt-auto" style={{ backgroundColor: acc, opacity: 0.4 }} />
@@ -330,10 +316,7 @@ function DeviceMockup({ accent, themeProgress, isMobile }) {
           <div className="flex justify-center py-1.5" style={{ backgroundColor: barColor }}>
             <div className="w-3 h-1 rounded-full bg-gray-500 opacity-60" />
           </div>
-          <motion.div
-            className="h-32 p-2 flex flex-col gap-1.5"
-            style={{ backgroundColor: screenBg }}
-          >
+          <motion.div className="h-32 p-2 flex flex-col gap-1.5" style={{ backgroundColor: screenBg }}>
             <div className="w-full h-2 rounded" style={{ backgroundColor: acc, opacity: 0.3 }} />
             <div className="w-3/4 h-2 rounded" style={{ backgroundColor: acc, opacity: 0.2 }} />
             <div className="w-1/2 h-4 rounded mt-auto" style={{ backgroundColor: acc, opacity: 0.4 }} />
@@ -347,7 +330,7 @@ function DeviceMockup({ accent, themeProgress, isMobile }) {
   );
 }
 
-/* ── Hero ────────────────────────────────────────── */
+/* ── Hero (always dark) ──────────────────────────── */
 function Hero({ globalProgress, isMobile }) {
   const ref = useRef(null);
   const [, setMouse] = useState({ x: 0.5, y: 0.5 });
@@ -357,10 +340,7 @@ function Hero({ globalProgress, isMobile }) {
       if (isMobile) return;
       const r = ref.current?.getBoundingClientRect();
       if (!r) return;
-      setMouse({
-        x: (e.clientX - r.left) / r.width,
-        y: (e.clientY - r.top) / r.height,
-      });
+      setMouse({ x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height });
     },
     [isMobile]
   );
@@ -376,23 +356,14 @@ function Hero({ globalProgress, isMobile }) {
       className="relative min-h-screen flex flex-col justify-center items-start px-6 md:px-20 overflow-hidden pt-20"
       style={{ backgroundColor: DARK.bg }}
     >
-      <motion.div
-        className="absolute top-0 left-0 w-full h-full z-0"
-        style={{ y: bgY, willChange: "transform" }}
-      >
+      <motion.div className="absolute top-0 left-0 w-full h-full z-0" style={{ y: bgY, willChange: "transform" }}>
         <motion.div
           className="absolute -top-20 -right-20 w-[50vw] h-[50vw] rounded-full opacity-10 blur-3xl"
-          style={{
-            background: `radial-gradient(circle, ${DARK.accent}, transparent 70%)`,
-            y: orb1Y,
-          }}
+          style={{ background: `radial-gradient(circle, ${DARK.accent}, transparent 70%)`, y: orb1Y }}
         />
         <motion.div
           className="absolute -bottom-20 -left-20 w-[40vw] h-[40vw] rounded-full opacity-10 blur-3xl"
-          style={{
-            background: `radial-gradient(circle, ${DARK.accent2}, transparent 70%)`,
-            y: orb2Y,
-          }}
+          style={{ background: `radial-gradient(circle, ${DARK.accent2}, transparent 70%)`, y: orb2Y }}
         />
       </motion.div>
 
@@ -404,10 +375,7 @@ function Hero({ globalProgress, isMobile }) {
           className="flex items-center gap-3"
         >
           <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-          <span
-            className="text-[11px] tracking-[0.35em] uppercase font-medium"
-            style={{ color: DARK.muted }}
-          >
+          <span className="text-[11px] tracking-[0.35em] uppercase font-medium" style={{ color: DARK.muted }}>
             Studio &middot; Est. 2025
           </span>
         </motion.div>
@@ -418,12 +386,9 @@ function Hero({ globalProgress, isMobile }) {
           transition={{ duration: 1, delay: 0.4, ease: E }}
           className="text-[clamp(2.8rem,10vw,7rem)] font-display font-bold leading-[0.9] tracking-tight"
         >
-          <span className="block" style={{ color: DARK.text }}>
-            Crafting
-          </span>
+          <span className="block" style={{ color: DARK.text }}>Crafting</span>
           <span className="block">
-            <span style={{ color: DARK.accent }}>Digital</span>
-            <br />
+            <span style={{ color: DARK.accent }}>Digital</span><br />
             <span className="bg-gradient-to-r from-accent to-accent-2 bg-clip-text text-transparent">
               Realities
             </span>
@@ -438,8 +403,7 @@ function Hero({ globalProgress, isMobile }) {
           className="max-w-xl text-[clamp(1rem,2.5vw,1.3rem)] leading-relaxed"
           style={{ color: DARK.muted }}
         >
-          We build immersive, high-performing websites that merge design with code
-          &#8211; before you even know you need them.
+          We build immersive, high-performing websites that merge design with code &#8211; before you even know you need them.
         </motion.p>
 
         <motion.div
@@ -448,18 +412,10 @@ function Hero({ globalProgress, isMobile }) {
           transition={{ duration: 0.7, delay: 1.0, ease: E }}
           className="flex flex-wrap gap-3 mt-4"
         >
-          <a
-            href="#work"
-            className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide"
-            style={{ background: DARK.accent, color: "#0B0B0E" }}
-          >
+          <a href="#work" className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide" style={{ background: DARK.accent, color: "#0B0B0E" }}>
             See work &#8594;
           </a>
-          <a
-            href="#contact"
-            className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide border"
-            style={{ borderColor: DARK.border, color: DARK.text }}
-          >
+          <a href="#contact" className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide border" style={{ borderColor: DARK.border, color: DARK.text }}>
             Get in touch
           </a>
         </motion.div>
@@ -471,13 +427,8 @@ function Hero({ globalProgress, isMobile }) {
         animate={{ opacity: 1 }}
         transition={{ delay: 2, duration: 0.8 }}
       >
-        <span className="text-[9px] tracking-[0.3em] uppercase" style={{ color: DARK.muted }}>
-          Scroll
-        </span>
-        <motion.div
-          className="w-4 h-8 rounded-full border flex justify-center p-1"
-          style={{ borderColor: DARK.border }}
-        >
+        <span className="text-[9px] tracking-[0.3em] uppercase" style={{ color: DARK.muted }}>Scroll</span>
+        <motion.div className="w-4 h-8 rounded-full border flex justify-center p-1" style={{ borderColor: DARK.border }}>
           <motion.div
             className="w-1.5 h-1.5 rounded-full bg-accent"
             animate={{ y: [0, 10, 0] }}
@@ -489,12 +440,11 @@ function Hero({ globalProgress, isMobile }) {
   );
 }
 
-/* ── Projects ────────────────────────────────────── */
+/* ── Projects (transparent background) ───────────── */
 function Projects({ globalProgress, themeProgress, isMobile }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
 
-  const sectionBg = useTransform(themeProgress, [0, 1], [DARK.surface, LIGHT.surface]);
   const textColor = useTransform(themeProgress, [0, 1], [DARK.text, LIGHT.text]);
   const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
   const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
@@ -505,7 +455,6 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
       ref={ref}
       id="work"
       className="relative py-28 md:py-44 px-6 md:px-14 theme-section"
-      style={{ backgroundColor: sectionBg }}
     >
       <div className="mb-20">
         <motion.span
@@ -523,10 +472,8 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.2, ease: E }}
         >
-          Projects that define
-          <br />
-          the <span style={{ color: accentColor }}>future</span>
-          <span style={{ color: accentColor }}>.</span>
+          Projects that define<br />
+          the <span style={{ color: accentColor }}>future</span><span style={{ color: accentColor }}>.</span>
         </motion.h2>
       </div>
 
@@ -540,26 +487,16 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
             className="group"
           >
             <DeviceMockup accent={p.colorAccent} themeProgress={themeProgress} isMobile={isMobile} />
-
             <div>
               <div className="flex items-center justify-between">
-                <motion.span
-                  className="text-[10px] tracking-[0.25em] uppercase"
-                  style={{ color: accentColor }}
-                >
+                <motion.span className="text-[10px] tracking-[0.25em] uppercase" style={{ color: accentColor }}>
                   {p.cat}
                 </motion.span>
-                <motion.span
-                  className="text-[10px] tracking-widest opacity-50 font-mono"
-                  style={{ color: mutedColor }}
-                >
+                <motion.span className="text-[10px] tracking-widest opacity-50 font-mono" style={{ color: mutedColor }}>
                   {p.id}
                 </motion.span>
               </div>
-              <motion.h3
-                className="text-2xl md:text-3xl font-display font-semibold mt-1"
-                style={{ color: textColor }}
-              >
+              <motion.h3 className="text-2xl md:text-3xl font-display font-semibold mt-1" style={{ color: textColor }}>
                 {p.title}
               </motion.h3>
               <motion.p className="text-base leading-relaxed mt-2" style={{ color: mutedColor }}>
@@ -567,11 +504,7 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
               </motion.p>
               <div className="flex flex-wrap gap-2 mt-4">
                 {p.tech.map((t) => (
-                  <motion.span
-                    key={t}
-                    className="text-[10px] tracking-wider px-3 py-1.5 rounded-full border"
-                    style={{ borderColor: borderColor, color: mutedColor }}
-                  >
+                  <motion.span key={t} className="text-[10px] tracking-wider px-3 py-1.5 rounded-full border" style={{ borderColor: borderColor, color: mutedColor }}>
                     {t}
                   </motion.span>
                 ))}
@@ -581,8 +514,7 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
                 className="inline-flex items-center gap-2 mt-6 text-sm font-semibold transition-colors"
                 style={{ color: accentColor }}
               >
-                View project{" "}
-                <span className="group-hover:translate-x-1 transition-transform">&#8594;</span>
+                View project <span className="group-hover:translate-x-1 transition-transform">&#8594;</span>
               </motion.a>
             </div>
           </motion.div>
@@ -592,10 +524,9 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
   );
 }
 
-/* ── Manifesto ───────────────────────────────────── */
+/* ── Manifesto (transparent background) ──────────── */
 function Manifesto({ globalProgress, manifestoRef, themeProgress, isMobile }) {
   const inView = useInView(manifestoRef, { once: true, margin: "-5%" });
-  const sectionBg = useTransform(themeProgress, [0, 1], [DARK.bg, LIGHT.bg]);
   const textColor = useTransform(themeProgress, [0, 1], [DARK.text, LIGHT.text]);
   const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
   const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
@@ -617,20 +548,10 @@ function Manifesto({ globalProgress, manifestoRef, themeProgress, isMobile }) {
       ref={manifestoRef}
       id="manifesto"
       className="relative py-28 md:py-44 px-6 md:px-20 overflow-hidden theme-section"
-      style={{ backgroundColor: sectionBg }}
     >
-      <motion.div
-        className="absolute top-0 left-0 w-full h-full pointer-events-none"
-        style={{ y: bgY, willChange: "transform" }}
-      >
-        <div
-          className="absolute top-[20%] right-[10%] w-[40%] h-[60%] rounded-full blur-3xl opacity-10"
-          style={{ background: `radial-gradient(circle, ${DARK.accent2}, transparent 70%)` }}
-        />
-        <div
-          className="absolute bottom-[10%] left-[5%] w-[30%] h-[40%] rounded-full blur-3xl opacity-10"
-          style={{ background: `radial-gradient(circle, ${DARK.accent}, transparent 70%)` }}
-        />
+      <motion.div className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{ y: bgY, willChange: "transform" }}>
+        <div className="absolute top-[20%] right-[10%] w-[40%] h-[60%] rounded-full blur-3xl opacity-10" style={{ background: `radial-gradient(circle, ${DARK.accent2}, transparent 70%)` }} />
+        <div className="absolute bottom-[10%] left-[5%] w-[30%] h-[40%] rounded-full blur-3xl opacity-10" style={{ background: `radial-gradient(circle, ${DARK.accent}, transparent 70%)` }} />
       </motion.div>
 
       <motion.span
@@ -665,28 +586,17 @@ function Manifesto({ globalProgress, manifestoRef, themeProgress, isMobile }) {
   );
 }
 
-/* ── Story / About ───────────────────────────────── */
+/* ── Story / About (transparent) ───────────────────── */
 function Story({ themeProgress }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
-  const sectionBg = useTransform(themeProgress, [0, 1], [DARK.surface, LIGHT.surface]);
   const textColor = useTransform(themeProgress, [0, 1], [DARK.text, LIGHT.text]);
   const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
   const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
 
   return (
-    <motion.section
-      ref={ref}
-      id="about"
-      className="py-28 md:py-44 px-6 md:px-20 theme-section"
-      style={{ backgroundColor: sectionBg }}
-    >
-      <motion.span
-        className="text-[10px] tracking-[0.4em] uppercase block mb-10"
-        style={{ color: mutedColor }}
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-      >
+    <motion.section ref={ref} id="about" className="py-28 md:py-44 px-6 md:px-20 theme-section">
+      <motion.span className="text-[10px] tracking-[0.4em] uppercase block mb-10" style={{ color: mutedColor }} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}>
         About
       </motion.span>
       <div className="max-w-4xl">
@@ -697,8 +607,7 @@ function Story({ themeProgress }) {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.2, duration: 0.9, ease: E }}
         >
-          We are a remote collective of designers and engineers obsessed with the{" "}
-          <span style={{ color: accentColor }}>edge</span> of web performance and aesthetics.
+          We are a remote collective of designers and engineers obsessed with the <span style={{ color: accentColor }}>edge</span> of web performance and aesthetics.
         </motion.p>
         <motion.p
           className="mt-8 text-lg leading-relaxed max-w-2xl"
@@ -707,8 +616,7 @@ function Story({ themeProgress }) {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.3 }}
         >
-          Started in 2025 with a single belief &#8211; that a website should feel like a part of
-          your brand&apos;s nervous system, not a static brochure.
+          Started in 2025 with a single belief &#8211; that a website should feel like a part of your brand&apos;s nervous system, not a static brochure.
         </motion.p>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20">
@@ -730,12 +638,8 @@ function Story({ themeProgress }) {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.4 }}
           >
-            <p className="text-3xl md:text-4xl font-display font-bold" style={{ color: accentColor }}>
-              {s.n}
-            </p>
-            <p className="text-xs tracking-wider uppercase mt-2" style={{ color: mutedColor }}>
-              {s.label}
-            </p>
+            <p className="text-3xl md:text-4xl font-display font-bold" style={{ color: accentColor }}>{s.n}</p>
+            <p className="text-xs tracking-wider uppercase mt-2" style={{ color: mutedColor }}>{s.label}</p>
           </motion.div>
         ))}
       </div>
@@ -743,42 +647,26 @@ function Story({ themeProgress }) {
   );
 }
 
-/* ── Testimonials ────────────────────────────────── */
+/* ── Testimonials (transparent background) ────────── */
 function Testimonials({ themeProgress }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
   const [active, setActive] = useState(0);
   const t = TESTIMONIALS[active];
-  const sectionBg = useTransform(themeProgress, [0, 1], [DARK.bg, LIGHT.bg]);
   const textColor = useTransform(themeProgress, [0, 1], [DARK.text, LIGHT.text]);
   const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
   const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
 
-  const { scrollYProgress: tScroll } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
+  const { scrollYProgress: tScroll } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const quoteY = useTransform(tScroll, [0, 1], [40, -40]);
 
   return (
-    <motion.section
-      ref={ref}
-      className="py-28 md:py-44 px-6 md:px-20 theme-section"
-      style={{ backgroundColor: sectionBg }}
-    >
-      <motion.span
-        className="text-[10px] tracking-[0.4em] uppercase block mb-16"
-        style={{ color: mutedColor }}
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-      >
+    <motion.section ref={ref} className="py-28 md:py-44 px-6 md:px-20 theme-section">
+      <motion.span className="text-[10px] tracking-[0.4em] uppercase block mb-16" style={{ color: mutedColor }} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}>
         Testimonials
       </motion.span>
       <div className="max-w-3xl relative">
-        <motion.span
-          className="absolute top-0 left-0 text-[10rem] font-display opacity-10 select-none"
-          style={{ y: quoteY, color: accentColor }}
-        >
+        <motion.span className="absolute top-0 left-0 text-[10rem] font-display opacity-10 select-none" style={{ y: quoteY, color: accentColor }}>
           &quot;
         </motion.span>
         <AnimatePresence mode="wait">
@@ -789,29 +677,16 @@ function Testimonials({ themeProgress }) {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.4, ease: E }}
           >
-            <motion.p
-              className="text-[clamp(1.3rem,4vw,2.2rem)] font-display font-medium leading-[1.5] italic relative z-10"
-              style={{ color: textColor }}
-            >
+            <motion.p className="text-[clamp(1.3rem,4vw,2.2rem)] font-display font-medium leading-[1.5] italic relative z-10" style={{ color: textColor }}>
               &quot;{t.quote}&quot;
             </motion.p>
             <div className="mt-8 flex items-center gap-4">
-              <div
-                className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
-                style={{ background: accentColor, color: DARK.bg }}
-              >
-                {t.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
+              <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0" style={{ background: accentColor, color: DARK.bg }}>
+                {t.name.split(" ").map((n) => n[0]).join("")}
               </div>
               <div>
-                <motion.p className="font-semibold" style={{ color: textColor }}>
-                  {t.name}
-                </motion.p>
-                <motion.p className="text-xs tracking-wider" style={{ color: mutedColor }}>
-                  {t.role}
-                </motion.p>
+                <motion.p className="font-semibold" style={{ color: textColor }}>{t.name}</motion.p>
+                <motion.p className="text-xs tracking-wider" style={{ color: mutedColor }}>{t.role}</motion.p>
               </div>
             </div>
           </motion.div>
@@ -837,22 +712,16 @@ function Testimonials({ themeProgress }) {
   );
 }
 
-/* ── Contact (with mobile line‑break + cursor) ───── */
+/* ── Contact (transparent background) ────────────── */
 function Contact({ themeProgress, isMobile }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
-  const sectionBg = useTransform(themeProgress, [0, 1], [DARK.surface, LIGHT.surface]);
   const textColor = useTransform(themeProgress, [0, 1], [DARK.text, LIGHT.text]);
   const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
   const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
 
   return (
-    <motion.section
-      ref={ref}
-      id="contact"
-      className="py-28 md:py-44 px-6 md:px-20 theme-section"
-      style={{ backgroundColor: sectionBg }}
-    >
+    <motion.section ref={ref} id="contact" className="py-28 md:py-44 px-6 md:px-20 theme-section">
       <div className="max-w-3xl">
         <motion.h2
           className="text-[clamp(3rem,10vw,7rem)] font-display font-bold leading-[0.95] tracking-tight mb-8"
@@ -861,8 +730,7 @@ function Contact({ themeProgress, isMobile }) {
           animate={inView ? { y: 0, opacity: 1 } : {}}
           transition={{ duration: 0.8, ease: E }}
         >
-          Let&apos;s make
-          <br />
+          Let&apos;s make<br />
           <span style={{ color: accentColor, whiteSpace: isMobile ? "normal" : "nowrap" }}>
             something{isMobile && <br />} cool.
             <motion.span
@@ -904,7 +772,41 @@ function Contact({ themeProgress, isMobile }) {
   );
 }
 
-/* ── Page root ───────────────────────────────────── */
+/* ──────────────────────────────────────────────────
+   Custom hook – discrete trigger + spring
+   ────────────────────────────────────────────────── */
+function useManifestoProgress(manifestoRef) {
+  const rawProgress = useMotionValue(0);
+  const prevPast = useRef(null);
+
+  const isPastMiddle = useCallback(() => {
+    const el = manifestoRef.current;
+    if (!el) return false;
+    return el.getBoundingClientRect().top < window.innerHeight * 0.5;
+  }, [manifestoRef]);
+
+  useLayoutEffect(() => {
+    const past = isPastMiddle();
+    rawProgress.jump(past ? 1 : 0);
+    prevPast.current = past;
+  }, [isPastMiddle, rawProgress]);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const past = isPastMiddle();
+      const prev = prevPast.current;
+      if (past && prev === false) rawProgress.set(1);
+      if (!past && prev === true) rawProgress.set(0);
+      prevPast.current = past;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isPastMiddle, rawProgress]);
+
+  return rawProgress;
+}
+
+/* ── Page root – slightly slowed down spring ──────── */
 export default function Page() {
   const manifestoRef = useRef(null);
   const containerRef = useRef(null);
@@ -921,34 +823,37 @@ export default function Page() {
     mass: 0.2,
   });
 
-  const { scrollYProgress: manifestoScroll } = useScroll({
-    target: manifestoRef,
-    offset: ["start center", "end start"],
-  });
+  const rawThemeProgress = useManifestoProgress(manifestoRef);
 
-  const rawThemeProgress = useTransform(manifestoScroll, [0, 0.25, 1], [0, 1, 1]);
-
+  // 🕐 Just a little slower than the previous fast version
   const themeProgress = useSpring(rawThemeProgress, {
-    stiffness: 100,
-    damping: 28,
-    mass: 0.2,
+    stiffness: 80,    // down from 150
+    damping: 25,      // slightly up from 20
+    mass: 0.4,        // slightly heavier than 0.3
   });
 
-  useEffect(() => {
-    const changeBg = (v) => {
-      const bg = interpolateHex(DARK.bg, LIGHT.bg, v);
-      document.body.style.backgroundColor = bg;
-      document.documentElement.style.backgroundColor = bg;
-    };
-    const unsub = themeProgress.on("change", changeBg);
-    return () => unsub();
-  }, [themeProgress]);
+  const wipeHeight = useTransform(themeProgress, [0, 1], ["0vh", "100vh"]);
 
   return (
     <>
+      {/* White wipe layer – fixed, bottom‑anchored, slides upward */}
+      <motion.div
+        style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: wipeHeight,
+          backgroundColor: LIGHT.bg,
+          zIndex: 5,
+          pointerEvents: "none",
+          willChange: "height",
+        }}
+      />
+
       <Cursor />
       <GlassNavbar />
-      <main ref={containerRef}>
+      <main ref={containerRef} style={{ position: "relative", zIndex: 10 }}>
         <Hero globalProgress={globalProgress} isMobile={isMobile} />
         <Projects globalProgress={globalProgress} themeProgress={themeProgress} isMobile={isMobile} />
         <Manifesto globalProgress={globalProgress} manifestoRef={manifestoRef} themeProgress={themeProgress} isMobile={isMobile} />
