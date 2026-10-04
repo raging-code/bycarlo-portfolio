@@ -8,20 +8,19 @@ import {
   useInView,
   useMotionValue,
   useSpring,
-  animate,
   AnimatePresence,
 } from "framer-motion";
 
 const E = [0.25, 1, 0.25, 1];
 
 const DARK = {
-  bg: "#3B3B3B",
-  surface: "#474747",
-  text: "#F4F4F4",
-  muted: "#BDBDBD",
+  bg: "#0B0B0E",
+  surface: "#14141A",
+  text: "#EBEBF5",
+  muted: "#9898A8",
   accent: "#00F0FF",
   accent2: "#B24BF3",
-  border: "rgba(255,255,255,0.14)",
+  border: "rgba(255,255,255,0.08)",
 };
 
 const LIGHT = {
@@ -31,10 +30,8 @@ const LIGHT = {
   muted: "#555555",
   accent: "#00AABB",
   accent2: "#8A2BE2",
-  border: "rgba(0,0,0,0.10)",
+  border: "rgba(0,0,0,0.08)",
 };
-
-const THEME_KEY = "bycarlo-theme";
 
 function interpolateHex(c1, c2, t) {
   const clamp = (v) => Math.max(0, Math.min(255, Math.round(v)));
@@ -106,65 +103,18 @@ function useIsMobile() {
   return isMobile;
 }
 
-/* ── ThemeToggle – light / dark switch (tap it, or swipe it left / right) ── */
-function ThemeToggle({ theme, onChange }) {
-  const startX = useRef(null);
-  const swiped = useRef(false);
-  const isDark = theme === "dark";
-
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={isDark}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      className="gnav-toggle"
-      data-theme={theme}
-      onPointerDown={(e) => {
-        startX.current = e.clientX;
-        swiped.current = false;
-        try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
-      }}
-      onPointerUp={(e) => {
-        if (startX.current === null) return;
-        const dx = e.clientX - startX.current;
-        startX.current = null;
-        if (Math.abs(dx) > 10) {
-          swiped.current = true;
-          onChange(dx > 0 ? "dark" : "light");
-        }
-      }}
-      onPointerCancel={() => { startX.current = null; }}
-      onClick={() => {
-        if (swiped.current) { swiped.current = false; return; }
-        onChange(isDark ? "light" : "dark");
-      }}
-    >
-      <span className="gnav-toggle-thumb" aria-hidden="true">
-        <svg className="gnav-ico gnav-ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
-        </svg>
-        <svg className="gnav-ico gnav-ico-moon" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a.6.6 0 0 0-.8-.7A9.5 9.5 0 1 0 21.2 15a.6.6 0 0 0-.7-.8z" />
-        </svg>
-      </span>
-    </button>
-  );
-}
-
-/* ── GlassNavbar – compact, flush at the top, glass capsule on scroll ── */
-function GlassNavbar({ themeProgress, theme, onThemeChange }) {
+/* ── GlassNavbar – flush at the top, gathers into a glass capsule on scroll ── */
+function GlassNavbar({ themeProgress }) {
   const [active, setActive] = useState("");
   const [scrolled, setScrolled] = useState(false);
 
-  // Colors follow the theme through the same eased motion value as the sections
-  const ink    = useTransform(themeProgress, [0, 1], ["#F4F4F4", "#0B0B0E"]);
-  const muted  = useTransform(themeProgress, [0, 1], ["rgba(244,244,244,0.65)", "rgba(11,11,14,0.55)"]);
-  const glass  = useTransform(themeProgress, [0, 1], ["rgba(59,59,59,0.62)", "rgba(255,255,255,0.72)"]);
-  const line   = useTransform(themeProgress, [0, 1], ["rgba(255,255,255,0.16)", "rgba(11,11,14,0.10)"]);
-  const chip   = useTransform(themeProgress, [0, 1], ["rgba(255,255,255,0.14)", "rgba(11,11,14,0.08)"]);
-  const ctaFg  = useTransform(themeProgress, [0, 1], ["#3B3B3B", "#FFFFFF"]);
+  // Colors follow the page theme (dark -> light) through the same spring as the sections
+  const ink    = useTransform(themeProgress, [0, 1], ["#EBEBF5", "#0B0B0E"]);
+  const muted  = useTransform(themeProgress, [0, 1], ["rgba(235,235,245,0.6)", "rgba(11,11,14,0.55)"]);
+  const glass  = useTransform(themeProgress, [0, 1], ["rgba(255,255,255,0.05)", "rgba(255,255,255,0.22)"]);
+  const line   = useTransform(themeProgress, [0, 1], ["rgba(255,255,255,0.10)", "rgba(11,11,14,0.08)"]);
+  const chip   = useTransform(themeProgress, [0, 1], ["rgba(255,255,255,0.12)", "rgba(11,11,14,0.08)"]);
+  const ctaFg  = useTransform(themeProgress, [0, 1], ["#0B0B0E", "#FFFFFF"]);
   const accent = useTransform(themeProgress, [0, 1], ["#00F0FF", "#00AABB"]);
 
   useEffect(() => {
@@ -182,7 +132,7 @@ function GlassNavbar({ themeProgress, theme, onThemeChange }) {
   }, []);
 
   return (
-    <div className={"gnav-wrap" + (scrolled ? " is-scrolled" : "")} data-theme={theme}>
+    <div className={"gnav-wrap" + (scrolled ? " is-scrolled" : "")}>
       <motion.nav
         className="gnav"
         aria-label="Primary"
@@ -204,9 +154,7 @@ function GlassNavbar({ themeProgress, theme, onThemeChange }) {
           aria-label="byCarlo, back to top"
           onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
         >
-          {/* light mode -> bcdlogo.png, dark mode -> bcwlogo.png (both preloaded, cross-faded) */}
-          <img src="/png/bcdlogo.png" alt="" width={30} height={30} className="gnav-logo gnav-logo-light" draggable={false} />
-          <img src="/png/bcwlogo.png" alt="" width={30} height={30} className="gnav-logo gnav-logo-dark" draggable={false} />
+          <img src="/webp/logo.webp" alt="" width={40} height={40} className="gnav-logo" draggable={false} />
         </a>
 
         <div className="gnav-links">
@@ -222,10 +170,7 @@ function GlassNavbar({ themeProgress, theme, onThemeChange }) {
           ))}
         </div>
 
-        <div className="gnav-end">
-          <a href="#contact" className="gnav-cta">Contact</a>
-          <ThemeToggle theme={theme} onChange={onThemeChange} />
-        </div>
+        <a href="#contact" className="gnav-cta">Contact</a>
       </motion.nav>
     </div>
   );
@@ -265,14 +210,14 @@ function Cursor() {
   return (
     <motion.div
       className="fixed top-0 left-0 pointer-events-none z-[9999] hidden md:block"
-      style={{ x: sx, y: sy, translateX: "-50%", translateY: "-50%", mixBlendMode: "difference" }}
+      style={{ x: sx, y: sy, translateX: "-50%", translateY: "-50%" }}
     >
       <motion.div
         animate={{
           width: hover ? 48 : 12,
           height: hover ? 48 : 12,
-          backgroundColor: hover ? "rgba(255,255,255,0.12)" : "#FFFFFF",
-          borderColor: hover ? "#FFFFFF" : "transparent",
+          backgroundColor: hover ? `${DARK.accent}18` : DARK.accent,
+          borderColor: hover ? DARK.accent : "transparent",
           borderWidth: hover ? 1.5 : 0,
         }}
         style={{ borderRadius: "50%", borderStyle: "solid" }}
@@ -286,10 +231,9 @@ function Cursor() {
 function DeviceMockup({ accent, themeProgress, isMobile }) {
   const acc = accent || "#00F0FF";
   const frameBg = useTransform(themeProgress, [0, 1], [DARK.surface, LIGHT.surface]);
-  const frameBorder = useTransform(themeProgress, [0, 1], [DARK.border, LIGHT.border]);
   const screenBg = useTransform(themeProgress, [0, 1], [DARK.bg, LIGHT.bg]);
   const barColor = useTransform(themeProgress, [0, 1], [
-    "rgba(255,255,255,0.12)",
+    "rgba(255,255,255,0.1)",
     "rgba(0,0,0,0.05)",
   ]);
 
@@ -312,7 +256,7 @@ function DeviceMockup({ accent, themeProgress, isMobile }) {
       <div className="relative mx-auto" style={{ maxWidth: "600px" }}>
         <motion.div
           className="rounded-xl overflow-hidden border w-full aspect-video"
-          style={{ borderColor: frameBorder, backgroundColor: frameBg }}
+          style={{ borderColor: DARK.border, backgroundColor: frameBg }}
           animate={laptopAnimate}
           transition={laptopTransition}
         >
@@ -330,7 +274,7 @@ function DeviceMockup({ accent, themeProgress, isMobile }) {
 
         <motion.div
           className="absolute bottom-[-24px] right-[-12px] w-24 rounded-2xl overflow-hidden border shadow-xl z-10"
-          style={{ borderColor: frameBorder, backgroundColor: frameBg }}
+          style={{ borderColor: DARK.border, backgroundColor: frameBg }}
           animate={phoneAnimate}
           transition={phoneTransition}
         >
@@ -352,14 +296,7 @@ function DeviceMockup({ accent, themeProgress, isMobile }) {
 }
 
 /* ── Hero (always dark) ──────────────────────────── */
-function Hero({ globalProgress, themeProgress, isMobile }) {
-  const heroVars = {
-    "--h-text":    useTransform(themeProgress, [0, 1], ["var(--h-text)", LIGHT.text]),
-    "--h-muted":   useTransform(themeProgress, [0, 1], ["var(--h-muted)", LIGHT.muted]),
-    "--h-accent":  useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]),
-    "--h-accent2": useTransform(themeProgress, [0, 1], [DARK.accent2, LIGHT.accent2]),
-    "--h-border":  useTransform(themeProgress, [0, 1], ["var(--h-border)", LIGHT.border]),
-  };
+function Hero({ globalProgress, isMobile }) {
   const ref = useRef(null);
   const [, setMouse] = useState({ x: 0.5, y: 0.5 });
 
@@ -382,7 +319,7 @@ function Hero({ globalProgress, themeProgress, isMobile }) {
       ref={ref}
       onMouseMove={handleMouse}
       className="relative min-h-screen flex flex-col justify-center items-start px-6 md:px-20 overflow-hidden pt-20"
-      style={heroVars}
+      style={{ backgroundColor: DARK.bg }}
     >
       <motion.div className="absolute top-0 left-0 w-full h-full z-0" style={{ y: bgY, willChange: "transform" }}>
         <motion.div
@@ -402,8 +339,8 @@ function Hero({ globalProgress, themeProgress, isMobile }) {
           transition={{ duration: 0.8, delay: 0.2, ease: E }}
           className="flex items-center gap-3"
         >
-          <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: "var(--h-accent)" }} />
-          <span className="text-[11px] tracking-[0.35em] uppercase font-medium" style={{ color: "var(--h-muted)" }}>
+          <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+          <span className="text-[11px] tracking-[0.35em] uppercase font-medium" style={{ color: DARK.muted }}>
             Studio &middot; Est. 2025
           </span>
         </motion.div>
@@ -414,13 +351,13 @@ function Hero({ globalProgress, themeProgress, isMobile }) {
           transition={{ duration: 1, delay: 0.4, ease: E }}
           className="text-[clamp(2.8rem,10vw,7rem)] font-display font-bold leading-[0.9] tracking-tight"
         >
-          <span className="block" style={{ color: "var(--h-text)" }}>Crafting</span>
+          <span className="block" style={{ color: DARK.text }}>Crafting</span>
           <span className="block">
-            <span style={{ color: "var(--h-accent)" }}>Digital</span><br />
-            <span className="bg-clip-text text-transparent" style={{ backgroundImage: "linear-gradient(90deg, var(--h-accent), var(--h-accent2))" }}>
+            <span style={{ color: DARK.accent }}>Digital</span><br />
+            <span className="bg-gradient-to-r from-accent to-accent-2 bg-clip-text text-transparent">
               Realities
             </span>
-            <span style={{ color: "var(--h-accent)" }}>.</span>
+            <span style={{ color: DARK.accent }}>.</span>
           </span>
         </motion.h1>
 
@@ -429,7 +366,7 @@ function Hero({ globalProgress, themeProgress, isMobile }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.7, ease: E }}
           className="max-w-xl text-[clamp(1rem,2.5vw,1.3rem)] leading-relaxed"
-          style={{ color: "var(--h-muted)" }}
+          style={{ color: DARK.muted }}
         >
           We build immersive, high-performing websites that merge design with code &#8211; before you even know you need them.
         </motion.p>
@@ -440,10 +377,10 @@ function Hero({ globalProgress, themeProgress, isMobile }) {
           transition={{ duration: 0.7, delay: 1.0, ease: E }}
           className="flex flex-wrap gap-3 mt-4"
         >
-          <a href="#work" className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide" style={{ background: "var(--h-accent)", color: "#0B0B0E" }}>
+          <a href="#work" className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide" style={{ background: DARK.accent, color: "#0B0B0E" }}>
             See work &#8594;
           </a>
-          <a href="#contact" className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide border" style={{ borderColor: "var(--h-border)", color: "var(--h-text)" }}>
+          <a href="#contact" className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide border" style={{ borderColor: DARK.border, color: DARK.text }}>
             Get in touch
           </a>
         </motion.div>
@@ -455,10 +392,10 @@ function Hero({ globalProgress, themeProgress, isMobile }) {
         animate={{ opacity: 1 }}
         transition={{ delay: 2, duration: 0.8 }}
       >
-        <span className="text-[9px] tracking-[0.3em] uppercase" style={{ color: "var(--h-muted)" }}>Scroll</span>
-        <motion.div className="w-4 h-8 rounded-full border flex justify-center p-1" style={{ borderColor: "var(--h-border)" }}>
+        <span className="text-[9px] tracking-[0.3em] uppercase" style={{ color: DARK.muted }}>Scroll</span>
+        <motion.div className="w-4 h-8 rounded-full border flex justify-center p-1" style={{ borderColor: DARK.border }}>
           <motion.div
-            className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--h-accent)" }}
+            className="w-1.5 h-1.5 rounded-full bg-accent"
             animate={{ y: [0, 10, 0] }}
             transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
           />
@@ -501,7 +438,7 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
           transition={{ delay: 0.2, ease: E }}
         >
           Projects that define<br />
-          the <motion.span style={{ color: accentColor }}>future</motion.span><motion.span style={{ color: accentColor }}>.</motion.span>
+          the <span style={{ color: accentColor }}>future</span><span style={{ color: accentColor }}>.</span>
         </motion.h2>
       </div>
 
@@ -635,7 +572,7 @@ function Story({ themeProgress }) {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.2, duration: 0.9, ease: E }}
         >
-          We are a remote collective of designers and engineers obsessed with the <motion.span style={{ color: accentColor }}>edge</motion.span> of web performance and aesthetics.
+          We are a remote collective of designers and engineers obsessed with the <span style={{ color: accentColor }}>edge</span> of web performance and aesthetics.
         </motion.p>
         <motion.p
           className="mt-8 text-lg leading-relaxed max-w-2xl"
@@ -666,8 +603,8 @@ function Story({ themeProgress }) {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.4 }}
           >
-            <motion.p className="text-3xl md:text-4xl font-display font-bold" style={{ color: accentColor }}>{s.n}</motion.p>
-            <motion.p className="text-xs tracking-wider uppercase mt-2" style={{ color: mutedColor }}>{s.label}</motion.p>
+            <p className="text-3xl md:text-4xl font-display font-bold" style={{ color: accentColor }}>{s.n}</p>
+            <p className="text-xs tracking-wider uppercase mt-2" style={{ color: mutedColor }}>{s.label}</p>
           </motion.div>
         ))}
       </div>
@@ -681,7 +618,6 @@ function Testimonials({ themeProgress }) {
   const inView = useInView(ref, { once: true, margin: "-10%" });
   const [active, setActive] = useState(0);
   const t = TESTIMONIALS[active];
-  const dotIdle = useTransform(themeProgress, [0, 1], ["rgba(255,255,255,0.22)", "rgba(0,0,0,0.14)"]);
   const textColor = useTransform(themeProgress, [0, 1], [DARK.text, LIGHT.text]);
   const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
   const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
@@ -710,9 +646,9 @@ function Testimonials({ themeProgress }) {
               &quot;{t.quote}&quot;
             </motion.p>
             <div className="mt-8 flex items-center gap-4">
-              <motion.div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0" style={{ background: accentColor, color: "#0B0B0E" }}>
+              <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0" style={{ background: accentColor, color: DARK.bg }}>
                 {t.name.split(" ").map((n) => n[0]).join("")}
-              </motion.div>
+              </div>
               <div>
                 <motion.p className="font-semibold" style={{ color: textColor }}>{t.name}</motion.p>
                 <motion.p className="text-xs tracking-wider" style={{ color: mutedColor }}>{t.role}</motion.p>
@@ -722,13 +658,13 @@ function Testimonials({ themeProgress }) {
         </AnimatePresence>
         <div className="flex gap-4 mt-12">
           {TESTIMONIALS.map((_, i) => (
-            <motion.button
+            <button
               key={i}
               onClick={() => setActive(i)}
               className="h-1.5 rounded-full transition-all duration-300"
               style={{
                 width: i === active ? 32 : 12,
-                background: i === active ? accentColor : dotIdle,
+                background: i === active ? accentColor : "rgba(255,255,255,0.15)",
                 border: "none",
                 cursor: "pointer",
               }}
@@ -760,7 +696,7 @@ function Contact({ themeProgress, isMobile }) {
           transition={{ duration: 0.8, ease: E }}
         >
           Let&apos;s make<br />
-          <motion.span style={{ color: accentColor, whiteSpace: isMobile ? "normal" : "nowrap" }}>
+          <span style={{ color: accentColor, whiteSpace: isMobile ? "normal" : "nowrap" }}>
             something{isMobile && <br />} cool.
             <motion.span
               style={{
@@ -774,7 +710,7 @@ function Contact({ themeProgress, isMobile }) {
               animate={{ opacity: [1, 0, 1] }}
               transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
             />
-          </motion.span>
+          </span>
         </motion.h2>
         <motion.a
           href="mailto:hello@bycarlo.dev"
@@ -801,7 +737,41 @@ function Contact({ themeProgress, isMobile }) {
   );
 }
 
-/* ── Page root – manual light / dark theme ──────── */
+/* ──────────────────────────────────────────────────
+   Custom hook – discrete trigger + spring
+   ────────────────────────────────────────────────── */
+function useManifestoProgress(manifestoRef) {
+  const rawProgress = useMotionValue(0);
+  const prevPast = useRef(null);
+
+  const isPastMiddle = useCallback(() => {
+    const el = manifestoRef.current;
+    if (!el) return false;
+    return el.getBoundingClientRect().top < window.innerHeight * 0.5;
+  }, [manifestoRef]);
+
+  useLayoutEffect(() => {
+    const past = isPastMiddle();
+    rawProgress.jump(past ? 1 : 0);
+    prevPast.current = past;
+  }, [isPastMiddle, rawProgress]);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const past = isPastMiddle();
+      const prev = prevPast.current;
+      if (past && prev === false) rawProgress.set(1);
+      if (!past && prev === true) rawProgress.set(0);
+      prevPast.current = past;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isPastMiddle, rawProgress]);
+
+  return rawProgress;
+}
+
+/* ── Page root – slightly slowed down spring ──────── */
 export default function Page() {
   const manifestoRef = useRef(null);
   const containerRef = useRef(null);
@@ -818,36 +788,38 @@ export default function Page() {
     mass: 0.2,
   });
 
-  // 1 = light (default), 0 = dark. Every section already reads colors from this value.
-  const themeProgress = useMotionValue(1);
-  const [theme, setTheme] = useState("light");
+  const rawThemeProgress = useManifestoProgress(manifestoRef);
 
-  const applyTheme = useCallback((next, instant) => {
-    setTheme(next);
-    document.documentElement.dataset.theme = next;
-    const target = next === "light" ? 1 : 0;
-    if (instant) themeProgress.jump(target);
-    else animate(themeProgress, target, { duration: 0.45, ease: "easeInOut" });
-  }, [themeProgress]);
+  // 🕐 Just a little slower than the previous fast version
+  const themeProgress = useSpring(rawThemeProgress, {
+    stiffness: 80,    // down from 150
+    damping: 25,      // slightly up from 20
+    mass: 0.4,        // slightly heavier than 0.3
+  });
 
-  const handleThemeChange = useCallback((next) => {
-    applyTheme(next, false);
-    try { localStorage.setItem(THEME_KEY, next); } catch {}
-  }, [applyTheme]);
-
-  // restore the visitor's last choice (first visit = light)
-  useLayoutEffect(() => {
-    let saved = null;
-    try { saved = localStorage.getItem(THEME_KEY); } catch {}
-    applyTheme(saved === "dark" ? "dark" : "light", true);
-  }, [applyTheme]);
+  const wipeHeight = useTransform(themeProgress, [0, 1], ["0vh", "100vh"]);
 
   return (
     <>
+      {/* White wipe layer – fixed, bottom‑anchored, slides upward */}
+      <motion.div
+        style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: wipeHeight,
+          backgroundColor: LIGHT.bg,
+          zIndex: 5,
+          pointerEvents: "none",
+          willChange: "height",
+        }}
+      />
+
       <Cursor />
-      <GlassNavbar themeProgress={themeProgress} theme={theme} onThemeChange={handleThemeChange} />
+      <GlassNavbar themeProgress={themeProgress} />
       <main ref={containerRef} style={{ position: "relative", zIndex: 10 }}>
-        <Hero globalProgress={globalProgress} themeProgress={themeProgress} isMobile={isMobile} />
+        <Hero globalProgress={globalProgress} isMobile={isMobile} />
         <Projects globalProgress={globalProgress} themeProgress={themeProgress} isMobile={isMobile} />
         <Manifesto globalProgress={globalProgress} manifestoRef={manifestoRef} themeProgress={themeProgress} isMobile={isMobile} />
         <Story themeProgress={themeProgress} />
