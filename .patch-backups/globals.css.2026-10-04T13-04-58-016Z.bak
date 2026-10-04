@@ -132,42 +132,23 @@ button, a {
 }
 .gnav-wrap.is-scrolled .gnav {
   width: 640px;
-  padding: 8px;
+  padding: 8px 8px 8px 20px;
   border-radius: 999px;
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.55);
 }
 .gnav > *:not(.gnav-glass) { position: relative; z-index: 1; }
 
-/* liquid glass – near-clear fill, lit rim, diagonal sheen */
 .gnav-glass {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  border: 1px solid var(--gn-line, rgba(255, 255, 255, 0.10));
-  background: var(--gn-glass, rgba(255, 255, 255, 0.05));
-  -webkit-backdrop-filter: blur(14px) saturate(200%);
-  backdrop-filter: blur(14px) saturate(200%);
-  box-shadow:
-    inset 1.5px 1.5px 2px -0.5px rgba(255, 255, 255, 0.65),
-    inset -1.5px -1.5px 2px -0.5px rgba(255, 255, 255, 0.35),
-    inset 0 0 14px rgba(255, 255, 255, 0.08),
-    0 10px 30px -6px rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--gn-line, rgba(255, 255, 255, 0.14));
+  background: var(--gn-glass, rgba(20, 20, 26, 0.55));
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.5s;
-}
-.gnav-glass::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.26),
-    transparent 32%,
-    transparent 68%,
-    rgba(255, 255, 255, 0.12)
-  );
 }
 .gnav-wrap.is-scrolled .gnav-glass { opacity: 1; }
 
@@ -241,39 +222,9 @@ button, a {
   color: var(--gn-cta-fg);
 }
 
-/* logo – 1:1 circle */
-.gnav-brand {
-  display: inline-flex;
-  align-items: center;
-  flex-shrink: 0;
-  border-radius: 50%;
-  line-height: 0;
-}
-.gnav-logo {
-  display: block;
-  width: 40px;
-  height: 40px;
-  aspect-ratio: 1 / 1;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-  user-select: none;
-  box-shadow: 0 0 0 1px var(--gn-line, rgba(255, 255, 255, 0.14)), 0 2px 8px rgba(0, 0, 0, 0.25);
-  transition:
-    width 0.7s cubic-bezier(0.65, 0, 0.2, 1),
-    height 0.7s cubic-bezier(0.65, 0, 0.2, 1),
-    transform 0.3s;
-}
-.gnav-wrap.is-scrolled .gnav-logo { width: 36px; height: 36px; }
-.gnav-brand:hover .gnav-logo { transform: scale(1.06); }
-@media (max-width: 640px) {
-  .gnav-logo,
-  .gnav-wrap.is-scrolled .gnav-logo { width: 32px; height: 32px; }
-}
-
 @media (max-width: 640px) {
   .gnav { padding: 12px 16px; }
-  .gnav-wrap.is-scrolled .gnav { padding: 6px 10px 6px 6px; }
+  .gnav-wrap.is-scrolled .gnav { padding: 6px 10px 6px 14px; }
   .gnav-fold { max-width: 0; opacity: 0; }
   .gnav-cta { display: none; }
   .gnav-links {
@@ -286,7 +237,7 @@ button, a {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .gnav-wrap, .gnav, .gnav-glass, .gnav-fold, .gnav-links, .gnav-link, .gnav-cta, .gnav-logo { transition: none; }
+  .gnav-wrap, .gnav, .gnav-glass, .gnav-fold, .gnav-links, .gnav-link, .gnav-cta { transition: none; }
 }
 
 .logo-gradient {

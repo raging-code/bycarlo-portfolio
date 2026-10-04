@@ -111,8 +111,8 @@ function GlassNavbar({ themeProgress }) {
   // Colors follow the page theme (dark -> light) through the same spring as the sections
   const ink    = useTransform(themeProgress, [0, 1], ["#EBEBF5", "#0B0B0E"]);
   const muted  = useTransform(themeProgress, [0, 1], ["rgba(235,235,245,0.6)", "rgba(11,11,14,0.55)"]);
-  const glass  = useTransform(themeProgress, [0, 1], ["rgba(255,255,255,0.05)", "rgba(255,255,255,0.22)"]);
-  const line   = useTransform(themeProgress, [0, 1], ["rgba(255,255,255,0.10)", "rgba(11,11,14,0.08)"]);
+  const glass  = useTransform(themeProgress, [0, 1], ["rgba(20,20,26,0.55)", "rgba(255,255,255,0.62)"]);
+  const line   = useTransform(themeProgress, [0, 1], ["rgba(255,255,255,0.14)", "rgba(11,11,14,0.1)"]);
   const chip   = useTransform(themeProgress, [0, 1], ["rgba(255,255,255,0.12)", "rgba(11,11,14,0.08)"]);
   const ctaFg  = useTransform(themeProgress, [0, 1], ["#0B0B0E", "#FFFFFF"]);
   const accent = useTransform(themeProgress, [0, 1], ["#00F0FF", "#00AABB"]);
@@ -151,10 +151,9 @@ function GlassNavbar({ themeProgress }) {
         <a
           href="#"
           className="gnav-brand"
-          aria-label="byCarlo, back to top"
           onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
         >
-          <img src="/webp/logo.webp" alt="" width={40} height={40} className="gnav-logo" draggable={false} />
+          <span className="gnav-fold">by</span>C<span className="gnav-fold">arlo</span>
         </a>
 
         <div className="gnav-links">
