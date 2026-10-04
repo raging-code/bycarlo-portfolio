@@ -91,6 +91,7 @@ const NAV_LINKS = [
   { id: "work", label: "Projects" },
   { id: "about", label: "About" },
   { id: "", label: "Services" },
+  { id: "manifesto", label: "Insights" },
 ];
 
 function useIsMobile() {
@@ -204,8 +205,8 @@ function GlassNavbar({ themeProgress, theme, onThemeChange }) {
           onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
         >
           {/* light mode -> bcdlogo.png, dark mode -> bcwlogo.png (both preloaded, cross-faded) */}
-          <img src="/png/bcdlogo.png" alt="" width={26} height={26} className="gnav-logo gnav-logo-light" draggable={false} />
-          <img src="/png/bcwlogo.png" alt="" width={26} height={26} className="gnav-logo gnav-logo-dark" draggable={false} />
+          <img src="/png/bcdlogo.png" alt="" width={30} height={30} className="gnav-logo gnav-logo-light" draggable={false} />
+          <img src="/png/bcwlogo.png" alt="" width={30} height={30} className="gnav-logo gnav-logo-dark" draggable={false} />
         </a>
 
         <div className="gnav-links">
