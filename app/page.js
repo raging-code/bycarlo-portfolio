@@ -103,36 +103,24 @@ function useIsMobile() {
   return isMobile;
 }
 
-/* ── GlassNavbar (always fixed at top) ───────────── */
-function GlassNavbar() {
-  const [active, setActive] = useState("work");
-  const [hovered, setHovered] = useState(null);
-  const isMobile = useIsMobile();
+/* ── GlassNavbar – flush at the top, gathers into a glass capsule on scroll ── */
+function GlassNavbar({ themeProgress }) {
+  const [active, setActive] = useState("");
+  const [scrolled, setScrolled] = useState(false);
 
-  const barLeft = useMotionValue(0);
-  const barWidth = useMotionValue(0);
-  const springL = useSpring(barLeft, { stiffness: 380, damping: 28 });
-  const springW = useSpring(barWidth, { stiffness: 380, damping: 28 });
-
-  const groupRef = useRef(null);
-  const linkRefs = useRef({});
-
-  const moveBar = useCallback(
-    (key) => {
-      const group = groupRef.current;
-      const link = linkRefs.current[key];
-      if (!group || !link) return;
-      const gRect = group.getBoundingClientRect();
-      const lRect = link.getBoundingClientRect();
-      barLeft.set(lRect.left - gRect.left);
-      barWidth.set(lRect.width);
-    },
-    [barLeft, barWidth]
-  );
+  // Colors follow the page theme (dark -> light) through the same spring as the sections
+  const ink    = useTransform(themeProgress, [0, 1], ["#EBEBF5", "#0B0B0E"]);
+  const muted  = useTransform(themeProgress, [0, 1], ["rgba(235,235,245,0.6)", "rgba(11,11,14,0.55)"]);
+  const glass  = useTransform(themeProgress, [0, 1], ["rgba(20,20,26,0.55)", "rgba(255,255,255,0.62)"]);
+  const line   = useTransform(themeProgress, [0, 1], ["rgba(255,255,255,0.14)", "rgba(11,11,14,0.1)"]);
+  const chip   = useTransform(themeProgress, [0, 1], ["rgba(255,255,255,0.12)", "rgba(11,11,14,0.08)"]);
+  const ctaFg  = useTransform(themeProgress, [0, 1], ["#0B0B0E", "#FFFFFF"]);
+  const accent = useTransform(themeProgress, [0, 1], ["#00F0FF", "#00AABB"]);
 
   useEffect(() => {
     const onScroll = () => {
-      let current = "work";
+      setScrolled(window.scrollY > 24);
+      let current = "";
       document.querySelectorAll("section[id]").forEach((s) => {
         if (s.getBoundingClientRect().top < window.innerHeight / 2) current = s.id;
       });
@@ -143,71 +131,47 @@ function GlassNavbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    requestAnimationFrame(() => moveBar(hovered ?? active));
-  }, [active, hovered, moveBar]);
-
-  useEffect(() => {
-    const onResize = () => moveBar(hovered ?? active);
-    window.addEventListener("resize", onResize, { passive: true });
-    return () => window.removeEventListener("resize", onResize);
-  }, [active, hovered, moveBar]);
-
   return (
-    <nav className="glass-nav">
-      <div
-        className="flex justify-center px-6"
+    <div className={"gnav-wrap" + (scrolled ? " is-scrolled" : "")}>
+      <motion.nav
+        className="gnav"
+        aria-label="Primary"
         style={{
-          paddingTop: isMobile ? "12px" : "16px",
-          paddingBottom: isMobile ? "12px" : "16px",
+          "--gn-ink": ink,
+          "--gn-muted": muted,
+          "--gn-glass": glass,
+          "--gn-line": line,
+          "--gn-chip": chip,
+          "--gn-cta-fg": ctaFg,
+          "--gn-accent": accent,
         }}
       >
-        <div
-          ref={groupRef}
-          className="glow-bar-track nav-links-scroll flex items-center gap-6 overflow-x-auto min-w-0"
-        >
-          {NAV_LINKS.map(({ id, label }) => {
-            const key = id || label;
-            return (
-              <a
-                key={key}
-                ref={(el) => { if (el) linkRefs.current[key] = el; }}
-                href={id ? `#${id}` : "#"}
-                onClick={(e) => { if (!id) e.preventDefault(); }}
-                onMouseEnter={() => setHovered(key)}
-                onMouseLeave={() => setHovered(null)}
-                className="no-underline transition-colors duration-200 whitespace-nowrap flex-shrink-0"
-                style={{
-                  fontSize: "0.8rem",
-                  fontWeight: 600,
-                  lineHeight: 1,
-                  paddingBottom: isMobile ? "4px" : "8px",
-                  minHeight: "unset",
-                  color: active === id ? "#ffffff" : "#999999",
-                  fontFamily: "var(--font-sans)",
-                }}
-              >
-                {label}
-              </a>
-            );
-          })}
+        <span className="gnav-glass" aria-hidden="true" />
 
-          <motion.div
-            style={{
-              position: "absolute",
-              bottom: 0,
-              left: springL,
-              width: springW,
-              height: 2,
-              borderRadius: 1,
-              background: "#ffffff",
-              boxShadow: "0 0 8px rgba(255,255,255,0.7), 0 0 18px rgba(255,255,255,0.3)",
-              pointerEvents: "none",
-            }}
-          />
+        <a
+          href="#"
+          className="gnav-brand"
+          onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+        >
+          <span className="gnav-fold">by</span>C<span className="gnav-fold">arlo</span>
+        </a>
+
+        <div className="gnav-links">
+          {NAV_LINKS.map(({ id, label }) => (
+            <a
+              key={id || label}
+              href={id ? "#" + id : "#"}
+              onClick={(e) => { if (!id) e.preventDefault(); }}
+              className={"gnav-link" + (id && active === id ? " on" : "")}
+            >
+              {label}
+            </a>
+          ))}
         </div>
-      </div>
-    </nav>
+
+        <a href="#contact" className="gnav-cta">Contact</a>
+      </motion.nav>
+    </div>
   );
 }
 
@@ -852,7 +816,7 @@ export default function Page() {
       />
 
       <Cursor />
-      <GlassNavbar />
+      <GlassNavbar themeProgress={themeProgress} />
       <main ref={containerRef} style={{ position: "relative", zIndex: 10 }}>
         <Hero globalProgress={globalProgress} isMobile={isMobile} />
         <Projects globalProgress={globalProgress} themeProgress={themeProgress} isMobile={isMobile} />
