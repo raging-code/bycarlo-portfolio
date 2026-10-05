@@ -577,12 +577,6 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
 }
 
 
-/* ── Icon coloring ─────────────────────────────────
-   false = every icon follows the theme (light text in dark mode, dark text in light mode)
-   true  = keep each icon's brand color, but near-black brand icons still follow the theme */
-const KEEP_BRAND_COLORS = false;
-const NEAR_BLACK_BRANDS = ["#000000", "#181717"];
-
 /* ── Tech stack data (edit icons/labels here) ─────── */
 const TECH_CATEGORIES = [
   {
@@ -688,7 +682,6 @@ function TechStack({ themeProgress }) {
   const handoff = useRef(0);
   const drag = useRef(null);
   const gen = useRef(0);
-  const watchdog = useRef(0);
   const glide = 75;
 
   const edgeL = useMotionValue(0);
@@ -719,18 +712,6 @@ function TechStack({ themeProgress }) {
     edgeR.jump(s.r);
   }, [edgeL, edgeR]);
 
-  // Safety net: some time after the last interaction, if the thumb is not sitting
-  // on the active tab (interrupted spring, lost pointer event...), put it there.
-  const armWatchdog = useCallback(() => {
-    clearTimeout(watchdog.current);
-    watchdog.current = setTimeout(() => {
-      if (drag.current) return;
-      const s = slots.current[committed.current];
-      if (!s) return;
-      if (Math.abs(edgeL.get() - s.l) > 0.5 || Math.abs(edgeR.get() - s.r) > 0.5) jumpTo(committed.current);
-    }, 800);
-  }, [edgeL, edgeR, jumpTo]);
-
   const measure = useCallback(() => {
     const track = trackRef.current;
     if (!track) return;
@@ -754,7 +735,7 @@ function TechStack({ themeProgress }) {
     return () => { observer.disconnect(); window.removeEventListener("resize", measure); };
   }, [measure]);
 
-  useEffect(() => () => { clearTimeout(handoff.current); clearTimeout(watchdog.current); edgeL.stop(); edgeR.stop(); }, [edgeL, edgeR]);
+  useEffect(() => () => { clearTimeout(handoff.current); edgeL.stop(); edgeR.stop(); }, [edgeL, edgeR]);
 
   const commit = useCallback((i) => {
     committed.current = i;
@@ -780,26 +761,21 @@ function TechStack({ themeProgress }) {
   }, [edgeL, edgeR]);
 
   const travel = useCallback((from, to) => {
+    const a = slots.current[from];
     const b = slots.current[to];
-    if (!b) return;
+    if (!a || !b) return;
     clearTimeout(handoff.current);
     gen.current += 1;
-    // stretch from where the thumb actually is right now, not from where the
-    // previous tab was, so rapid presses never snap or get left behind
-    const l0 = edgeL.get();
-    const r0 = edgeR.get();
     const tween = { duration: RUBBER_DILATE, ease: RUBBER_EASE_OUT };
-    animate(edgeL, Math.min(l0, b.l), tween);
-    animate(edgeR, Math.max(r0, b.r), tween);
+    animate(edgeL, b.l + (Math.min(a.l, b.l) - b.l), tween);
+    animate(edgeR, b.r + (Math.max(a.r, b.r) - b.r), tween);
     handoff.current = setTimeout(() => land(to, null, false, true), RUBBER_HANDOFF * 1000);
-    armWatchdog();
-  }, [edgeL, edgeR, land, armWatchdog]);
+  }, [edgeL, edgeR, land]);
 
   const localX = (e) => e.clientX - (box.current ? box.current.left : 0) - 4;
 
   const handlePointerDown = (e, i) => {
-    if (e.button !== 0) return;
-    drag.current = null; // a stale drag must never swallow a new press
+    if (drag.current || e.button !== 0) return;
     box.current = trackRef.current.getBoundingClientRect();
     try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
     const x = localX(e);
@@ -856,11 +832,7 @@ function TechStack({ themeProgress }) {
         const from = committed.current;
         commit(d.slot);
         travel(from, d.slot);
-      } else if (d.onThumb) {
-        // the press froze the thumb; always let it finish on the active tab
-        land(committed.current, null, false, false);
       }
-      armWatchdog();
       return;
     }
     const v = rubberVelocityOf(d.hist, e.timeStamp);
@@ -869,15 +841,14 @@ function TechStack({ themeProgress }) {
     if (flick && to === committed.current) to = rubberClamp(to + Math.sign(v), 0, TECH_CATEGORIES.length - 1);
     commit(to);
     land(to, v, flick, flick);
-    armWatchdog();
   };
 
   const handlePointerCancel = (e) => {
     const d = drag.current;
     if (!d || e.pointerId !== d.id) return;
     release();
-    if (d.live || d.onThumb) land(committed.current, null, false, false);
-    armWatchdog();
+    if (!d.live) return;
+    land(committed.current, null, false, false);
   };
 
   const handleKeyDown = (e) => {
@@ -936,7 +907,7 @@ function TechStack({ themeProgress }) {
         >
           {/* bottom layer: idle labels at reduced opacity (--rs-ink, opacity 0.7) */}
           {TECH_CATEGORIES.map((cat, i) => (
-            <motion.button
+            <button
               key={cat.label}
               ref={(el) => { itemRefs.current[i] = el; }}
               type="button"
@@ -946,10 +917,10 @@ function TechStack({ themeProgress }) {
               onPointerDown={(e) => handlePointerDown(e, i)}
               onKeyDown={handleKeyDown}
               className="flex items-center justify-center px-4 py-2 text-[12px] md:text-[13px] font-medium rounded-xl whitespace-nowrap cursor-pointer"
-              style={{ color: inkIdle, opacity: i === active ? 0 : 0.7 }}
+              style={{ color: inkIdle.get(), opacity: i === active ? 0 : 0.7 }}
             >
               {cat.label}
-            </motion.button>
+            </button>
           ))}
 
           {/* top layer: the clipped "thumb" — same grid, same labels, full-opacity
@@ -960,13 +931,13 @@ function TechStack({ themeProgress }) {
             style={{ gridAutoFlow: "column", gridAutoColumns: "auto", background: thumbBg, clipPath }}
           >
             {TECH_CATEGORIES.map((cat) => (
-              <motion.span
+              <span
                 key={cat.label}
                 className="flex items-center justify-center px-4 py-2 text-[12px] md:text-[13px] font-medium rounded-xl whitespace-nowrap"
-                style={{ color: inkActive }}
+                style={{ color: inkActive.get() }}
               >
                 {cat.label}
-              </motion.span>
+              </span>
             ))}
           </motion.div>
         </motion.div>
@@ -980,9 +951,9 @@ function TechStack({ themeProgress }) {
         >
           {current.label} &amp; tools
         </motion.h3>
-        <motion.p className="text-[10px] font-semibold tracking-wider mb-2" style={{ color: mutedColor }}>
+        <p className="text-[10px] font-semibold tracking-wider mb-2" style={{ color: mutedColor.get() }}>
           {String(active + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-        </motion.p>
+        </p>
         <div className="w-7 h-[3px] mx-auto mb-10 rounded-full overflow-hidden" style={{ background: "rgba(128,128,128,0.25)" }}>
           <motion.div
             className="h-full rounded-full"
@@ -1000,17 +971,14 @@ function TechStack({ themeProgress }) {
           transition={{ duration: 0.35, ease: E }}
         >
           {current.tools.map((tool) => (
-            <div key={tool.name} className="flex flex-col items-center gap-3">
-              {/* no box around the icon; it inherits `color`, which tracks the theme live */}
-              <motion.span
-                className="flex items-center justify-center"
-                style={{
-                  color: KEEP_BRAND_COLORS && !NEAR_BLACK_BRANDS.includes(tool.color) ? tool.color : textColor,
-                }}
+            <div key={tool.name} className="flex flex-col items-center gap-2">
+              <div
+                className="w-12 h-12 flex items-center justify-center rounded-2xl border"
+                style={{ borderColor: borderColor.get() }}
               >
-                <tool.Icon size={30} />
-              </motion.span>
-              <motion.span className="text-[11px] font-medium" style={{ color: mutedColor }}>{tool.name}</motion.span>
+                <tool.Icon size={22} color={tool.color} style={{ opacity: 0.9 }} />
+              </div>
+              <span className="text-[11px] font-medium" style={{ color: mutedColor.get() }}>{tool.name}</span>
             </div>
           ))}
         </motion.div>
