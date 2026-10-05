@@ -192,8 +192,6 @@ button, a {
 }
 .gnav-wrap.is-scrolled .gnav-brand { width: 24px; height: 24px; }
 .gnav-brand:hover { transform: scale(1.06); }
-/* logo-nudge-right */
-.gnav-brand { margin-left: 5px; }
 .gnav-logo {
   position: absolute;
   inset: 0;
@@ -309,8 +307,8 @@ button, a {
 @media (max-width: 640px) {
   .gnav-wrap.is-scrolled { padding: 6px 8px 0; }
   /* navbar-mobile-bigger */
-  .gnav { padding: 12px 10px; gap: 4px; }
-  .gnav-wrap.is-scrolled .gnav { width: 100%; padding: 8px 10px 8px 8px; }
+  .gnav { padding: 15px 10px; gap: 4px; }
+  .gnav-wrap.is-scrolled .gnav { width: 100%; padding: 10px 10px 10px 8px; }
 
   .gnav-brand, .gnav-wrap.is-scrolled .gnav-brand { width: 27px; height: 27px; }
 
@@ -369,7 +367,7 @@ button, a {
   --ts-pad-y: 11px;                    /* tab height: bigger number = taller tabs */
   font-size: clamp(9px, 2.9vw, 16px);  /* scales down so all six tabs fit */
   line-height: 1.2;
-  padding: var(--ts-pad-y) clamp(3px, 1.4vw, 7px);
+  padding: var(--ts-pad-y) clamp(2px, 0.7vw, 7px);
 }
 @media (min-width: 768px) {
   .ts-seg { font-size: 16px; padding: 11px 7px; }
