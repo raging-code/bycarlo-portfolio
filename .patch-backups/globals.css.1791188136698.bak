@@ -360,23 +360,24 @@ button, a {
   display: none;
 }
 
-/* Tech stack tabs: always fit the screen (scale down on phones) */
-/* shared by the tab buttons and the sliding-pill labels so both layers stay identical */
-.ts-seg {
-  font-size: clamp(8.5px, 2.7vw, 13px);
-  line-height: 1.2;
-  padding: 10px clamp(4px, 1.5vw, 16px);
+/* Tech stack tabs: mobile scroll strip + touch behavior */
+.ts-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
 }
-@media (min-width: 768px) {
-  .ts-seg { font-size: 13px; padding: 8px 16px; }
-}
+.ts-scroll::-webkit-scrollbar { display: none; }
 
 /* the generic `button { transition: all }` fights the per-frame tab animation */
 .ts-tab {
   transition: none !important;
-  touch-action: pan-y;                 /* sideways drag on the pill = rubber drag, vertical = page scroll, no double-tap zoom */
+  touch-action: manipulation;          /* swipe scrolls the strip, no double-tap zoom */
   -webkit-tap-highlight-color: transparent;
   -webkit-user-select: none;
   user-select: none;
   -webkit-touch-callout: none;
+}
+.ts-tab[aria-checked="true"] {
+  touch-action: pan-y;                 /* dragging the pill sideways = rubber drag, vertical = page scroll */
 }

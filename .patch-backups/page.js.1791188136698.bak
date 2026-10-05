@@ -583,6 +583,9 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
 const KEEP_BRAND_COLORS = false;
 const NEAR_BLACK_BRANDS = ["#000000", "#181717"];
 
+/* Fades the left/right edge of the tab strip when it has to scroll (small phones) */
+const TS_MASK = "linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%)";
+
 /* ── Tech stack data (edit icons/labels here) ─────── */
 const TECH_CATEGORIES = [
   {
@@ -689,6 +692,8 @@ function TechStack({ themeProgress }) {
   const drag = useRef(null);
   const gen = useRef(0);
   const watchdog = useRef(0);
+  const wrapRef = useRef(null);
+  const [scrolls, setScrolls] = useState(false);
   const glide = 75;
 
   const edgeL = useMotionValue(0);
@@ -743,6 +748,8 @@ function TechStack({ themeProgress }) {
       return { l: r.left - rect.left - 4, r: r.right - rect.left - 4 };
     });
     innerW.set(rect.width - 8);
+    const w = wrapRef.current;
+    if (w) setScrolls(w.scrollWidth > w.clientWidth + 1);
     jumpTo(committed.current);
   }, [innerW, jumpTo]);
 
@@ -750,6 +757,7 @@ function TechStack({ themeProgress }) {
   useEffect(() => {
     const observer = new ResizeObserver(measure);
     if (trackRef.current) observer.observe(trackRef.current);
+    if (wrapRef.current) observer.observe(wrapRef.current);
     window.addEventListener("resize", measure);
     return () => { observer.disconnect(); window.removeEventListener("resize", measure); };
   }, [measure]);
@@ -894,6 +902,16 @@ function TechStack({ themeProgress }) {
     itemRefs.current[next]?.focus();
   };
 
+  // when the strip has to scroll (narrow phones), bring the active tab to the middle
+  useEffect(() => {
+    const w = wrapRef.current;
+    const t = trackRef.current;
+    const b = itemRefs.current[active];
+    if (!w || !t || !b || w.scrollWidth <= w.clientWidth + 1) return;
+    const left = t.offsetLeft + b.offsetLeft - (w.clientWidth - b.offsetWidth) / 2;
+    w.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
+  }, [active]);
+
   const total = TECH_CATEGORIES.length;
   const current = TECH_CATEGORIES[active];
   const progress = total > 1 ? (active / (total - 1)) * 100 : 100;
@@ -921,7 +939,9 @@ function TechStack({ themeProgress }) {
         </motion.h2>
 
         <motion.div
-          className="flex justify-center -mx-3 md:mx-0 mb-8"
+          ref={wrapRef}
+          className="ts-scroll relative flex w-full mb-8 overflow-x-auto overflow-y-hidden"
+          style={scrolls ? { padding: "0 14px", WebkitMaskImage: TS_MASK, maskImage: TS_MASK } : undefined}
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.2, ease: E }}
@@ -930,7 +950,7 @@ function TechStack({ themeProgress }) {
           ref={trackRef}
           role="radiogroup"
           aria-label="Tech stack category"
-          className="relative inline-grid max-w-full p-1 rounded-2xl select-none"
+          className="relative inline-grid shrink-0 mx-auto p-1 rounded-2xl select-none"
           style={{ background: trackBg, gridAutoFlow: "column", gridAutoColumns: "auto" }}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
@@ -948,7 +968,7 @@ function TechStack({ themeProgress }) {
               tabIndex={i === active ? 0 : -1}
               onPointerDown={(e) => handlePointerDown(e, i)}
               onKeyDown={handleKeyDown}
-              className="ts-tab ts-seg flex items-center justify-center font-medium rounded-xl whitespace-nowrap cursor-pointer"
+              className="ts-tab flex items-center justify-center px-3.5 py-2.5 md:px-4 md:py-2 text-[12px] md:text-[13px] font-medium rounded-xl whitespace-nowrap cursor-pointer"
               style={{ color: inkIdle, opacity: i === active ? 0 : 0.7 }}
             >
               {cat.label}
@@ -965,7 +985,7 @@ function TechStack({ themeProgress }) {
             {TECH_CATEGORIES.map((cat) => (
               <motion.span
                 key={cat.label}
-                className="ts-seg flex items-center justify-center font-medium rounded-xl whitespace-nowrap"
+                className="flex items-center justify-center px-3.5 py-2.5 md:px-4 md:py-2 text-[12px] md:text-[13px] font-medium rounded-xl whitespace-nowrap"
                 style={{ color: inkActive }}
               >
                 {cat.label}
