@@ -678,13 +678,10 @@ const rubberNearestSlot = (slots, x) => {
 /* ── 3D icon: stacked copies along the depth axis = a thick, extruded icon ── */
 const ICON3D_DEPTH = 14;        // number of layers
 const ICON3D_THICKNESS = 0.36;  // total thickness as a fraction of the icon size
-const ICON3D_SIZE = 39;         // icon size in px (was 30, now 1.3x bigger)
 
 // Colors come from CSS variables set on the icon grid, so they follow the theme live:
 //   --ic-face (front), --ic-a (side next to the face) -> --ic-b (back of the icon)
-function Icon3D({ Icon, size = ICON3D_SIZE, face }) {
-  // one turn per hover (mouse) or tap (touch); ignored while it is already turning
-  const [spinning, setSpinning] = useState(false);
+function Icon3D({ Icon, size = 30, face }) {
   const step = (size * ICON3D_THICKNESS) / (ICON3D_DEPTH - 1);
   const half = (ICON3D_DEPTH - 1) / 2; // centers the thickness on z=0 so it spins around its own middle
   const layers = [];
@@ -704,15 +701,8 @@ function Icon3D({ Icon, size = ICON3D_SIZE, face }) {
     );
   }
   return (
-    <span className="ts-icon3d-hit" onPointerEnter={() => setSpinning(true)}>
-      <span className="ts-icon3d-wrap" aria-hidden="true" style={{ width: size, height: size, perspective: size * 15 }}>
-        <span
-          className={"ts-icon3d" + (spinning ? " is-spinning" : "")}
-          onAnimationEnd={(e) => { if (e.target === e.currentTarget) setSpinning(false); }}
-        >
-          {layers}
-        </span>
-      </span>
+    <span className="ts-icon3d-wrap" aria-hidden="true" style={{ width: size, height: size, perspective: size * 15 }}>
+      <span className="ts-icon3d">{layers}</span>
     </span>
   );
 }
@@ -966,7 +956,7 @@ function TechStack({ themeProgress }) {
         </motion.h2>
 
         <motion.div
-          className="flex justify-center -mx-4 md:mx-0 mb-8"
+          className="flex justify-center -mx-3 md:mx-0 mb-8"
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.2, ease: E }}
@@ -1054,7 +1044,7 @@ function TechStack({ themeProgress }) {
               {/* 3D icon, no box around it; colors follow the theme live */}
               <Icon3D
                 Icon={tool.Icon}
-                size={ICON3D_SIZE}
+                size={30}
                 face={KEEP_BRAND_COLORS && !NEAR_BLACK_BRANDS.includes(tool.color) ? tool.color : undefined}
               />
               <motion.span className="text-[11px] font-medium text-center leading-tight" style={{ color: mutedColor }}>{tool.name}</motion.span>

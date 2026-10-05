@@ -363,10 +363,10 @@ button, a {
 /* Tech stack tabs: always fit the screen (scale down on phones) */
 /* shared by the tab buttons and the sliding-pill labels so both layers stay identical */
 .ts-seg {
-  --ts-pad-y: 9px;                     /* phone tab height: bigger number = taller tabs */
-  font-size: clamp(9px, 2.95vw, 13px);
+  --ts-pad-y: 6px;                     /* phone tab height: bigger number = taller tabs */
+  font-size: clamp(8.5px, 2.7vw, 13px);
   line-height: 1.2;
-  padding: var(--ts-pad-y) clamp(3px, 1.2vw, 16px);
+  padding: var(--ts-pad-y) clamp(4px, 1.5vw, 16px);
 }
 @media (min-width: 768px) {
   .ts-seg { font-size: 13px; padding: 8px 16px; }
@@ -388,22 +388,12 @@ button, a {
   position: relative;
   display: block;
 }
-/* slightly larger pointer target than the icon itself (easy to tap on phones) */
-.ts-icon3d-hit {
-  display: block;
-  padding: 8px;
-  margin: -8px;
-  -webkit-tap-highlight-color: transparent;
-}
 .ts-icon3d {
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
+  animation: ts-turn 5s infinite;
   will-change: transform;
-}
-/* one horizontal turn, started by hover / tap (class is set from JS) */
-.ts-icon3d.is-spinning {
-  animation: ts-turn-once 0.9s cubic-bezier(0.65, 0, 0.25, 1);
 }
 .ts-icon3d-layer {
   position: absolute;
@@ -412,10 +402,11 @@ button, a {
   align-items: center;
   justify-content: center;
 }
-@keyframes ts-turn-once {
-  from { transform: rotateY(0deg); }
-  to   { transform: rotateY(360deg); }
+@keyframes ts-turn {
+  0%   { transform: rotateY(0deg);   animation-timing-function: cubic-bezier(0.65, 0, 0.25, 1); }
+  24%  { transform: rotateY(360deg); }
+  100% { transform: rotateY(360deg); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ts-icon3d.is-spinning { animation: none; }
+  .ts-icon3d { animation: none; }
 }
