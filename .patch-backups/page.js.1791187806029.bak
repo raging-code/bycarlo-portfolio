@@ -583,9 +583,6 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
 const KEEP_BRAND_COLORS = false;
 const NEAR_BLACK_BRANDS = ["#000000", "#181717"];
 
-/* Fades the left/right edge of the tab strip when it has to scroll (small phones) */
-const TS_MASK = "linear-gradient(to right, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%)";
-
 /* ── Tech stack data (edit icons/labels here) ─────── */
 const TECH_CATEGORIES = [
   {
@@ -692,8 +689,6 @@ function TechStack({ themeProgress }) {
   const drag = useRef(null);
   const gen = useRef(0);
   const watchdog = useRef(0);
-  const wrapRef = useRef(null);
-  const [scrolls, setScrolls] = useState(false);
   const glide = 75;
 
   const edgeL = useMotionValue(0);
@@ -748,8 +743,6 @@ function TechStack({ themeProgress }) {
       return { l: r.left - rect.left - 4, r: r.right - rect.left - 4 };
     });
     innerW.set(rect.width - 8);
-    const w = wrapRef.current;
-    if (w) setScrolls(w.scrollWidth > w.clientWidth + 1);
     jumpTo(committed.current);
   }, [innerW, jumpTo]);
 
@@ -757,7 +750,6 @@ function TechStack({ themeProgress }) {
   useEffect(() => {
     const observer = new ResizeObserver(measure);
     if (trackRef.current) observer.observe(trackRef.current);
-    if (wrapRef.current) observer.observe(wrapRef.current);
     window.addEventListener("resize", measure);
     return () => { observer.disconnect(); window.removeEventListener("resize", measure); };
   }, [measure]);
@@ -902,16 +894,6 @@ function TechStack({ themeProgress }) {
     itemRefs.current[next]?.focus();
   };
 
-  // when the strip has to scroll (narrow phones), bring the active tab to the middle
-  useEffect(() => {
-    const w = wrapRef.current;
-    const t = trackRef.current;
-    const b = itemRefs.current[active];
-    if (!w || !t || !b || w.scrollWidth <= w.clientWidth + 1) return;
-    const left = t.offsetLeft + b.offsetLeft - (w.clientWidth - b.offsetWidth) / 2;
-    w.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
-  }, [active]);
-
   const total = TECH_CATEGORIES.length;
   const current = TECH_CATEGORIES[active];
   const progress = total > 1 ? (active / (total - 1)) * 100 : 100;
@@ -939,19 +921,14 @@ function TechStack({ themeProgress }) {
         </motion.h2>
 
         <motion.div
-          ref={wrapRef}
-          className="ts-scroll relative flex w-full mb-8 overflow-x-auto overflow-y-hidden"
-          style={scrolls ? { padding: "0 14px", WebkitMaskImage: TS_MASK, maskImage: TS_MASK } : undefined}
-          initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.2, ease: E }}
-        >
-        <motion.div
           ref={trackRef}
           role="radiogroup"
           aria-label="Tech stack category"
-          className="relative inline-grid shrink-0 mx-auto p-1 rounded-2xl select-none"
+          className="relative inline-grid p-1 rounded-2xl mb-8 touch-pan-y select-none"
           style={{ background: trackBg, gridAutoFlow: "column", gridAutoColumns: "auto" }}
+          initial={{ opacity: 0, y: 16 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.2, ease: E }}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerCancel}
@@ -968,7 +945,7 @@ function TechStack({ themeProgress }) {
               tabIndex={i === active ? 0 : -1}
               onPointerDown={(e) => handlePointerDown(e, i)}
               onKeyDown={handleKeyDown}
-              className="ts-tab flex items-center justify-center px-3.5 py-2.5 md:px-4 md:py-2 text-[12px] md:text-[13px] font-medium rounded-xl whitespace-nowrap cursor-pointer"
+              className="flex items-center justify-center px-4 py-2 text-[12px] md:text-[13px] font-medium rounded-xl whitespace-nowrap cursor-pointer"
               style={{ color: inkIdle, opacity: i === active ? 0 : 0.7 }}
             >
               {cat.label}
@@ -985,14 +962,13 @@ function TechStack({ themeProgress }) {
             {TECH_CATEGORIES.map((cat) => (
               <motion.span
                 key={cat.label}
-                className="flex items-center justify-center px-3.5 py-2.5 md:px-4 md:py-2 text-[12px] md:text-[13px] font-medium rounded-xl whitespace-nowrap"
+                className="flex items-center justify-center px-4 py-2 text-[12px] md:text-[13px] font-medium rounded-xl whitespace-nowrap"
                 style={{ color: inkActive }}
               >
                 {cat.label}
               </motion.span>
             ))}
           </motion.div>
-        </motion.div>
         </motion.div>
 
         <motion.h3
@@ -1018,13 +994,13 @@ function TechStack({ themeProgress }) {
 
         <motion.div
           key={"grid-" + active}
-          className="flex flex-wrap justify-center gap-x-[3%] gap-y-7 md:gap-x-6 max-w-[420px] mx-auto"
+          className="grid grid-cols-3 gap-x-4 gap-y-6"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: E }}
         >
           {current.tools.map((tool) => (
-            <div key={tool.name} className="flex flex-col items-center gap-3 w-[30%] max-w-[110px]">
+            <div key={tool.name} className="flex flex-col items-center gap-3">
               {/* no box around the icon; it inherits `color`, which tracks the theme live */}
               <motion.span
                 className="flex items-center justify-center"
@@ -1034,7 +1010,7 @@ function TechStack({ themeProgress }) {
               >
                 <tool.Icon size={30} />
               </motion.span>
-              <motion.span className="text-[11px] font-medium text-center leading-tight" style={{ color: mutedColor }}>{tool.name}</motion.span>
+              <motion.span className="text-[11px] font-medium" style={{ color: mutedColor }}>{tool.name}</motion.span>
             </div>
           ))}
         </motion.div>

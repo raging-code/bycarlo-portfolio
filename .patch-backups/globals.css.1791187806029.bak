@@ -359,25 +359,3 @@ button, a {
 .nav-links-scroll::-webkit-scrollbar {
   display: none;
 }
-
-/* Tech stack tabs: mobile scroll strip + touch behavior */
-.ts-scroll {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-x: contain;
-}
-.ts-scroll::-webkit-scrollbar { display: none; }
-
-/* the generic `button { transition: all }` fights the per-frame tab animation */
-.ts-tab {
-  transition: none !important;
-  touch-action: manipulation;          /* swipe scrolls the strip, no double-tap zoom */
-  -webkit-tap-highlight-color: transparent;
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-touch-callout: none;
-}
-.ts-tab[aria-checked="true"] {
-  touch-action: pan-y;                 /* dragging the pill sideways = rubber drag, vertical = page scroll */
-}
