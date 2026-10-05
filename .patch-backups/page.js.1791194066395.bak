@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback, useLayoutEffect } from "react";
-import GlassSurface from "./GlassSurface";
 import {
   motion,
   useScroll,
@@ -221,22 +220,7 @@ function GlassNavbar({ themeProgress, theme, onThemeChange }) {
           "--gn-accent": accent,
         }}
       >
-        <div className="gnav-glass" aria-hidden="true">
-          <GlassSurface
-            width="100%"
-            height="100%"
-            borderRadius={scrolled ? 999 : 0}
-            backgroundOpacity={0.1}
-            brightness={50}
-            opacity={0.93}
-            blur={11}
-            displace={0.5}
-            distortionScale={-180}
-            redOffset={0}
-            greenOffset={10}
-            blueOffset={20}
-          />
-        </div>
+        <span className="gnav-glass" aria-hidden="true" />
 
         <a
           href="#"

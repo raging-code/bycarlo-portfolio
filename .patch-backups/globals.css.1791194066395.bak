@@ -155,35 +155,22 @@ button, a {
 /* the global mobile rule gives every a/button a 44px min-height, which would make the bar tall */
 .gnav a, .gnav button { min-height: 0; }
 
-/* gnav-glass-surface */
-/* liquid glass: drawn by <GlassSurface /> (app/GlassSurface.js). This layer only
-   handles position, fade-in on scroll and the corner radius. */
+/* liquid glass */
 .gnav-glass {
   position: absolute;
   inset: 0;
   border-radius: inherit;
+  border: 1px solid var(--gn-line, rgba(11, 11, 14, 0.1));
+  background: var(--gn-glass, rgba(255, 255, 255, 0.7));
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  backdrop-filter: blur(14px) saturate(180%);
+  box-shadow:
+    inset 1.5px 1.5px 2px -0.5px rgba(255, 255, 255, 0.55),
+    inset -1.5px -1.5px 2px -0.5px rgba(255, 255, 255, 0.25),
+    0 8px 24px -8px rgba(0, 0, 0, 0.28);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.5s;
-}
-/* follow the navbar's flat -> pill corner morph instead of a fixed radius */
-.gnav-glass .glass-surface {
-  border-radius: inherit !important;
-}
-/* Safari / Firefox fallback: follow the SITE theme switch, not the OS theme */
-.gnav-wrap[data-theme="light"] .glass-surface--fallback {
-  background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(11, 11, 14, 0.1);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.6),
-    0 8px 24px -8px rgba(0, 0, 0, 0.25);
-}
-.gnav-wrap[data-theme="dark"] .glass-surface--fallback {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
-    inset 0 -1px 0 0 rgba(255, 255, 255, 0.1);
 }
 .gnav-wrap.is-scrolled .gnav-glass { opacity: 1; }
 
