@@ -678,16 +678,13 @@ const rubberNearestSlot = (slots, x) => {
 /* ── 3D icon: stacked copies along the depth axis = a thick, extruded icon ── */
 const ICON3D_DEPTH = 14;        // number of layers
 const ICON3D_THICKNESS = 0.36;  // total thickness as a fraction of the icon size
-const ICON3D_STAGGER_MS = 70;   // delay between icons when the category changes
 const ICON3D_SIZE = 39;         // icon size in px (was 30, now 1.3x bigger)
 
 // Colors come from CSS variables set on the icon grid, so they follow the theme live:
 //   --ic-face (front), --ic-a (side next to the face) -> --ic-b (back of the icon)
-function Icon3D({ Icon, size = ICON3D_SIZE, face, autoSpin = false, index = 0 }) {
+function Icon3D({ Icon, size = ICON3D_SIZE, face }) {
   // one turn per hover (mouse) or tap (touch); ignored while it is already turning
-  // autoSpin: the icon mounts already turning (used when the category changes)
-  const [spinning, setSpinning] = useState(autoSpin);
-  const [autoDelay, setAutoDelay] = useState(autoSpin ? index * ICON3D_STAGGER_MS : 0);
+  const [spinning, setSpinning] = useState(false);
   const step = (size * ICON3D_THICKNESS) / (ICON3D_DEPTH - 1);
   const half = (ICON3D_DEPTH - 1) / 2; // centers the thickness on z=0 so it spins around its own middle
   const layers = [];
@@ -707,12 +704,11 @@ function Icon3D({ Icon, size = ICON3D_SIZE, face, autoSpin = false, index = 0 })
     );
   }
   return (
-    <span className="ts-icon3d-hit" onPointerEnter={() => { setAutoDelay(0); setSpinning(true); }}>
+    <span className="ts-icon3d-hit" onPointerEnter={() => setSpinning(true)}>
       <span className="ts-icon3d-wrap" aria-hidden="true" style={{ width: size, height: size, perspective: size * 15 }}>
         <span
           className={"ts-icon3d" + (spinning ? " is-spinning" : "")}
-          style={autoDelay ? { animationDelay: autoDelay + "ms" } : undefined}
-          onAnimationEnd={(e) => { if (e.target === e.currentTarget) { setSpinning(false); setAutoDelay(0); } }}
+          onAnimationEnd={(e) => { if (e.target === e.currentTarget) setSpinning(false); }}
         >
           {layers}
         </span>
@@ -725,10 +721,6 @@ function TechStack({ themeProgress }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
   const [active, setActive] = useState(0);
-  // icons spin on mount only after the category has actually changed (not on page load)
-  const initialActive = useRef(active);
-  const switched = useRef(false);
-  if (active !== initialActive.current) switched.current = true;
 
   const trackRef = useRef(null);
   const itemRefs = useRef([]);
@@ -1057,14 +1049,12 @@ function TechStack({ themeProgress }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: E }}
         >
-          {current.tools.map((tool, toolIndex) => (
+          {current.tools.map((tool) => (
             <div key={tool.name} className="flex flex-col items-center gap-3 w-[30%] max-w-[110px]">
               {/* 3D icon, no box around it; colors follow the theme live */}
               <Icon3D
                 Icon={tool.Icon}
                 size={ICON3D_SIZE}
-                autoSpin={switched.current}
-                index={toolIndex}
                 face={KEEP_BRAND_COLORS && !NEAR_BLACK_BRANDS.includes(tool.color) ? tool.color : undefined}
               />
               <motion.span className="text-[11px] font-medium text-center leading-tight" style={{ color: mutedColor }}>{tool.name}</motion.span>
