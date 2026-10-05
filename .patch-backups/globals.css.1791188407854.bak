@@ -363,10 +363,9 @@ button, a {
 /* Tech stack tabs: always fit the screen (scale down on phones) */
 /* shared by the tab buttons and the sliding-pill labels so both layers stay identical */
 .ts-seg {
-  --ts-pad-y: 6px;                     /* phone tab height: bigger number = taller tabs */
   font-size: clamp(8.5px, 2.7vw, 13px);
   line-height: 1.2;
-  padding: var(--ts-pad-y) clamp(4px, 1.5vw, 16px);
+  padding: 10px clamp(4px, 1.5vw, 16px);
 }
 @media (min-width: 768px) {
   .ts-seg { font-size: 13px; padding: 8px 16px; }
@@ -374,7 +373,6 @@ button, a {
 
 /* the generic `button { transition: all }` fights the per-frame tab animation */
 .ts-tab {
-  min-height: 0;                       /* beats the global mobile `button { min-height: 44px }` */
   transition: none !important;
   touch-action: pan-y;                 /* sideways drag on the pill = rubber drag, vertical = page scroll, no double-tap zoom */
   -webkit-tap-highlight-color: transparent;
