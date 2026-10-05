@@ -306,11 +306,10 @@ button, a {
 /* mobile – everything stays visible: logo, all links, Contact and the switch */
 @media (max-width: 640px) {
   .gnav-wrap.is-scrolled { padding: 6px 8px 0; }
-  /* navbar-mobile-bigger */
-  .gnav { padding: 15px 10px; gap: 4px; }
-  .gnav-wrap.is-scrolled .gnav { width: 100%; padding: 10px 10px 10px 8px; }
+  .gnav { padding: 9px 10px; gap: 4px; }
+  .gnav-wrap.is-scrolled .gnav { width: 100%; padding: 6px 8px 6px 6px; }
 
-  .gnav-brand, .gnav-wrap.is-scrolled .gnav-brand { width: 27px; height: 27px; }
+  .gnav-brand, .gnav-wrap.is-scrolled .gnav-brand { width: 22px; height: 22px; }
 
   .gnav-links,
   .gnav-wrap.is-scrolled .gnav-links {
@@ -323,17 +322,17 @@ button, a {
   .gnav-links::-webkit-scrollbar { display: none; }
 
   /* one size knob: font scales with the screen width */
-  .gnav-link, .gnav-cta { font-size: clamp(10px, 3.1vw, 14px); }
-  .gnav-link { padding: 7px 0.45em; }
-  .gnav-cta  { padding: 9px 0.55em; }
+  .gnav-link, .gnav-cta { font-size: clamp(9px, 2.85vw, 12px); }
+  .gnav-link { padding: 4px 0.45em; }
+  .gnav-cta  { padding: 6px 0.55em; }
 
   .gnav-end { gap: 6px; }
-  .gnav-toggle { --tw: 40px; --th: 22px; --tk: 16px; --pad: 3px; }
-  .gnav-ico { width: 10px; height: 10px; }
+  .gnav-toggle { --tw: 36px; --th: 20px; --tk: 14px; --pad: 3px; }
+  .gnav-ico { width: 9px; height: 9px; }
 }
 @media (max-width: 380px) {
-  .gnav-link { padding: 7px 0.36em; }
-  .gnav-cta  { padding: 9px 0.45em; }
+  .gnav-link { padding: 4px 0.36em; }
+  .gnav-cta  { padding: 6px 0.45em; }
   .gnav-end  { gap: 4px; }
 }
 
@@ -364,13 +363,13 @@ button, a {
 /* Tech stack tabs: always fit the screen (scale down on phones) */
 /* shared by the tab buttons and the sliding-pill labels so both layers stay identical */
 .ts-seg {
-  --ts-pad-y: 11px;                    /* tab height: bigger number = taller tabs */
-  font-size: clamp(9px, 3.2vw, 18px);  /* about 1.4x; scales down so all six tabs fit */
+  --ts-pad-y: 9px;                     /* phone tab height: bigger number = taller tabs */
+  font-size: clamp(9px, 2.95vw, 13px);
   line-height: 1.2;
-  padding: var(--ts-pad-y) clamp(2px, 0.7vw, 7px);
+  padding: var(--ts-pad-y) clamp(3px, 1.2vw, 16px);
 }
 @media (min-width: 768px) {
-  .ts-seg { font-size: 18px; padding: 11px 7px; }
+  .ts-seg { font-size: 13px; padding: 8px 16px; }
 }
 
 /* the generic `button { transition: all }` fights the per-frame tab animation */
