@@ -692,13 +692,12 @@ function TechStack({ themeProgress }) {
   const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
   const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
   const borderColor = useTransform(themeProgress, [0, 1], [DARK.border, LIGHT.border]);
-  // Matches the original RubberSegment CSS variables 1:1, swapped per theme:
-  // light mode = --rs-track:#27272a / --rs-thumb:#fafafa (dark track, light thumb)
-  // dark mode  = inverted, so the pill still reads clearly against a dark page.
+  // Solid dark-track / light-thumb contrast like the original RubberSegment,
+  // swapped per theme: dark mode gets a light track + dark thumb instead.
   const trackBg = useTransform(themeProgress, [0, 1], ["#27272a", "#e4e4e7"]);
   const thumbBg = useTransform(themeProgress, [0, 1], ["#fafafa", "#18181b"]);
-  const inkIdle = useTransform(themeProgress, [0, 1], ["#fafafa", "#18181b"]); // --rs-ink, opacity 0.7 in CSS
-  const inkActive = useTransform(themeProgress, [0, 1], ["#18181b", "#fafafa"]); // --rs-ink-active, full opacity
+  const idleInk = useTransform(themeProgress, [0, 1], ["rgba(250,250,250,0.7)", "rgba(24,24,27,0.6)"]);
+  const activeInk = useTransform(themeProgress, [0, 1], ["#18181b", "#fafafa"]);
   const clipPath = useTransform(
     () => `inset(0 ${Math.max(0, innerW.get() - edgeR.get())}px 0 ${Math.max(0, edgeL.get())}px round 10px)`
   );
@@ -895,8 +894,8 @@ function TechStack({ themeProgress }) {
           ref={trackRef}
           role="radiogroup"
           aria-label="Tech stack category"
-          className="relative inline-grid p-1 rounded-2xl mb-8 touch-pan-y select-none"
-          style={{ background: trackBg, gridAutoFlow: "column", gridAutoColumns: "auto" }}
+          className="relative inline-flex flex-wrap justify-center gap-1 p-1 rounded-2xl mb-8 touch-pan-y select-none"
+          style={{ background: trackBg }}
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.2, ease: E }}
@@ -905,7 +904,11 @@ function TechStack({ themeProgress }) {
           onPointerCancel={handlePointerCancel}
           onLostPointerCapture={handlePointerCancel}
         >
-          {/* bottom layer: idle labels at reduced opacity (--rs-ink, opacity 0.7) */}
+          <motion.span
+            aria-hidden="true"
+            className="absolute top-1 bottom-1 rounded-xl"
+            style={{ background: thumbBg, clipPath }}
+          />
           {TECH_CATEGORIES.map((cat, i) => (
             <button
               key={cat.label}
@@ -916,30 +919,12 @@ function TechStack({ themeProgress }) {
               tabIndex={i === active ? 0 : -1}
               onPointerDown={(e) => handlePointerDown(e, i)}
               onKeyDown={handleKeyDown}
-              className="flex items-center justify-center px-4 py-2 text-[12px] md:text-[13px] font-medium rounded-xl whitespace-nowrap cursor-pointer"
-              style={{ color: inkIdle.get(), opacity: i === active ? 0 : 0.7 }}
+              className="relative z-10 px-4 py-2 text-[12px] md:text-[13px] font-medium rounded-xl whitespace-nowrap cursor-pointer transition-opacity"
+              style={{ color: i === active ? activeInk.get() : idleInk.get() }}
             >
               {cat.label}
             </button>
           ))}
-
-          {/* top layer: the clipped "thumb" — same grid, same labels, full-opacity
-              active ink, revealed only where the clip-path window currently sits */}
-          <motion.div
-            aria-hidden="true"
-            className="absolute inset-1 grid pointer-events-none"
-            style={{ gridAutoFlow: "column", gridAutoColumns: "auto", background: thumbBg, clipPath }}
-          >
-            {TECH_CATEGORIES.map((cat) => (
-              <span
-                key={cat.label}
-                className="flex items-center justify-center px-4 py-2 text-[12px] md:text-[13px] font-medium rounded-xl whitespace-nowrap"
-                style={{ color: inkActive.get() }}
-              >
-                {cat.label}
-              </span>
-            ))}
-          </motion.div>
         </motion.div>
 
         <motion.h3
