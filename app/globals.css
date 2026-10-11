@@ -376,14 +376,14 @@ button, a {
 /* Tech stack tabs: always fit the screen (scale down on phones) */
 /* shared by the tab buttons and the sliding-pill labels so both layers stay identical */
 .ts-seg {
-  --ts-pad-y: 11px;                    /* tab height: bigger number = taller tabs */
+  --ts-pad-y: 8px;                    /* tab height: bigger number = taller tabs */
   font-family: var(--font-display); /* Titillium is narrower: keeps six tabs readable on phones */
   font-size: clamp(9px, 2.9vw, 16px);  /* scales down so all six tabs fit */
   line-height: 1.2;
-  padding: var(--ts-pad-y) clamp(3px, 1.4vw, 7px);
+  padding: var(--ts-pad-y) clamp(3px, 1.6vw, 8px);
 }
 @media (min-width: 768px) {
-  .ts-seg { font-size: 16px; padding: 11px 7px; }
+  .ts-seg { font-size: 16px; padding: var(--ts-pad-y) 12px; }
 }
 
 /* the generic `button { transition: all }` fights the per-frame tab animation */
