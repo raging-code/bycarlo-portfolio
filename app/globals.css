@@ -358,10 +358,7 @@ button, a {
 }
 
 .logo-gradient {
-  background: linear-gradient(135deg, #1A3EE0, #E0631A);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #1A3EE0;
 }
 
 .glow-bar-track {

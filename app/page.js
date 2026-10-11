@@ -326,35 +326,18 @@ function Cursor() {
 function DeviceMockup({ accent, themeProgress, isMobile }) {
   const acc = accent || "#1A3EE0";
   const frameBg = useTransform(themeProgress, [0, 1], [DARK.surface, LIGHT.surface]);
-  const frameBorder = useTransform(themeProgress, [0, 1], [DARK.border, LIGHT.border]);
   const screenBg = useTransform(themeProgress, [0, 1], [DARK.bg, LIGHT.bg]);
   const barColor = useTransform(themeProgress, [0, 1], [
     "rgba(255,255,255,0.12)",
     "rgba(0,0,0,0.05)",
   ]);
 
-  const laptopAnimate = isMobile
-    ? { boxShadow: `0 0 22px ${acc}45` }
-    : { boxShadow: [`0 0 15px ${acc}30`, `0 0 25px ${acc}50`, `0 0 15px ${acc}30`] };
-  const laptopTransition = isMobile
-    ? {}
-    : { repeat: Infinity, duration: 2.5, ease: "easeInOut" };
-
-  const phoneAnimate = isMobile
-    ? { boxShadow: `0 0 14px ${acc}40` }
-    : { boxShadow: [`0 0 10px ${acc}30`, `0 0 20px ${acc}50`, `0 0 10px ${acc}30`] };
-  const phoneTransition = isMobile
-    ? {}
-    : { repeat: Infinity, duration: 2.5, ease: "easeInOut", delay: 0.2 };
-
   return (
     <div className="mt-6 mb-12">
       <div className="relative mx-auto" style={{ maxWidth: "600px" }}>
         <motion.div
-          className="rounded-xl overflow-hidden border w-full aspect-video"
-          style={{ borderColor: frameBorder, backgroundColor: frameBg }}
-          animate={laptopAnimate}
-          transition={laptopTransition}
+          className="rounded-xl overflow-hidden border-2 w-full aspect-video"
+          style={{ borderColor: acc, backgroundColor: frameBg }}
         >
           <div className="flex items-center gap-1.5 px-4 py-2" style={{ backgroundColor: barColor }}>
             <div className="w-2.5 h-2.5 rounded-full bg-red-400 opacity-70" />
@@ -369,10 +352,8 @@ function DeviceMockup({ accent, themeProgress, isMobile }) {
         </motion.div>
 
         <motion.div
-          className="absolute bottom-[-24px] right-[-12px] w-24 rounded-2xl overflow-hidden border shadow-xl z-10"
-          style={{ borderColor: frameBorder, backgroundColor: frameBg }}
-          animate={phoneAnimate}
-          transition={phoneTransition}
+          className="absolute bottom-[-24px] right-[-12px] w-24 rounded-2xl overflow-hidden border-2 z-10"
+          style={{ borderColor: acc, backgroundColor: frameBg }}
         >
           <div className="flex justify-center py-1.5" style={{ backgroundColor: barColor }}>
             <div className="w-3 h-1 rounded-full bg-gray-500 opacity-60" />
@@ -413,10 +394,6 @@ function Hero({ globalProgress, themeProgress, isMobile }) {
     [isMobile]
   );
 
-  const bgY = useTransform(globalProgress, [0, 0.4], isMobile ? [0, -20] : [0, -100]);
-  const orb1Y = useTransform(globalProgress, [0, 0.5], isMobile ? [0, -20] : [0, -80]);
-  const orb2Y = useTransform(globalProgress, [0, 0.5], isMobile ? [0, 20] : [0, 80]);
-
   return (
     <motion.section
       ref={ref}
@@ -424,17 +401,6 @@ function Hero({ globalProgress, themeProgress, isMobile }) {
       className="relative min-h-screen flex flex-col justify-center items-start px-6 md:px-20 overflow-hidden pt-20"
       style={heroVars}
     >
-      <motion.div className="absolute top-0 left-0 w-full h-full z-0" style={{ y: bgY, willChange: "transform" }}>
-        <motion.div
-          className="absolute -top-20 -right-20 w-[50vw] h-[50vw] rounded-full opacity-10 blur-3xl"
-          style={{ background: `radial-gradient(circle, ${DARK.accent}, transparent 70%)`, y: orb1Y }}
-        />
-        <motion.div
-          className="absolute -bottom-20 -left-20 w-[40vw] h-[40vw] rounded-full opacity-10 blur-3xl"
-          style={{ background: `radial-gradient(circle, ${DARK.accent2}, transparent 70%)`, y: orb2Y }}
-        />
-      </motion.div>
-
       <div className="relative z-10 flex flex-col gap-6 md:gap-8">
         <motion.h1
           initial={{ opacity: 0, y: 60 }}
@@ -1058,8 +1024,6 @@ function Manifesto({ globalProgress, manifestoRef, themeProgress, isMobile }) {
   const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
   const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
 
-  const bgY = useTransform(globalProgress, [0.3, 0.7], isMobile ? [0, -20] : [0, -80]);
-
   const lines = [
     "One developer,",
     "from first sketch",
@@ -1074,11 +1038,6 @@ function Manifesto({ globalProgress, manifestoRef, themeProgress, isMobile }) {
       id="manifesto"
       className="relative py-28 md:py-44 px-6 md:px-20 overflow-hidden theme-section"
     >
-      <motion.div className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{ y: bgY, willChange: "transform" }}>
-        <div className="absolute top-[20%] right-[10%] w-[40%] h-[60%] rounded-full blur-3xl opacity-10" style={{ background: `radial-gradient(circle, ${DARK.accent2}, transparent 70%)` }} />
-        <div className="absolute bottom-[10%] left-[5%] w-[30%] h-[40%] rounded-full blur-3xl opacity-10" style={{ background: `radial-gradient(circle, ${DARK.accent}, transparent 70%)` }} />
-      </motion.div>
-
       <motion.span
         className="text-[10px] tracking-[0.4em] uppercase mb-16 relative z-10 block"
         style={{ color: mutedColor }}
