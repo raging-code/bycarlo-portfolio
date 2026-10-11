@@ -41,23 +41,23 @@ import { VscVscode } from "react-icons/vsc";
 const E = [0.25, 1, 0.25, 1];
 
 const DARK = {
-  bg: "#3B3B3B",
-  surface: "#474747",
-  text: "#F4F4F4",
-  muted: "#BDBDBD",
-  accent: "#00F0FF",
-  accent2: "#B24BF3",
-  border: "rgba(255,255,255,0.14)",
+  bg: "#0B1930",
+  surface: "#132345",
+  text: "#F4F7FC",
+  muted: "#8FA0BD",
+  accent: "#5B82F2",
+  accent2: "#FB923C",
+  border: "rgba(244,247,252,0.14)",
 };
 
 const LIGHT = {
-  bg: "#FFFFFF",
-  surface: "#F5F5F5",
-  text: "#0B0B0E",
-  muted: "#555555",
-  accent: "#00AABB",
-  accent2: "#8A2BE2",
-  border: "rgba(0,0,0,0.10)",
+  bg: "#F7F8FA",
+  surface: "#EEF1F6",
+  text: "#0B1E3D",
+  muted: "#5A6B85",
+  accent: "#1A3EE0",
+  accent2: "#E0631A",
+  border: "rgba(11,30,61,0.10)",
 };
 
 const THEME_KEY = "bycarlo-theme";
@@ -324,7 +324,7 @@ function Cursor() {
 
 /* ── Device Mockup ───────────────────────────────── */
 function DeviceMockup({ accent, themeProgress, isMobile }) {
-  const acc = accent || "#00F0FF";
+  const acc = accent || "#1A3EE0";
   const frameBg = useTransform(themeProgress, [0, 1], [DARK.surface, LIGHT.surface]);
   const frameBorder = useTransform(themeProgress, [0, 1], [DARK.border, LIGHT.border]);
   const screenBg = useTransform(themeProgress, [0, 1], [DARK.bg, LIGHT.bg]);
@@ -436,32 +436,15 @@ function Hero({ globalProgress, themeProgress, isMobile }) {
       </motion.div>
 
       <div className="relative z-10 flex flex-col gap-6 md:gap-8">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: E }}
-          className="flex items-center gap-3"
-        >
-          <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: "var(--h-accent)" }} />
-          <span className="text-[11px] tracking-[0.35em] uppercase font-medium" style={{ color: "var(--h-muted)" }}>
-            Studio &middot; Est. 2025
-          </span>
-        </motion.div>
-
         <motion.h1
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.4, ease: E }}
-          className="text-[clamp(2.8rem,10vw,7rem)] font-display font-bold leading-[0.9] tracking-tight"
+          className="text-[clamp(2.4rem,8vw,5.5rem)] font-display font-black leading-[0.95] tracking-tight"
         >
-          <span className="block" style={{ color: "var(--h-text)" }}>Crafting</span>
-          <span className="block">
-            <span style={{ color: "var(--h-accent)" }}>Digital</span><br />
-            <span className="bg-clip-text text-transparent" style={{ backgroundImage: "linear-gradient(90deg, var(--h-accent), var(--h-accent2))" }}>
-              Realities
-            </span>
-            <span style={{ color: "var(--h-accent)" }}>.</span>
-          </span>
+          <span className="block" style={{ color: "var(--h-text)" }}>Websites, apps</span>
+          <span className="block" style={{ color: "var(--h-text)" }}>and connected</span>
+          <span className="block" style={{ color: "var(--h-text)" }}>devices<span style={{ color: "var(--h-accent)" }}>.</span></span>
         </motion.h1>
 
         <motion.p
@@ -480,8 +463,8 @@ function Hero({ globalProgress, themeProgress, isMobile }) {
           transition={{ duration: 0.7, delay: 1.0, ease: E }}
           className="flex flex-wrap gap-3 mt-4"
         >
-          <a href="#work" className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide" style={{ background: "var(--h-accent)", color: "#0B0B0E" }}>
-            See work &#8594;
+          <a href="#work" className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide" style={{ background: "var(--h-accent)", color: "#F7F8FA" }}>
+            See projects
           </a>
           <a href="#contact" className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide border" style={{ borderColor: "var(--h-border)", color: "var(--h-text)" }}>
             Get in touch
@@ -489,21 +472,6 @@ function Hero({ globalProgress, themeProgress, isMobile }) {
         </motion.div>
       </div>
 
-      <motion.div
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 0.8 }}
-      >
-        <span className="text-[9px] tracking-[0.3em] uppercase" style={{ color: "var(--h-muted)" }}>Scroll</span>
-        <motion.div className="w-4 h-8 rounded-full border flex justify-center p-1" style={{ borderColor: "var(--h-border)" }}>
-          <motion.div
-            className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--h-accent)" }}
-            animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
-          />
-        </motion.div>
-      </motion.div>
     </motion.section>
   );
 }
@@ -525,23 +493,14 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
       className="relative py-28 md:py-44 px-6 md:px-14 theme-section"
     >
       <div className="mb-20">
-        <motion.span
-          className="text-[11px] tracking-[0.4em] uppercase block mb-4"
-          style={{ color: mutedColor }}
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-        >
-          Selected Work
-        </motion.span>
         <motion.h2
-          className="text-[clamp(2.2rem,6vw,4.5rem)] font-bold tracking-tight leading-[1.1]"
-          style={{ color: textColor, fontFamily: "var(--font-display)" }}
+          className="text-[clamp(1.8rem,5vw,3rem)] font-display font-black tracking-tight leading-[1.1]"
+          style={{ color: textColor }}
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.2, ease: E }}
         >
-          Projects that define<br />
-          the <motion.span style={{ color: accentColor }}>future</motion.span><motion.span style={{ color: accentColor }}>.</motion.span>
+          Selected projects
         </motion.h2>
       </div>
 
@@ -1102,13 +1061,11 @@ function Manifesto({ globalProgress, manifestoRef, themeProgress, isMobile }) {
   const bgY = useTransform(globalProgress, [0.3, 0.7], isMobile ? [0, -20] : [0, -80]);
 
   const lines = [
-    "We ship in weeks,",
-    "not years.",
-    "We design for the",
-    "borderless age.",
-    "No templates.",
-    "No bullshit.",
-    "Just clarity.",
+    "One developer,",
+    "from first sketch",
+    "to deployed product.",
+    "Fewer handoffs.",
+    "Fewer surprises.",
   ];
 
   return (
@@ -1135,9 +1092,9 @@ function Manifesto({ globalProgress, manifestoRef, themeProgress, isMobile }) {
         {lines.map((line, i) => (
           <div key={i} className="overflow-hidden">
             <motion.p
-              className="font-display font-bold leading-[1.05]"
+              className="font-display font-black leading-[1.05]"
               style={{
-                fontSize: "clamp(2.4rem, 8vw, 6.5rem)",
+                fontSize: "clamp(1.8rem, 6vw, 4rem)",
                 color: i % 2 === 0 ? textColor : accentColor,
                 letterSpacing: "-0.02em",
               }}
@@ -1299,22 +1256,8 @@ function Contact({ themeProgress, isMobile }) {
           animate={inView ? { y: 0, opacity: 1 } : {}}
           transition={{ duration: 0.8, ease: E }}
         >
-          Let&apos;s make<br />
-          <motion.span style={{ color: accentColor, whiteSpace: isMobile ? "normal" : "nowrap" }}>
-            something{isMobile && <br />} cool.
-            <motion.span
-              style={{
-                display: "inline-block",
-                width: "0.18em",
-                height: "0.75em",
-                backgroundColor: accentColor,
-                marginLeft: "0.08em",
-                verticalAlign: "baseline",
-              }}
-              animate={{ opacity: [1, 0, 1] }}
-              transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
-            />
-          </motion.span>
+          Have a project<br />
+          in mind?
         </motion.h2>
         <motion.a
           href="mailto:hello@bycarlo.dev"
@@ -1334,8 +1277,8 @@ function Contact({ themeProgress, isMobile }) {
         animate={inView ? { opacity: 1 } : {}}
         transition={{ delay: 1 }}
       >
-        <span>&#169; 2025 ByCarlo Studio</span>
-        <span>Manila &middot; Remote &middot; Worldwide</span>
+        <span>&#169; 2025 byCarlo</span>
+        <span>Based in Manila, working worldwide</span>
       </motion.footer>
     </motion.section>
   );
