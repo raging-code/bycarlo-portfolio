@@ -4,8 +4,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        display:   ["var(--font-display)", "system-ui", "sans-serif"], // Outfit
-        sans:      ["var(--font-sans)", "system-ui", "sans-serif"],    // Plus Jakarta Sans
+        display:   ["var(--font-display)", "system-ui", "sans-serif"], // Titillium Web
+        sans:      ["var(--font-body)", "system-ui", "sans-serif"],    // Poppins (body)
         mono:      ["var(--font-syne-mono)", "monospace"],
         cormorant: ["var(--font-cormorant)", "Georgia", "serif"],
       },

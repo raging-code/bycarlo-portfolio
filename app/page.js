@@ -417,7 +417,7 @@ function Hero({ globalProgress, themeProgress, isMobile }) {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.7, ease: E }}
-          className="max-w-xl text-[clamp(1rem,2.5vw,1.3rem)] leading-relaxed"
+          className="max-w-xl text-[clamp(1.05rem,2.6vw,1.375rem)] leading-[1.5]"
           style={{ color: "var(--h-muted)" }}
         >
           I design and build landing pages, full-stack web apps and IoT dashboards, and see each one through to launch.
@@ -482,14 +482,14 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
             <DeviceMockup accent={p.colorAccent} themeProgress={themeProgress} isMobile={isMobile} />
             <div>
               <div className="flex items-center justify-between">
-                <motion.span className="text-[10px] tracking-[0.25em] uppercase" style={{ color: accentColor }}>
+                <motion.span className="text-[13px] font-medium" style={{ color: accentColor }}>
                   {p.cat}
                 </motion.span>
-                <motion.span className="text-[10px] tracking-widest opacity-50 font-mono" style={{ color: mutedColor }}>
+                <motion.span className="text-xs tracking-widest opacity-50 font-mono" style={{ color: mutedColor }}>
                   {p.id}
                 </motion.span>
               </div>
-              <motion.h3 className="text-2xl md:text-3xl font-display font-semibold mt-1" style={{ color: textColor }}>
+              <motion.h3 className="font-display font-black text-[1.9rem] md:text-[2.15rem] leading-[1.02] tracking-[-0.01em] mt-2" style={{ color: textColor }}>
                 {p.title}
               </motion.h3>
               <motion.p className="text-base leading-relaxed mt-2" style={{ color: mutedColor }}>
@@ -497,7 +497,7 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
               </motion.p>
               <div className="flex flex-wrap gap-2 mt-4">
                 {p.tech.map((t) => (
-                  <motion.span key={t} className="text-[10px] tracking-wider px-3 py-1.5 rounded-full border" style={{ borderColor: borderColor, color: mutedColor }}>
+                  <motion.span key={t} className="text-[12.5px] px-3 py-1.5 rounded-full border" style={{ borderColor: borderColor, color: mutedColor }}>
                     {t}
                   </motion.span>
                 ))}
@@ -896,7 +896,7 @@ function TechStack({ themeProgress }) {
     <motion.section ref={ref} id="stack" className="relative py-28 md:py-44 px-6 md:px-14 theme-section">
       <div className="max-w-xl mx-auto text-center">
         <motion.span
-          className="inline-flex items-center gap-2 text-[11px] tracking-[0.4em] uppercase mb-4"
+          className="inline-flex items-center gap-2 text-xs tracking-[0.3em] uppercase mb-4"
           style={{ color: mutedColor }}
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
@@ -978,7 +978,7 @@ function TechStack({ themeProgress }) {
         >
           {current.label} &amp; tools
         </motion.h3>
-        <motion.p className="text-[10px] font-semibold tracking-wider mb-2" style={{ color: mutedColor }}>
+        <motion.p className="text-xs font-semibold tracking-wider mb-2" style={{ color: mutedColor }}>
           {String(active + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
         </motion.p>
         <div className="w-7 h-[3px] mx-auto mb-10 rounded-full overflow-hidden" style={{ background: "rgba(128,128,128,0.25)" }}>
@@ -1008,7 +1008,7 @@ function TechStack({ themeProgress }) {
                 index={toolIndex}
                 face={KEEP_BRAND_COLORS && !NEAR_BLACK_BRANDS.includes(tool.color) ? tool.color : undefined}
               />
-              <motion.span className="text-[11px] font-medium text-center leading-tight" style={{ color: mutedColor }}>{tool.name}</motion.span>
+              <motion.span className="text-[12.5px] font-medium text-center leading-tight" style={{ color: mutedColor }}>{tool.name}</motion.span>
             </div>
           ))}
         </motion.div>
@@ -1039,7 +1039,7 @@ function Manifesto({ globalProgress, manifestoRef, themeProgress, isMobile }) {
       className="relative py-28 md:py-44 px-6 md:px-20 overflow-hidden theme-section"
     >
       <motion.span
-        className="text-[10px] tracking-[0.4em] uppercase mb-16 relative z-10 block"
+        className="text-xs tracking-[0.3em] uppercase mb-16 relative z-10 block"
         style={{ color: mutedColor }}
         initial={{ opacity: 0 }}
         animate={inView ? { opacity: 1 } : {}}
@@ -1080,7 +1080,7 @@ function Story({ themeProgress }) {
 
   return (
     <motion.section ref={ref} id="about" className="py-28 md:py-44 px-6 md:px-20 theme-section">
-      <motion.span className="text-[10px] tracking-[0.4em] uppercase block mb-10" style={{ color: mutedColor }} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}>
+      <motion.span className="text-xs tracking-[0.3em] uppercase block mb-10" style={{ color: mutedColor }} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}>
         About
       </motion.span>
       <div className="max-w-4xl">
@@ -1147,7 +1147,7 @@ function Testimonials({ themeProgress }) {
 
   return (
     <motion.section ref={ref} className="py-28 md:py-44 px-6 md:px-20 theme-section">
-      <motion.span className="text-[10px] tracking-[0.4em] uppercase block mb-16" style={{ color: mutedColor }} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}>
+      <motion.span className="text-xs tracking-[0.3em] uppercase block mb-16" style={{ color: mutedColor }} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}>
         Testimonials
       </motion.span>
       <div className="max-w-3xl relative">
