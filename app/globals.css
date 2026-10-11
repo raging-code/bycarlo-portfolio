@@ -433,3 +433,23 @@ button, a {
 @media (prefers-reduced-motion: reduce) {
   .ts-icon3d.is-spinning { animation: none; }
 }
+
+
+/* Full-colour 3D logos: front = real logo, thickness = brand-coloured silhouette */
+.ts-icon3d-img {
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.ts-icon3d-sil {
+  display: block;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}

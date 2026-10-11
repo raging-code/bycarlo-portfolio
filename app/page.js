@@ -524,6 +524,33 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
 const KEEP_BRAND_COLORS = false;
 const NEAR_BLACK_BRANDS = ["#000000", "#181717"];
 
+/* ── Full-colour logos ─────────────────────────────
+   file  = /public/logos/<file>.svg (real multi-colour logo)
+   side  = colour of the 3D thickness (darkened automatically towards the back)
+   scale = optional, makes wide logos (cloud shapes) a bit bigger
+   No entry = black-brand tool: plain react-icon in the site accent colour */
+const TECH_LOGOS = {
+  "React": { file: "react", side: "#1FB6D9" },
+  "TypeScript": { file: "typescript", side: "#3178C6" },
+  "Tailwind": { file: "tailwindcss", side: "#06B6D4", scale: 1.2 },
+  "Node.js": { file: "nodejs", side: "#5FA04E" },
+  "GraphQL": { file: "graphql", side: "#E535AB" },
+  "Python": { file: "python", side: "#3776AB" },
+  "Postman": { file: "postman", side: "#FF6C37" },
+  "PostgreSQL": { file: "postgresql", side: "#336791" },
+  "MongoDB": { file: "mongodb", side: "#47A248" },
+  "Cloudflare D1": { file: "cloudflare", side: "#F38020", scale: 1.2 },
+  "JWT": { file: "jwt", side: "#D63AFF" },
+  "OAuth": { file: "auth0", side: "#EB5424" },
+  "Cloudflare": { file: "cloudflare", side: "#F38020", scale: 1.2 },
+  "Docker": { file: "docker", side: "#2396ED", scale: 1.1 },
+  "Git": { file: "git", side: "#DE4C36" },
+  "VS Code": { file: "vscode", side: "#007ACC" },
+  "ESLint": { file: "eslint", side: "#4B32C3" },
+  "Jest": { file: "jest", side: "#C21325" },
+  "npm": { file: "npm", side: "#CB3837" },
+};
+
 /* ── Tech stack data (edit icons/labels here) ─────── */
 const TECH_CATEGORIES = [
   {
@@ -624,26 +651,40 @@ const ICON3D_SIZE = 39;         // icon size in px (was 30, now 1.3x bigger)
 
 // Colors come from CSS variables set on the icon grid, so they follow the theme live:
 //   --ic-face (front), --ic-a (side next to the face) -> --ic-b (back of the icon)
-function Icon3D({ Icon, size = ICON3D_SIZE, face, autoSpin = false, index = 0 }) {
+function Icon3D({ Icon, logo, brand, scale = 1, size = ICON3D_SIZE, autoSpin = false, index = 0 }) {
   // one turn per hover (mouse) or tap (touch); ignored while it is already turning
   // autoSpin: the icon mounts already turning (used when the category changes)
+  // logo: path to a full-colour SVG (front layer) - its silhouette becomes the thickness
+  // brand: colour of the thickness (any CSS colour or var)
   const [spinning, setSpinning] = useState(autoSpin);
   const [autoDelay, setAutoDelay] = useState(autoSpin ? index * ICON3D_STAGGER_MS : 0);
   const step = (size * ICON3D_THICKNESS) / (ICON3D_DEPTH - 1);
   const half = (ICON3D_DEPTH - 1) / 2; // centers the thickness on z=0 so it spins around its own middle
+  const px = Math.round(size * scale);
+  const maskUrl = logo ? "url(" + logo + ")" : undefined;
   const layers = [];
   for (let k = ICON3D_DEPTH - 1; k >= 0; k--) {
-    const fromA = Math.round((1 - k / (ICON3D_DEPTH - 1)) * 100);
+    // thickness = brand colour, mixed with more black towards the back (22% -> 52%)
+    const dark = Math.round(22 + (k / (ICON3D_DEPTH - 1)) * 30);
+    const side = "color-mix(in srgb, " + brand + " " + (100 - dark) + "%, black)";
+    let content;
+    if (logo) {
+      content = k === 0
+        ? <img src={logo} alt="" width={px} height={px} draggable={false} className="ts-icon3d-img" />
+        : <span className="ts-icon3d-sil" style={{ width: px, height: px, background: side, WebkitMaskImage: maskUrl, maskImage: maskUrl }} />;
+    } else {
+      content = <Icon size={size} />;
+    }
     layers.push(
       <span
         key={k}
         className="ts-icon3d-layer"
         style={{
-          color: k === 0 ? face || "var(--ic-face)" : `color-mix(in srgb, var(--ic-a) ${fromA}%, var(--ic-b))`,
-          transform: `translateZ(${((half - k) * step).toFixed(2)}px)`,
+          color: k === 0 ? brand : side,
+          transform: "translateZ(" + ((half - k) * step).toFixed(2) + "px)",
         }}
       >
-        <Icon size={size} />
+        {content}
       </span>
     );
   }
@@ -993,7 +1034,7 @@ function TechStack({ themeProgress }) {
         <motion.div
           key={"grid-" + active}
           className="flex flex-wrap justify-center gap-x-[3%] gap-y-7 md:gap-x-6 max-w-[420px] mx-auto"
-          style={{ "--ic-face": textColor, "--ic-a": iconSideA, "--ic-b": iconSideB }}
+          style={{ "--ic-face": textColor, "--ic-a": iconSideA, "--ic-b": iconSideB, "--ic-accent": accentColor }}
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: E }}
@@ -1006,7 +1047,9 @@ function TechStack({ themeProgress }) {
                 size={ICON3D_SIZE}
                 autoSpin={switched.current}
                 index={toolIndex}
-                face={KEEP_BRAND_COLORS && !NEAR_BLACK_BRANDS.includes(tool.color) ? tool.color : undefined}
+                logo={(TECH_LOGOS[tool.name] || {}).file ? "/logos/" + TECH_LOGOS[tool.name].file + ".svg" : undefined}
+                brand={(TECH_LOGOS[tool.name] || {}).side || "var(--ic-accent)"}
+                scale={(TECH_LOGOS[tool.name] || {}).scale || 1}
               />
               <motion.span className="text-[12.5px] font-medium text-center leading-tight" style={{ color: mutedColor }}>{tool.name}</motion.span>
             </div>
