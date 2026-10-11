@@ -79,22 +79,22 @@ const PROJECTS = [
   {
     id: "01", title: "Helix Protocol", cat: "Web3 Platform",
     desc: "A next-gen DeFi dashboard with real-time data visualisation.",
-    tech: ["Solidity", "Next.js", "D3"], live: "#", colorAccent: "#00F0FF"
+    tech: ["Solidity", "Next.js", "D3"], live: "#", colorAccent: "#1A3EE0"
   },
   {
     id: "02", title: "Mirage Events", cat: "Experience Portal",
     desc: "Immersive event microsite blending video and 3D ticketing.",
-    tech: ["Three.js", "GSAP", "Firebase"], live: "#", colorAccent: "#B24BF3"
+    tech: ["Three.js", "GSAP", "Firebase"], live: "#", colorAccent: "#E0631A"
   },
   {
     id: "03", title: "Core Studio", cat: "Agency Rebrand",
     desc: "Brutalist portfolio for a creative studio moving into architecture.",
-    tech: ["Tailwind", "Framer Motion", "Storyblok"], live: "#", colorAccent: "#00F0FF"
+    tech: ["Tailwind", "Framer Motion", "Storyblok"], live: "#", colorAccent: "#1A3EE0"
   },
   {
     id: "04", title: "Void Commerce", cat: "Headless Store",
     desc: "Product-first shopping with AI search and zero-click checkout.",
-    tech: ["Medusa", "Algolia", "Astro"], live: "#", colorAccent: "#B24BF3"
+    tech: ["Medusa", "Algolia", "Astro"], live: "#", colorAccent: "#E0631A"
   },
 ];
 
@@ -184,13 +184,13 @@ function GlassNavbar({ themeProgress, theme, onThemeChange }) {
   const [scrolled, setScrolled] = useState(false);
 
   // Colors follow the theme through the same eased motion value as the sections
-  const ink    = useTransform(themeProgress, [0, 1], ["#F4F4F4", "#0B0B0E"]);
+  const ink    = useTransform(themeProgress, [0, 1], ["#F4F7FC", "#0B1E3D"]);
   const muted  = useTransform(themeProgress, [0, 1], ["rgba(244,244,244,0.65)", "rgba(11,11,14,0.55)"]);
-  const glass  = useTransform(themeProgress, [0, 1], ["rgba(59,59,59,0.62)", "rgba(255,255,255,0.72)"]);
+  const glass  = useTransform(themeProgress, [0, 1], ["rgba(11,25,48,0.62)", "rgba(247,248,250,0.72)"]);
   const line   = useTransform(themeProgress, [0, 1], ["rgba(255,255,255,0.16)", "rgba(11,11,14,0.10)"]);
   const chip   = useTransform(themeProgress, [0, 1], ["rgba(255,255,255,0.14)", "rgba(11,11,14,0.08)"]);
-  const ctaFg  = useTransform(themeProgress, [0, 1], ["#3B3B3B", "#FFFFFF"]);
-  const accent = useTransform(themeProgress, [0, 1], ["#00F0FF", "#00AABB"]);
+  const ctaFg  = useTransform(themeProgress, [0, 1], ["#0B1930", "#F7F8FA"]);
+  const accent = useTransform(themeProgress, [0, 1], ["#5B82F2", "#1A3EE0"]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -471,7 +471,7 @@ function Hero({ globalProgress, themeProgress, isMobile }) {
           className="max-w-xl text-[clamp(1rem,2.5vw,1.3rem)] leading-relaxed"
           style={{ color: "var(--h-muted)" }}
         >
-          We build immersive, high-performing websites that merge design with code &#8211; before you even know you need them.
+          I design and build landing pages, full-stack web apps and IoT dashboards, and see each one through to launch.
         </motion.p>
 
         <motion.div
@@ -1175,7 +1175,7 @@ function Story({ themeProgress }) {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.2, duration: 0.9, ease: E }}
         >
-          We are a remote collective of designers and engineers obsessed with the <motion.span style={{ color: accentColor }}>edge</motion.span> of web performance and aesthetics.
+          I build websites, web apps and connected devices for people who need the whole thing working, not just the front page.
         </motion.p>
         <motion.p
           className="mt-8 text-lg leading-relaxed max-w-2xl"
@@ -1184,7 +1184,7 @@ function Story({ themeProgress }) {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.3 }}
         >
-          Started in 2025 with a single belief &#8211; that a website should feel like a part of your brand&apos;s nervous system, not a static brochure.
+          Landing pages that load fast, full-stack products with a real back end, and IoT dashboards that read from actual hardware.
         </motion.p>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20">

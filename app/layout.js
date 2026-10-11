@@ -1,40 +1,20 @@
 import "./globals.css";
-import {
-  Outfit,
-  Plus_Jakarta_Sans,
-  Syne_Mono,
-  Cormorant_Garamond,
-} from "next/font/google";
+import { Titillium_Web } from "next/font/google";
 
-const outfit = Outfit({
+const titilliumWeb = Titillium_Web({
   subsets: ["latin"],
   variable: "--font-display",
-  weight: ["300", "400", "500", "600", "700", "800"],
-  display: "swap",
-});
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: ["300", "400", "600", "700", "900"],
   style: ["normal", "italic"],
   display: "swap",
 });
 
-const syneMono = Syne_Mono({
-  subsets: ["latin"],
-  variable: "--font-syne-mono",
-  weight: ["400"],
-  display: "swap",
-});
-
-const cormorantGaramond = Cormorant_Garamond({
-  subsets: ["latin"],
-  variable: "--font-cormorant",
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
-  display: "swap",
-});
+// kept as aliases so --font-sans / --font-syne-mono / --font-cormorant
+// (still referenced by tailwind.config.js and a few components) resolve
+// to the same family instead of falling back to system-ui.
+const plusJakartaSans = { variable: "--font-sans" };
+const syneMono = { variable: "--font-syne-mono" };
+const cormorantGaramond = { variable: "--font-cormorant" };
 
 export const metadata = {
   title: "byCarlo — Web Design Studio",
@@ -53,7 +33,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${outfit.variable} ${plusJakartaSans.variable} ${syneMono.variable} ${cormorantGaramond.variable}`}
+      className={`${titilliumWeb.variable} ${plusJakartaSans.variable} ${syneMono.variable} ${cormorantGaramond.variable}`}
     >
       {/*
         Explicit meta is a belt-and-suspenders fallback for older Next.js builds
