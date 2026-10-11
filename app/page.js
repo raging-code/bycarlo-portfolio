@@ -41,23 +41,23 @@ import { VscVscode } from "react-icons/vsc";
 const E = [0.25, 1, 0.25, 1];
 
 const DARK = {
-  bg: "#0B1930",
-  surface: "#132345",
-  text: "#F4F7FC",
-  muted: "#8FA0BD",
-  accent: "#5B82F2",
-  accent2: "#FB923C",
-  border: "rgba(244,247,252,0.14)",
+  bg: "#121212",
+  surface: "#1C1B1A",
+  text: "#F2EFEA",
+  muted: "#9A958D",
+  accent: "#FF6A4D",
+  accent2: "#C9A66B",
+  border: "rgba(242,239,234,0.16)",
 };
 
 const LIGHT = {
-  bg: "#F7F8FA",
-  surface: "#EEF1F6",
-  text: "#0B1E3D",
-  muted: "#5A6B85",
-  accent: "#1A3EE0",
-  accent2: "#E0631A",
-  border: "rgba(11,30,61,0.10)",
+  bg: "#F6F5F2",
+  surface: "#EAE6DF",
+  text: "#141414",
+  muted: "#6B6762",
+  accent: "#CC3419",
+  accent2: "#C9A66B",
+  border: "rgba(20,20,20,0.14)",
 };
 
 const THEME_KEY = "bycarlo-theme";
@@ -79,22 +79,22 @@ const PROJECTS = [
   {
     id: "01", title: "Helix Protocol", cat: "Web3 Platform",
     desc: "A next-gen DeFi dashboard with real-time data visualisation.",
-    tech: ["Solidity", "Next.js", "D3"], live: "#", colorAccent: "#1A3EE0"
+    tech: ["Solidity", "Next.js", "D3"], live: "#", colorAccent: "#CC3419"
   },
   {
     id: "02", title: "Mirage Events", cat: "Experience Portal",
     desc: "Immersive event microsite blending video and 3D ticketing.",
-    tech: ["Three.js", "GSAP", "Firebase"], live: "#", colorAccent: "#E0631A"
+    tech: ["Three.js", "GSAP", "Firebase"], live: "#", colorAccent: "#CC3419"
   },
   {
     id: "03", title: "Core Studio", cat: "Agency Rebrand",
     desc: "Brutalist portfolio for a creative studio moving into architecture.",
-    tech: ["Tailwind", "Framer Motion", "Storyblok"], live: "#", colorAccent: "#1A3EE0"
+    tech: ["Tailwind", "Framer Motion", "Storyblok"], live: "#", colorAccent: "#CC3419"
   },
   {
     id: "04", title: "Void Commerce", cat: "Headless Store",
     desc: "Product-first shopping with AI search and zero-click checkout.",
-    tech: ["Medusa", "Algolia", "Astro"], live: "#", colorAccent: "#E0631A"
+    tech: ["Medusa", "Algolia", "Astro"], live: "#", colorAccent: "#CC3419"
   },
 ];
 
@@ -184,13 +184,13 @@ function GlassNavbar({ themeProgress, theme, onThemeChange }) {
   const [scrolled, setScrolled] = useState(false);
 
   // Colors follow the theme through the same eased motion value as the sections
-  const ink    = useTransform(themeProgress, [0, 1], ["#F4F7FC", "#0B1E3D"]);
-  const muted  = useTransform(themeProgress, [0, 1], ["rgba(244,244,244,0.65)", "rgba(11,11,14,0.55)"]);
-  const glass  = useTransform(themeProgress, [0, 1], ["rgba(11,25,48,0.62)", "rgba(247,248,250,0.72)"]);
-  const line   = useTransform(themeProgress, [0, 1], ["rgba(255,255,255,0.16)", "rgba(11,11,14,0.10)"]);
-  const chip   = useTransform(themeProgress, [0, 1], ["rgba(255,255,255,0.14)", "rgba(11,11,14,0.08)"]);
-  const ctaFg  = useTransform(themeProgress, [0, 1], ["#0B1930", "#F7F8FA"]);
-  const accent = useTransform(themeProgress, [0, 1], ["#5B82F2", "#1A3EE0"]);
+  const ink    = useTransform(themeProgress, [0, 1], ["#F2EFEA", "#141414"]);
+  const muted  = useTransform(themeProgress, [0, 1], ["rgba(242,239,234,0.65)", "rgba(20,20,20,0.60)"]);
+  const glass  = useTransform(themeProgress, [0, 1], ["rgba(18,18,18,0.62)", "rgba(246,245,242,0.72)"]);
+  const line   = useTransform(themeProgress, [0, 1], ["rgba(242,239,234,0.16)", "rgba(20,20,20,0.12)"]);
+  const chip   = useTransform(themeProgress, [0, 1], ["rgba(242,239,234,0.12)", "rgba(20,20,20,0.08)"]);
+  const ctaFg  = useTransform(themeProgress, [0, 1], ["#121212", "#F6F5F2"]);
+  const accent = useTransform(themeProgress, [0, 1], ["#FF6A4D", "#CC3419"]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -324,7 +324,7 @@ function Cursor() {
 
 /* ── Device Mockup ───────────────────────────────── */
 function DeviceMockup({ accent, themeProgress, isMobile }) {
-  const acc = accent || "#1A3EE0";
+  const acc = accent || "#CC3419";
   const frameBg = useTransform(themeProgress, [0, 1], [DARK.surface, LIGHT.surface]);
   const screenBg = useTransform(themeProgress, [0, 1], [DARK.bg, LIGHT.bg]);
   const barColor = useTransform(themeProgress, [0, 1], [
@@ -375,11 +375,12 @@ function DeviceMockup({ accent, themeProgress, isMobile }) {
 /* ── Hero (always dark) ──────────────────────────── */
 function Hero({ globalProgress, themeProgress, isMobile }) {
   const heroVars = {
-    "--h-text":    useTransform(themeProgress, [0, 1], ["var(--h-text)", LIGHT.text]),
-    "--h-muted":   useTransform(themeProgress, [0, 1], ["var(--h-muted)", LIGHT.muted]),
+    "--h-text":    useTransform(themeProgress, [0, 1], [DARK.text, LIGHT.text]),
+    "--h-muted":   useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]),
     "--h-accent":  useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]),
     "--h-accent2": useTransform(themeProgress, [0, 1], [DARK.accent2, LIGHT.accent2]),
-    "--h-border":  useTransform(themeProgress, [0, 1], ["var(--h-border)", LIGHT.border]),
+    "--h-border":  useTransform(themeProgress, [0, 1], [DARK.border, LIGHT.border]),
+    "--h-on-accent": useTransform(themeProgress, [0, 1], [DARK.bg, LIGHT.bg]),
   };
   const ref = useRef(null);
   const [, setMouse] = useState({ x: 0.5, y: 0.5 });
@@ -429,7 +430,7 @@ function Hero({ globalProgress, themeProgress, isMobile }) {
           transition={{ duration: 0.7, delay: 1.0, ease: E }}
           className="flex flex-wrap gap-3 mt-4"
         >
-          <a href="#work" className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide" style={{ background: "var(--h-accent)", color: "#F7F8FA" }}>
+          <a href="#work" className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide" style={{ background: "var(--h-accent)", color: "var(--h-on-accent)" }}>
             See projects
           </a>
           <a href="#contact" className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide border" style={{ borderColor: "var(--h-border)", color: "var(--h-text)" }}>
@@ -735,10 +736,10 @@ function TechStack({ themeProgress }) {
   // Matches the original RubberSegment CSS variables 1:1, swapped per theme:
   // light mode = --rs-track:#27272a / --rs-thumb:#fafafa (dark track, light thumb)
   // dark mode  = inverted, so the pill still reads clearly against a dark page.
-  const trackBg = useTransform(themeProgress, [0, 1], ["#27272a", "#e4e4e7"]);
-  const thumbBg = useTransform(themeProgress, [0, 1], ["#fafafa", "#18181b"]);
-  const inkIdle = useTransform(themeProgress, [0, 1], ["#fafafa", "#18181b"]); // --rs-ink, opacity 0.7 in CSS
-  const inkActive = useTransform(themeProgress, [0, 1], ["#18181b", "#fafafa"]); // --rs-ink-active, full opacity
+  const trackBg = useTransform(themeProgress, [0, 1], ["#2A2826", "#E4DFD6"]);
+  const thumbBg = useTransform(themeProgress, [0, 1], ["#F6F5F2", "#141414"]);
+  const inkIdle = useTransform(themeProgress, [0, 1], ["#F6F5F2", "#141414"]); // --rs-ink, opacity 0.7 in CSS
+  const inkActive = useTransform(themeProgress, [0, 1], ["#141414", "#F6F5F2"]); // --rs-ink-active, full opacity
   // 3D icon colors (face = site text color, thickness = site gray tones), all theme-live
   const iconSideA = useTransform(themeProgress, [0, 1], ["rgb(189,189,189)", "rgb(85,85,85)"]);
   const iconSideB = useTransform(themeProgress, [0, 1], ["rgb(96,96,96)", "rgb(170,170,170)"]);
@@ -1210,7 +1211,7 @@ function Testimonials({ themeProgress }) {
               &quot;{t.quote}&quot;
             </motion.p>
             <div className="mt-8 flex items-center gap-4">
-              <motion.div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0" style={{ background: accentColor, color: "#0B0B0E" }}>
+              <motion.div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0" style={{ background: accentColor, color: "var(--bg-primary)" }}>
                 {t.name.split(" ").map((n) => n[0]).join("")}
               </motion.div>
               <div>

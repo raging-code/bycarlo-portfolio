@@ -41,23 +41,23 @@ import { VscVscode } from "react-icons/vsc";
 const E = [0.25, 1, 0.25, 1];
 
 const DARK = {
-  bg: "#3B3B3B",
-  surface: "#474747",
-  text: "#F4F4F4",
-  muted: "#BDBDBD",
-  accent: "#00F0FF",
-  accent2: "#B24BF3",
-  border: "rgba(255,255,255,0.14)",
+  bg: "#0B1930",
+  surface: "#132345",
+  text: "#F4F7FC",
+  muted: "#8FA0BD",
+  accent: "#5B82F2",
+  accent2: "#FB923C",
+  border: "rgba(244,247,252,0.14)",
 };
 
 const LIGHT = {
-  bg: "#FFFFFF",
-  surface: "#F5F5F5",
-  text: "#0B0B0E",
-  muted: "#555555",
-  accent: "#00AABB",
-  accent2: "#8A2BE2",
-  border: "rgba(0,0,0,0.10)",
+  bg: "#F7F8FA",
+  surface: "#EEF1F6",
+  text: "#0B1E3D",
+  muted: "#5A6B85",
+  accent: "#1A3EE0",
+  accent2: "#E0631A",
+  border: "rgba(11,30,61,0.10)",
 };
 
 const THEME_KEY = "bycarlo-theme";
@@ -79,22 +79,22 @@ const PROJECTS = [
   {
     id: "01", title: "Helix Protocol", cat: "Web3 Platform",
     desc: "A next-gen DeFi dashboard with real-time data visualisation.",
-    tech: ["Solidity", "Next.js", "D3"], live: "#", colorAccent: "#00F0FF"
+    tech: ["Solidity", "Next.js", "D3"], live: "#", colorAccent: "#1A3EE0"
   },
   {
     id: "02", title: "Mirage Events", cat: "Experience Portal",
     desc: "Immersive event microsite blending video and 3D ticketing.",
-    tech: ["Three.js", "GSAP", "Firebase"], live: "#", colorAccent: "#B24BF3"
+    tech: ["Three.js", "GSAP", "Firebase"], live: "#", colorAccent: "#E0631A"
   },
   {
     id: "03", title: "Core Studio", cat: "Agency Rebrand",
     desc: "Brutalist portfolio for a creative studio moving into architecture.",
-    tech: ["Tailwind", "Framer Motion", "Storyblok"], live: "#", colorAccent: "#00F0FF"
+    tech: ["Tailwind", "Framer Motion", "Storyblok"], live: "#", colorAccent: "#1A3EE0"
   },
   {
     id: "04", title: "Void Commerce", cat: "Headless Store",
     desc: "Product-first shopping with AI search and zero-click checkout.",
-    tech: ["Medusa", "Algolia", "Astro"], live: "#", colorAccent: "#B24BF3"
+    tech: ["Medusa", "Algolia", "Astro"], live: "#", colorAccent: "#E0631A"
   },
 ];
 
@@ -184,13 +184,13 @@ function GlassNavbar({ themeProgress, theme, onThemeChange }) {
   const [scrolled, setScrolled] = useState(false);
 
   // Colors follow the theme through the same eased motion value as the sections
-  const ink    = useTransform(themeProgress, [0, 1], ["#F4F4F4", "#0B0B0E"]);
+  const ink    = useTransform(themeProgress, [0, 1], ["#F4F7FC", "#0B1E3D"]);
   const muted  = useTransform(themeProgress, [0, 1], ["rgba(244,244,244,0.65)", "rgba(11,11,14,0.55)"]);
-  const glass  = useTransform(themeProgress, [0, 1], ["rgba(59,59,59,0.62)", "rgba(255,255,255,0.72)"]);
+  const glass  = useTransform(themeProgress, [0, 1], ["rgba(11,25,48,0.62)", "rgba(247,248,250,0.72)"]);
   const line   = useTransform(themeProgress, [0, 1], ["rgba(255,255,255,0.16)", "rgba(11,11,14,0.10)"]);
   const chip   = useTransform(themeProgress, [0, 1], ["rgba(255,255,255,0.14)", "rgba(11,11,14,0.08)"]);
-  const ctaFg  = useTransform(themeProgress, [0, 1], ["#3B3B3B", "#FFFFFF"]);
-  const accent = useTransform(themeProgress, [0, 1], ["#00F0FF", "#00AABB"]);
+  const ctaFg  = useTransform(themeProgress, [0, 1], ["#0B1930", "#F7F8FA"]);
+  const accent = useTransform(themeProgress, [0, 1], ["#5B82F2", "#1A3EE0"]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -324,37 +324,20 @@ function Cursor() {
 
 /* ── Device Mockup ───────────────────────────────── */
 function DeviceMockup({ accent, themeProgress, isMobile }) {
-  const acc = accent || "#00F0FF";
+  const acc = accent || "#1A3EE0";
   const frameBg = useTransform(themeProgress, [0, 1], [DARK.surface, LIGHT.surface]);
-  const frameBorder = useTransform(themeProgress, [0, 1], [DARK.border, LIGHT.border]);
   const screenBg = useTransform(themeProgress, [0, 1], [DARK.bg, LIGHT.bg]);
   const barColor = useTransform(themeProgress, [0, 1], [
     "rgba(255,255,255,0.12)",
     "rgba(0,0,0,0.05)",
   ]);
 
-  const laptopAnimate = isMobile
-    ? { boxShadow: `0 0 22px ${acc}45` }
-    : { boxShadow: [`0 0 15px ${acc}30`, `0 0 25px ${acc}50`, `0 0 15px ${acc}30`] };
-  const laptopTransition = isMobile
-    ? {}
-    : { repeat: Infinity, duration: 2.5, ease: "easeInOut" };
-
-  const phoneAnimate = isMobile
-    ? { boxShadow: `0 0 14px ${acc}40` }
-    : { boxShadow: [`0 0 10px ${acc}30`, `0 0 20px ${acc}50`, `0 0 10px ${acc}30`] };
-  const phoneTransition = isMobile
-    ? {}
-    : { repeat: Infinity, duration: 2.5, ease: "easeInOut", delay: 0.2 };
-
   return (
     <div className="mt-6 mb-12">
       <div className="relative mx-auto" style={{ maxWidth: "600px" }}>
         <motion.div
-          className="rounded-xl overflow-hidden border w-full aspect-video"
-          style={{ borderColor: frameBorder, backgroundColor: frameBg }}
-          animate={laptopAnimate}
-          transition={laptopTransition}
+          className="rounded-xl overflow-hidden border-2 w-full aspect-video"
+          style={{ borderColor: acc, backgroundColor: frameBg }}
         >
           <div className="flex items-center gap-1.5 px-4 py-2" style={{ backgroundColor: barColor }}>
             <div className="w-2.5 h-2.5 rounded-full bg-red-400 opacity-70" />
@@ -369,10 +352,8 @@ function DeviceMockup({ accent, themeProgress, isMobile }) {
         </motion.div>
 
         <motion.div
-          className="absolute bottom-[-24px] right-[-12px] w-24 rounded-2xl overflow-hidden border shadow-xl z-10"
-          style={{ borderColor: frameBorder, backgroundColor: frameBg }}
-          animate={phoneAnimate}
-          transition={phoneTransition}
+          className="absolute bottom-[-24px] right-[-12px] w-24 rounded-2xl overflow-hidden border-2 z-10"
+          style={{ borderColor: acc, backgroundColor: frameBg }}
         >
           <div className="flex justify-center py-1.5" style={{ backgroundColor: barColor }}>
             <div className="w-3 h-1 rounded-full bg-gray-500 opacity-60" />
@@ -413,10 +394,6 @@ function Hero({ globalProgress, themeProgress, isMobile }) {
     [isMobile]
   );
 
-  const bgY = useTransform(globalProgress, [0, 0.4], isMobile ? [0, -20] : [0, -100]);
-  const orb1Y = useTransform(globalProgress, [0, 0.5], isMobile ? [0, -20] : [0, -80]);
-  const orb2Y = useTransform(globalProgress, [0, 0.5], isMobile ? [0, 20] : [0, 80]);
-
   return (
     <motion.section
       ref={ref}
@@ -424,54 +401,26 @@ function Hero({ globalProgress, themeProgress, isMobile }) {
       className="relative min-h-screen flex flex-col justify-center items-start px-6 md:px-20 overflow-hidden pt-20"
       style={heroVars}
     >
-      <motion.div className="absolute top-0 left-0 w-full h-full z-0" style={{ y: bgY, willChange: "transform" }}>
-        <motion.div
-          className="absolute -top-20 -right-20 w-[50vw] h-[50vw] rounded-full opacity-10 blur-3xl"
-          style={{ background: `radial-gradient(circle, ${DARK.accent}, transparent 70%)`, y: orb1Y }}
-        />
-        <motion.div
-          className="absolute -bottom-20 -left-20 w-[40vw] h-[40vw] rounded-full opacity-10 blur-3xl"
-          style={{ background: `radial-gradient(circle, ${DARK.accent2}, transparent 70%)`, y: orb2Y }}
-        />
-      </motion.div>
-
       <div className="relative z-10 flex flex-col gap-6 md:gap-8">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: E }}
-          className="flex items-center gap-3"
-        >
-          <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: "var(--h-accent)" }} />
-          <span className="text-[11px] tracking-[0.35em] uppercase font-medium" style={{ color: "var(--h-muted)" }}>
-            Studio &middot; Est. 2025
-          </span>
-        </motion.div>
-
         <motion.h1
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.4, ease: E }}
-          className="text-[clamp(2.8rem,10vw,7rem)] font-display font-bold leading-[0.9] tracking-tight"
+          className="text-[clamp(2.4rem,8vw,5.5rem)] font-display font-black leading-[0.95] tracking-tight"
         >
-          <span className="block" style={{ color: "var(--h-text)" }}>Crafting</span>
-          <span className="block">
-            <span style={{ color: "var(--h-accent)" }}>Digital</span><br />
-            <span className="bg-clip-text text-transparent" style={{ backgroundImage: "linear-gradient(90deg, var(--h-accent), var(--h-accent2))" }}>
-              Realities
-            </span>
-            <span style={{ color: "var(--h-accent)" }}>.</span>
-          </span>
+          <span className="block" style={{ color: "var(--h-text)" }}>Websites, apps</span>
+          <span className="block" style={{ color: "var(--h-text)" }}>and connected</span>
+          <span className="block" style={{ color: "var(--h-text)" }}>devices<span style={{ color: "var(--h-accent)" }}>.</span></span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.7, ease: E }}
-          className="max-w-xl text-[clamp(1rem,2.5vw,1.3rem)] leading-relaxed"
+          className="max-w-xl text-[clamp(1.05rem,2.6vw,1.375rem)] leading-[1.5]"
           style={{ color: "var(--h-muted)" }}
         >
-          We build immersive, high-performing websites that merge design with code &#8211; before you even know you need them.
+          I design and build landing pages, full-stack web apps and IoT dashboards, and see each one through to launch.
         </motion.p>
 
         <motion.div
@@ -480,8 +429,8 @@ function Hero({ globalProgress, themeProgress, isMobile }) {
           transition={{ duration: 0.7, delay: 1.0, ease: E }}
           className="flex flex-wrap gap-3 mt-4"
         >
-          <a href="#work" className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide" style={{ background: "var(--h-accent)", color: "#0B0B0E" }}>
-            See work &#8594;
+          <a href="#work" className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide" style={{ background: "var(--h-accent)", color: "#F7F8FA" }}>
+            See projects
           </a>
           <a href="#contact" className="px-7 py-3 rounded-full font-semibold text-sm tracking-wide border" style={{ borderColor: "var(--h-border)", color: "var(--h-text)" }}>
             Get in touch
@@ -489,21 +438,6 @@ function Hero({ globalProgress, themeProgress, isMobile }) {
         </motion.div>
       </div>
 
-      <motion.div
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 0.8 }}
-      >
-        <span className="text-[9px] tracking-[0.3em] uppercase" style={{ color: "var(--h-muted)" }}>Scroll</span>
-        <motion.div className="w-4 h-8 rounded-full border flex justify-center p-1" style={{ borderColor: "var(--h-border)" }}>
-          <motion.div
-            className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--h-accent)" }}
-            animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
-          />
-        </motion.div>
-      </motion.div>
     </motion.section>
   );
 }
@@ -525,23 +459,14 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
       className="relative py-28 md:py-44 px-6 md:px-14 theme-section"
     >
       <div className="mb-20">
-        <motion.span
-          className="text-[11px] tracking-[0.4em] uppercase block mb-4"
-          style={{ color: mutedColor }}
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-        >
-          Selected Work
-        </motion.span>
         <motion.h2
-          className="text-[clamp(2.2rem,6vw,4.5rem)] font-bold tracking-tight leading-[1.1]"
-          style={{ color: textColor, fontFamily: "var(--font-display)" }}
+          className="text-[clamp(1.8rem,5vw,3rem)] font-display font-black tracking-tight leading-[1.1]"
+          style={{ color: textColor }}
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.2, ease: E }}
         >
-          Projects that define<br />
-          the <motion.span style={{ color: accentColor }}>future</motion.span><motion.span style={{ color: accentColor }}>.</motion.span>
+          Selected projects
         </motion.h2>
       </div>
 
@@ -557,14 +482,14 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
             <DeviceMockup accent={p.colorAccent} themeProgress={themeProgress} isMobile={isMobile} />
             <div>
               <div className="flex items-center justify-between">
-                <motion.span className="text-[10px] tracking-[0.25em] uppercase" style={{ color: accentColor }}>
+                <motion.span className="text-[13px] font-medium" style={{ color: accentColor }}>
                   {p.cat}
                 </motion.span>
-                <motion.span className="text-[10px] tracking-widest opacity-50 font-mono" style={{ color: mutedColor }}>
+                <motion.span className="text-xs tracking-widest opacity-50 font-mono" style={{ color: mutedColor }}>
                   {p.id}
                 </motion.span>
               </div>
-              <motion.h3 className="text-2xl md:text-3xl font-display font-semibold mt-1" style={{ color: textColor }}>
+              <motion.h3 className="font-display font-black text-[1.9rem] md:text-[2.15rem] leading-[1.02] tracking-[-0.01em] mt-2" style={{ color: textColor }}>
                 {p.title}
               </motion.h3>
               <motion.p className="text-base leading-relaxed mt-2" style={{ color: mutedColor }}>
@@ -572,7 +497,7 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
               </motion.p>
               <div className="flex flex-wrap gap-2 mt-4">
                 {p.tech.map((t) => (
-                  <motion.span key={t} className="text-[10px] tracking-wider px-3 py-1.5 rounded-full border" style={{ borderColor: borderColor, color: mutedColor }}>
+                  <motion.span key={t} className="text-[12.5px] px-3 py-1.5 rounded-full border" style={{ borderColor: borderColor, color: mutedColor }}>
                     {t}
                   </motion.span>
                 ))}
@@ -598,6 +523,34 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
    true  = keep each icon's brand color, but near-black brand icons still follow the theme */
 const KEEP_BRAND_COLORS = false;
 const NEAR_BLACK_BRANDS = ["#000000", "#181717"];
+
+/* ── Full-colour logos ─────────────────────────────
+   file  = /public/logos/<file>.svg (real multi-colour logo)
+   side  = colour of the 3D thickness (darkened automatically towards the back)
+   scale = visual size tweak so every logo looks the same size (1 = fills the 39px box)
+   No entry = black-brand tool: plain react-icon in the site accent colour */
+const TECH_LOGOS = {
+  /* logos-v3 */
+  "React": { file: "react", side: "#1FB6D9", scale: 1.1 },
+  "TypeScript": { file: "typescript", side: "#3178C6", scale: 0.85 },
+  "Tailwind": { file: "tailwindcss", side: "#06B6D4", scale: 1.2 },
+  "Node.js": { file: "nodejs", side: "#5FA04E", scale: 1.05 },
+  "GraphQL": { file: "graphql", side: "#E535AB", scale: 1.1 },
+  "Python": { file: "python", side: "#3776AB", scale: 0.92 },
+  "Postman": { file: "postman", side: "#FF6C37", scale: 0.88 },
+  "PostgreSQL": { file: "postgresql", side: "#336791", scale: 0.88 },
+  "MongoDB": { file: "mongodb", side: "#47A248", scale: 0.85 },
+  "Cloudflare D1": { file: "cloudflare", side: "#F38020", scale: 1.2 },
+  "JWT": { file: "jwt", side: "#D63AFF" },
+  "OAuth": { file: "auth0", side: "#EB5424" },
+  "Cloudflare": { file: "cloudflare", side: "#F38020", scale: 1.2 },
+  "Docker": { file: "docker", side: "#2396ED", scale: 1.15 },
+  "Git": { file: "git", side: "#DE4C36" },
+  "VS Code": { file: "vscode", side: "#007ACC", scale: 0.95 },
+  "ESLint": { file: "eslint", side: "#4B32C3" },
+  "Jest": { file: "jest", side: "#C21325", scale: 0.95 },
+  "npm": { file: "npm", side: "#CB3837", scale: 0.82 },
+};
 
 /* ── Tech stack data (edit icons/labels here) ─────── */
 const TECH_CATEGORIES = [
@@ -699,26 +652,40 @@ const ICON3D_SIZE = 39;         // icon size in px (was 30, now 1.3x bigger)
 
 // Colors come from CSS variables set on the icon grid, so they follow the theme live:
 //   --ic-face (front), --ic-a (side next to the face) -> --ic-b (back of the icon)
-function Icon3D({ Icon, size = ICON3D_SIZE, face, autoSpin = false, index = 0 }) {
+function Icon3D({ Icon, logo, brand, scale = 1, size = ICON3D_SIZE, autoSpin = false, index = 0 }) {
   // one turn per hover (mouse) or tap (touch); ignored while it is already turning
   // autoSpin: the icon mounts already turning (used when the category changes)
+  // logo: path to a full-colour SVG (front layer) - its silhouette becomes the thickness
+  // brand: colour of the thickness (any CSS colour or var)
   const [spinning, setSpinning] = useState(autoSpin);
   const [autoDelay, setAutoDelay] = useState(autoSpin ? index * ICON3D_STAGGER_MS : 0);
   const step = (size * ICON3D_THICKNESS) / (ICON3D_DEPTH - 1);
   const half = (ICON3D_DEPTH - 1) / 2; // centers the thickness on z=0 so it spins around its own middle
+  const px = Math.round(size * scale);
+  const maskUrl = logo ? "url(" + logo + ")" : undefined;
   const layers = [];
   for (let k = ICON3D_DEPTH - 1; k >= 0; k--) {
-    const fromA = Math.round((1 - k / (ICON3D_DEPTH - 1)) * 100);
+    // thickness = brand colour, mixed with more black towards the back (22% -> 52%)
+    const dark = Math.round(22 + (k / (ICON3D_DEPTH - 1)) * 30);
+    const side = "color-mix(in srgb, " + brand + " " + (100 - dark) + "%, black)";
+    let content;
+    if (logo) {
+      content = k === 0
+        ? <img src={logo} alt="" width={px} height={px} draggable={false} className="ts-icon3d-img" style={{ width: px, height: px, maxWidth: "none" }} />
+        : <span className="ts-icon3d-sil" style={{ width: px, height: px, background: side, WebkitMaskImage: maskUrl, maskImage: maskUrl }} />;
+    } else {
+      content = <Icon size={size} />;
+    }
     layers.push(
       <span
         key={k}
         className="ts-icon3d-layer"
         style={{
-          color: k === 0 ? face || "var(--ic-face)" : `color-mix(in srgb, var(--ic-a) ${fromA}%, var(--ic-b))`,
-          transform: `translateZ(${((half - k) * step).toFixed(2)}px)`,
+          color: k === 0 ? brand : side,
+          transform: "translateZ(" + ((half - k) * step).toFixed(2) + "px)",
         }}
       >
-        <Icon size={size} />
+        {content}
       </span>
     );
   }
@@ -971,7 +938,7 @@ function TechStack({ themeProgress }) {
     <motion.section ref={ref} id="stack" className="relative py-28 md:py-44 px-6 md:px-14 theme-section">
       <div className="max-w-xl mx-auto text-center">
         <motion.span
-          className="inline-flex items-center gap-2 text-[11px] tracking-[0.4em] uppercase mb-4"
+          className="inline-flex items-center gap-2 text-xs tracking-[0.3em] uppercase mb-4"
           style={{ color: mutedColor }}
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
@@ -1053,7 +1020,7 @@ function TechStack({ themeProgress }) {
         >
           {current.label} &amp; tools
         </motion.h3>
-        <motion.p className="text-[10px] font-semibold tracking-wider mb-2" style={{ color: mutedColor }}>
+        <motion.p className="text-xs font-semibold tracking-wider mb-2" style={{ color: mutedColor }}>
           {String(active + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
         </motion.p>
         <div className="w-7 h-[3px] mx-auto mb-10 rounded-full overflow-hidden" style={{ background: "rgba(128,128,128,0.25)" }}>
@@ -1068,7 +1035,7 @@ function TechStack({ themeProgress }) {
         <motion.div
           key={"grid-" + active}
           className="flex flex-wrap justify-center gap-x-[3%] gap-y-7 md:gap-x-6 max-w-[420px] mx-auto"
-          style={{ "--ic-face": textColor, "--ic-a": iconSideA, "--ic-b": iconSideB }}
+          style={{ "--ic-face": textColor, "--ic-a": iconSideA, "--ic-b": iconSideB, "--ic-accent": accentColor }}
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: E }}
@@ -1081,9 +1048,11 @@ function TechStack({ themeProgress }) {
                 size={ICON3D_SIZE}
                 autoSpin={switched.current}
                 index={toolIndex}
-                face={KEEP_BRAND_COLORS && !NEAR_BLACK_BRANDS.includes(tool.color) ? tool.color : undefined}
+                logo={(TECH_LOGOS[tool.name] || {}).file ? "/logos/" + TECH_LOGOS[tool.name].file + ".svg" : undefined}
+                brand={(TECH_LOGOS[tool.name] || {}).side || "var(--ic-accent)"}
+                scale={(TECH_LOGOS[tool.name] || {}).scale || 1}
               />
-              <motion.span className="text-[11px] font-medium text-center leading-tight" style={{ color: mutedColor }}>{tool.name}</motion.span>
+              <motion.span className="text-[12.5px] font-medium text-center leading-tight" style={{ color: mutedColor }}>{tool.name}</motion.span>
             </div>
           ))}
         </motion.div>
@@ -1099,16 +1068,12 @@ function Manifesto({ globalProgress, manifestoRef, themeProgress, isMobile }) {
   const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
   const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
 
-  const bgY = useTransform(globalProgress, [0.3, 0.7], isMobile ? [0, -20] : [0, -80]);
-
   const lines = [
-    "We ship in weeks,",
-    "not years.",
-    "We design for the",
-    "borderless age.",
-    "No templates.",
-    "No bullshit.",
-    "Just clarity.",
+    "One developer,",
+    "from first sketch",
+    "to deployed product.",
+    "Fewer handoffs.",
+    "Fewer surprises.",
   ];
 
   return (
@@ -1117,13 +1082,8 @@ function Manifesto({ globalProgress, manifestoRef, themeProgress, isMobile }) {
       id="manifesto"
       className="relative py-28 md:py-44 px-6 md:px-20 overflow-hidden theme-section"
     >
-      <motion.div className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{ y: bgY, willChange: "transform" }}>
-        <div className="absolute top-[20%] right-[10%] w-[40%] h-[60%] rounded-full blur-3xl opacity-10" style={{ background: `radial-gradient(circle, ${DARK.accent2}, transparent 70%)` }} />
-        <div className="absolute bottom-[10%] left-[5%] w-[30%] h-[40%] rounded-full blur-3xl opacity-10" style={{ background: `radial-gradient(circle, ${DARK.accent}, transparent 70%)` }} />
-      </motion.div>
-
       <motion.span
-        className="text-[10px] tracking-[0.4em] uppercase mb-16 relative z-10 block"
+        className="text-xs tracking-[0.3em] uppercase mb-16 relative z-10 block"
         style={{ color: mutedColor }}
         initial={{ opacity: 0 }}
         animate={inView ? { opacity: 1 } : {}}
@@ -1135,9 +1095,9 @@ function Manifesto({ globalProgress, manifestoRef, themeProgress, isMobile }) {
         {lines.map((line, i) => (
           <div key={i} className="overflow-hidden">
             <motion.p
-              className="font-display font-bold leading-[1.05]"
+              className="font-display font-black leading-[1.05]"
               style={{
-                fontSize: "clamp(2.4rem, 8vw, 6.5rem)",
+                fontSize: "clamp(1.8rem, 6vw, 4rem)",
                 color: i % 2 === 0 ? textColor : accentColor,
                 letterSpacing: "-0.02em",
               }}
@@ -1164,7 +1124,7 @@ function Story({ themeProgress }) {
 
   return (
     <motion.section ref={ref} id="about" className="py-28 md:py-44 px-6 md:px-20 theme-section">
-      <motion.span className="text-[10px] tracking-[0.4em] uppercase block mb-10" style={{ color: mutedColor }} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}>
+      <motion.span className="text-xs tracking-[0.3em] uppercase block mb-10" style={{ color: mutedColor }} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}>
         About
       </motion.span>
       <div className="max-w-4xl">
@@ -1175,7 +1135,7 @@ function Story({ themeProgress }) {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.2, duration: 0.9, ease: E }}
         >
-          We are a remote collective of designers and engineers obsessed with the <motion.span style={{ color: accentColor }}>edge</motion.span> of web performance and aesthetics.
+          I build websites, web apps and connected devices for people who need the whole thing working, not just the front page.
         </motion.p>
         <motion.p
           className="mt-8 text-lg leading-relaxed max-w-2xl"
@@ -1184,7 +1144,7 @@ function Story({ themeProgress }) {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.3 }}
         >
-          Started in 2025 with a single belief &#8211; that a website should feel like a part of your brand&apos;s nervous system, not a static brochure.
+          Landing pages that load fast, full-stack products with a real back end, and IoT dashboards that read from actual hardware.
         </motion.p>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20">
@@ -1231,7 +1191,7 @@ function Testimonials({ themeProgress }) {
 
   return (
     <motion.section ref={ref} className="py-28 md:py-44 px-6 md:px-20 theme-section">
-      <motion.span className="text-[10px] tracking-[0.4em] uppercase block mb-16" style={{ color: mutedColor }} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}>
+      <motion.span className="text-xs tracking-[0.3em] uppercase block mb-16" style={{ color: mutedColor }} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}>
         Testimonials
       </motion.span>
       <div className="max-w-3xl relative">
@@ -1299,22 +1259,8 @@ function Contact({ themeProgress, isMobile }) {
           animate={inView ? { y: 0, opacity: 1 } : {}}
           transition={{ duration: 0.8, ease: E }}
         >
-          Let&apos;s make<br />
-          <motion.span style={{ color: accentColor, whiteSpace: isMobile ? "normal" : "nowrap" }}>
-            something{isMobile && <br />} cool.
-            <motion.span
-              style={{
-                display: "inline-block",
-                width: "0.18em",
-                height: "0.75em",
-                backgroundColor: accentColor,
-                marginLeft: "0.08em",
-                verticalAlign: "baseline",
-              }}
-              animate={{ opacity: [1, 0, 1] }}
-              transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
-            />
-          </motion.span>
+          Have a project<br />
+          in mind?
         </motion.h2>
         <motion.a
           href="mailto:hello@bycarlo.dev"
@@ -1334,8 +1280,8 @@ function Contact({ themeProgress, isMobile }) {
         animate={inView ? { opacity: 1 } : {}}
         transition={{ delay: 1 }}
       >
-        <span>&#169; 2025 ByCarlo Studio</span>
-        <span>Manila &middot; Remote &middot; Worldwide</span>
+        <span>&#169; 2025 byCarlo</span>
+        <span>Based in Manila, working worldwide</span>
       </motion.footer>
     </motion.section>
   );

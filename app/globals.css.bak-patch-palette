@@ -1,31 +1,31 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700;900&family=Poppins:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-display: 'Space Grotesk', system-ui, sans-serif;
-  --font-body:    'Inter', system-ui, sans-serif;
+  --font-display: 'Titillium Web', system-ui, sans-serif;
+  --font-body:    'Poppins', system-ui, sans-serif;
 
   /* light (default) */
-  --bg-primary:   #FFFFFF;
-  --text-primary: #0B0B0E;
-  --text-secondary: #555555;
-  --accent:       #00AABB;
-  --accent-2:     #8A2BE2;
-  --border:       rgba(0,0,0,0.10);
+  --bg-primary:   #F7F8FA;
+  --text-primary: #0B1E3D;
+  --text-secondary: #5A6B85;
+  --accent:       #1A3EE0;
+  --accent-2:     #E0631A;
+  --border:       rgba(11,30,61,0.10);
   color-scheme: light;
 }
 
 /* dark */
 :root[data-theme="dark"] {
-  --bg-primary:   #3B3B3B;
-  --text-primary: #F4F4F4;
-  --text-secondary: #BDBDBD;
-  --accent:       #00F0FF;
-  --accent-2:     #B24BF3;
-  --border:       rgba(255,255,255,0.14);
+  --bg-primary:   #0B1930;
+  --text-primary: #F4F7FC;
+  --text-secondary: #8FA0BD;
+  --accent:       #5B82F2;
+  --accent-2:     #FB923C;
+  --border:       rgba(244,247,252,0.14);
   color-scheme: dark;
 }
 
@@ -39,9 +39,9 @@ html {
 body {
   margin: 0;
   font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 18px;
-  line-height: 1.6;
+  font-weight: 400;
+  font-size: 16.5px;
+  line-height: 1.7;
   overflow-x: hidden;
   background: var(--bg-primary);
   transition: background-color 0.45s ease-in-out;
@@ -69,7 +69,7 @@ body {
 
 ::selection {
   background: var(--accent);
-  color: #0B0B0E;
+  color: #F7F8FA;
 }
 
 button, a {
@@ -138,7 +138,7 @@ button, a {
   padding: 12px 20px;
   border-radius: 0;
   color: var(--gn-ink, #0B0B0E);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
   transition:
     width 0.6s cubic-bezier(0.65, 0, 0.2, 1),
     padding 0.6s cubic-bezier(0.65, 0, 0.2, 1),
@@ -338,7 +338,7 @@ button, a {
   .gnav-links::-webkit-scrollbar { display: none; }
 
   /* one size knob: font scales with the screen width */
-  .gnav-link, .gnav-cta { font-size: clamp(10px, 3.1vw, 14px); }
+  .gnav-link, .gnav-cta { font-size: clamp(9.5px, 2.8vw, 14px); }
   .gnav-link { padding: 7px 0.45em; }
   .gnav-cta  { padding: 9px 0.55em; }
 
@@ -358,10 +358,7 @@ button, a {
 }
 
 .logo-gradient {
-  background: linear-gradient(135deg, #00F0FF, #B24BF3);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #1A3EE0;
 }
 
 .glow-bar-track {
@@ -380,6 +377,7 @@ button, a {
 /* shared by the tab buttons and the sliding-pill labels so both layers stay identical */
 .ts-seg {
   --ts-pad-y: 11px;                    /* tab height: bigger number = taller tabs */
+  font-family: var(--font-display); /* Titillium is narrower: keeps six tabs readable on phones */
   font-size: clamp(9px, 2.9vw, 16px);  /* scales down so all six tabs fit */
   line-height: 1.2;
   padding: var(--ts-pad-y) clamp(3px, 1.4vw, 7px);
@@ -434,4 +432,24 @@ button, a {
 }
 @media (prefers-reduced-motion: reduce) {
   .ts-icon3d.is-spinning { animation: none; }
+}
+
+
+/* Full-colour 3D logos: front = real logo, thickness = brand-coloured silhouette */
+.ts-icon3d-img {
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.ts-icon3d-sil {
+  display: block;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
 }
