@@ -527,28 +527,29 @@ const NEAR_BLACK_BRANDS = ["#000000", "#181717"];
 /* ── Full-colour logos ─────────────────────────────
    file  = /public/logos/<file>.svg (real multi-colour logo)
    side  = colour of the 3D thickness (darkened automatically towards the back)
-   scale = optional, makes wide logos (cloud shapes) a bit bigger
+   scale = visual size tweak so every logo looks the same size (1 = fills the 39px box)
    No entry = black-brand tool: plain react-icon in the site accent colour */
 const TECH_LOGOS = {
-  "React": { file: "react", side: "#1FB6D9" },
-  "TypeScript": { file: "typescript", side: "#3178C6" },
+  /* logos-v3 */
+  "React": { file: "react", side: "#1FB6D9", scale: 1.1 },
+  "TypeScript": { file: "typescript", side: "#3178C6", scale: 0.85 },
   "Tailwind": { file: "tailwindcss", side: "#06B6D4", scale: 1.2 },
-  "Node.js": { file: "nodejs", side: "#5FA04E" },
-  "GraphQL": { file: "graphql", side: "#E535AB" },
-  "Python": { file: "python", side: "#3776AB" },
-  "Postman": { file: "postman", side: "#FF6C37" },
-  "PostgreSQL": { file: "postgresql", side: "#336791" },
-  "MongoDB": { file: "mongodb", side: "#47A248" },
+  "Node.js": { file: "nodejs", side: "#5FA04E", scale: 1.05 },
+  "GraphQL": { file: "graphql", side: "#E535AB", scale: 1.1 },
+  "Python": { file: "python", side: "#3776AB", scale: 0.92 },
+  "Postman": { file: "postman", side: "#FF6C37", scale: 0.88 },
+  "PostgreSQL": { file: "postgresql", side: "#336791", scale: 0.88 },
+  "MongoDB": { file: "mongodb", side: "#47A248", scale: 0.85 },
   "Cloudflare D1": { file: "cloudflare", side: "#F38020", scale: 1.2 },
   "JWT": { file: "jwt", side: "#D63AFF" },
   "OAuth": { file: "auth0", side: "#EB5424" },
   "Cloudflare": { file: "cloudflare", side: "#F38020", scale: 1.2 },
-  "Docker": { file: "docker", side: "#2396ED", scale: 1.1 },
+  "Docker": { file: "docker", side: "#2396ED", scale: 1.15 },
   "Git": { file: "git", side: "#DE4C36" },
-  "VS Code": { file: "vscode", side: "#007ACC" },
+  "VS Code": { file: "vscode", side: "#007ACC", scale: 0.95 },
   "ESLint": { file: "eslint", side: "#4B32C3" },
-  "Jest": { file: "jest", side: "#C21325" },
-  "npm": { file: "npm", side: "#CB3837" },
+  "Jest": { file: "jest", side: "#C21325", scale: 0.95 },
+  "npm": { file: "npm", side: "#CB3837", scale: 0.82 },
 };
 
 /* ── Tech stack data (edit icons/labels here) ─────── */
@@ -670,7 +671,7 @@ function Icon3D({ Icon, logo, brand, scale = 1, size = ICON3D_SIZE, autoSpin = f
     let content;
     if (logo) {
       content = k === 0
-        ? <img src={logo} alt="" width={px} height={px} draggable={false} className="ts-icon3d-img" />
+        ? <img src={logo} alt="" width={px} height={px} draggable={false} className="ts-icon3d-img" style={{ width: px, height: px, maxWidth: "none" }} />
         : <span className="ts-icon3d-sil" style={{ width: px, height: px, background: side, WebkitMaskImage: maskUrl, maskImage: maskUrl }} />;
     } else {
       content = <Icon size={size} />;
