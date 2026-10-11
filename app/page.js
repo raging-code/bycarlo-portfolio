@@ -737,9 +737,9 @@ function TechStack({ themeProgress }) {
   // light mode = --rs-track:#27272a / --rs-thumb:#fafafa (dark track, light thumb)
   // dark mode  = inverted, so the pill still reads clearly against a dark page.
   const trackBg = useTransform(themeProgress, [0, 1], ["#2A2826", "#E4DFD6"]);
-  const thumbBg = useTransform(themeProgress, [0, 1], ["#F6F5F2", "#141414"]);
+  const thumbBg = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
   const inkIdle = useTransform(themeProgress, [0, 1], ["#F6F5F2", "#141414"]); // --rs-ink, opacity 0.7 in CSS
-  const inkActive = useTransform(themeProgress, [0, 1], ["#141414", "#F6F5F2"]); // --rs-ink-active, full opacity
+  const inkActive = useTransform(themeProgress, [0, 1], [DARK.bg, LIGHT.bg]); // --rs-ink-active, full opacity
   // 3D icon colors (face = site text color, thickness = site gray tones), all theme-live
   const iconSideA = useTransform(themeProgress, [0, 1], ["rgb(189,189,189)", "rgb(85,85,85)"]);
   const iconSideB = useTransform(themeProgress, [0, 1], ["rgb(96,96,96)", "rgb(170,170,170)"]);
