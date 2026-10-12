@@ -1,12 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700;900&family=Poppins:wght@400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-display: 'Titillium Web', system-ui, sans-serif;
-  --font-body:    'Poppins', system-ui, sans-serif;
+  --font-display: var(--font-jakarta), 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-body:    var(--font-dmsans), 'DM Sans', system-ui, sans-serif;
 
   /* light */
   --bg-primary:   #F6F5F2;
@@ -317,7 +315,7 @@ button, a {
 /* shared by the tab buttons and the sliding-pill labels so both layers stay identical */
 .ts-seg {
   --ts-pad-y: 8px;                    /* tab height: bigger number = taller tabs */
-  font-family: var(--font-display); /* Titillium is narrower: keeps six tabs readable on phones */
+  font-family: var(--font-body); /* DM Sans is narrower than Jakarta: keeps six tabs readable on phones */
   font-size: clamp(9.5px, 3.1vw, 17px);  /* scales down so all six tabs fit */
   line-height: 1.2;
   padding: var(--ts-pad-y) clamp(4px, 1.9vw, 9px);

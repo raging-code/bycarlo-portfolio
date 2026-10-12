@@ -1,21 +1,22 @@
 import "./globals.css";
-import { Titillium_Web } from "next/font/google";
+import { Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
 import IntroAnimation from "./IntroAnimation";
 
-const titilliumWeb = Titillium_Web({
+// Display / headings
+const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-display",
-  weight: ["300", "400", "600", "700", "900"],
-  style: ["normal", "italic"],
+  variable: "--font-jakarta",
+  weight: ["500", "600", "700", "800"],
   display: "swap",
 });
 
-// kept as aliases so --font-sans / --font-syne-mono / --font-cormorant
-// (still referenced by tailwind.config.js and a few components) resolve
-// to the same family instead of falling back to system-ui.
-const plusJakartaSans = { variable: "--font-sans" };
-const syneMono = { variable: "--font-syne-mono" };
-const cormorantGaramond = { variable: "--font-cormorant" };
+// Body / labels
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-dmsans",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
 
 export const metadata = {
   title: "byCarlo — Web Design Studio",
@@ -34,7 +35,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${titilliumWeb.variable} ${plusJakartaSans.variable} ${syneMono.variable} ${cormorantGaramond.variable}`}
+      className={`${plusJakarta.variable} ${dmSans.variable}`}
     >
       {/*
         Explicit meta is a belt-and-suspenders fallback for older Next.js builds
