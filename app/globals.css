@@ -8,7 +8,7 @@
   --font-display: 'Titillium Web', system-ui, sans-serif;
   --font-body:    'Poppins', system-ui, sans-serif;
 
-  /* light (default) */
+  /* light */
   --bg-primary:   #F6F5F2;
   --text-primary: #141414;
   --text-secondary: #6B6762;
@@ -16,17 +16,6 @@
   --accent-2:     #C9A66B;
   --border:       rgba(20,20,20,0.14);
   color-scheme: light;
-}
-
-/* dark */
-:root[data-theme="dark"] {
-  --bg-primary:   #121212;
-  --text-primary: #F2EFEA;
-  --text-secondary: #9A958D;
-  --accent:       #FF6A4D;
-  --accent-2:     #C9A66B;
-  --border:       rgba(242,239,234,0.16);
-  color-scheme: dark;
 }
 
 html {
@@ -83,7 +72,7 @@ button, a {
   }
 }
 
-/* Sections that participate in the dark‑to‑light transition */
+/* Sections: promote to their own layer for smoother scrolling */
 .theme-section {
   will-change: background-color, transform;
   contain: paint;
@@ -171,27 +160,20 @@ button, a {
 .gnav-glass .glass-surface {
   border-radius: inherit !important;
 }
-/* Safari / Firefox fallback: follow the SITE theme switch, not the OS theme */
-.gnav-wrap[data-theme="light"] .glass-surface--fallback {
+/* Safari / Firefox fallback */
+.gnav-wrap .glass-surface--fallback {
   background: rgba(255, 255, 255, 0.55);
   border: 1px solid rgba(20, 20, 20, 0.14);
   box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.6),
     0 8px 24px -8px rgba(0, 0, 0, 0.25);
 }
-.gnav-wrap[data-theme="dark"] .glass-surface--fallback {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow:
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.2),
-    inset 0 -1px 0 0 rgba(255, 255, 255, 0.1);
-}
 .gnav-wrap.is-scrolled .gnav-glass { opacity: 1; }
 
 .gnav a:focus-visible,
 .gnav button:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
 
-/* logo – 1:1 circle, light / dark files cross-fade */
+/* logo – 1:1 circle */
 .gnav-brand {
   position: relative;
   display: inline-flex;
@@ -220,9 +202,6 @@ button, a {
   box-shadow: 0 0 0 1px var(--gn-line, rgba(20, 20, 20, 0.14));
   transition: opacity 0.45s ease-in-out;
 }
-.gnav-logo-dark { opacity: 0; }
-.gnav-wrap[data-theme="dark"] .gnav-logo-light { opacity: 0; }
-.gnav-wrap[data-theme="dark"] .gnav-logo-dark { opacity: 1; }
 
 .gnav-links {
   display: flex;
@@ -281,44 +260,6 @@ button, a {
   color: var(--gn-cta-fg);
 }
 
-/* light / dark swipe switch */
-.gnav-toggle {
-  --tw: 44px; --th: 24px; --tk: 18px; --pad: 3px;
-  position: relative;
-  flex-shrink: 0;
-  width: var(--tw);
-  height: var(--th);
-  padding: 0;
-  border: 1px solid var(--gn-line);
-  border-radius: 999px;
-  background: var(--gn-chip);
-  color: inherit;
-  touch-action: pan-y;
-  -webkit-tap-highlight-color: transparent;
-}
-.gnav-toggle-thumb {
-  position: absolute;
-  top: 50%;
-  left: var(--pad);
-  width: var(--tk);
-  height: var(--tk);
-  margin-top: calc(var(--tk) / -2);
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--gn-ink);
-  color: var(--gn-cta-fg);
-  transform: translateX(0);
-  transition: transform 0.35s cubic-bezier(0.65, 0, 0.2, 1);
-}
-.gnav-toggle[data-theme="dark"] .gnav-toggle-thumb {
-  transform: translateX(calc(var(--tw) - var(--tk) - var(--pad) * 2 - 2px));
-}
-.gnav-ico { position: absolute; width: 11px; height: 11px; transition: opacity 0.3s, transform 0.35s; }
-.gnav-ico-moon { opacity: 0; transform: rotate(-40deg) scale(0.6); }
-.gnav-toggle[data-theme="dark"] .gnav-ico-sun  { opacity: 0; transform: rotate(40deg) scale(0.6); }
-.gnav-toggle[data-theme="dark"] .gnav-ico-moon { opacity: 1; transform: none; }
-
 /* mobile – everything stays visible: logo, all links, Contact and the switch */
 @media (max-width: 640px) {
   .gnav-wrap.is-scrolled { padding: 6px 8px 0; }
@@ -344,8 +285,6 @@ button, a {
   .gnav-cta  { padding: 9px 0.55em; }
 
   .gnav-end { gap: 6px; }
-  .gnav-toggle { --tw: 40px; --th: 22px; --tk: 16px; --pad: 3px; }
-  .gnav-ico { width: 10px; height: 10px; }
 }
 @media (max-width: 380px) {
   .gnav-link { padding: 7px 0.36em; }
@@ -355,7 +294,7 @@ button, a {
 
 @media (prefers-reduced-motion: reduce) {
   .gnav-wrap, .gnav, .gnav-glass, .gnav-links, .gnav-link, .gnav-cta, .gnav-logo,
-  .gnav-brand, .gnav-toggle-thumb, .gnav-ico, body { transition: none; }
+  .gnav-brand, body { transition: none; }
 }
 
 .logo-gradient {
@@ -457,17 +396,7 @@ button, a {
 
 /* navbar-glass-v4: exact "Glass" capsule (design 1) ───────────────────────── */
 
-.gnav-wrap[data-theme="dark"] {
-  --ng-tx: #F2EFEA;
-  --ng-bg: #121212;
-  --ng-mu: rgba(242, 239, 234, 0.62);
-  --ng-chip: rgba(242, 239, 234, 0.09);
-  --ng-gl: rgba(30, 29, 28, 0.55);
-  --ng-edge: rgba(242, 239, 234, 0.11);
-  --ng-hi: rgba(255, 255, 255, 0.08);
-  --ng-shadow: rgba(0, 0, 0, 0.5);
-}
-.gnav-wrap[data-theme="light"] {
+.gnav-wrap {
   --ng-tx: #141414;
   --ng-bg: #F6F5F2;
   --ng-mu: rgba(20, 20, 20, 0.58);
@@ -479,11 +408,11 @@ button, a {
 }
 
 /* floating, centered, always a capsule */
-.gnav-wrap[data-theme].is-scrolled { padding: 16px 12px 0; }
+.gnav-wrap.is-scrolled { padding: 16px 12px 0; }
 
 /* navbar-responsive-minwidth-patch */
 /* navbar-center-links-patch */
-.gnav-wrap[data-theme].is-scrolled .gnav {
+.gnav-wrap.is-scrolled .gnav {
   width: auto;
   min-width: min(760px, calc(100vw - 24px));
   max-width: 100%;
@@ -503,46 +432,36 @@ button, a {
 }
 
 /* the capsule is plain CSS glass now, so the SVG liquid-glass layer is not needed */
-.gnav-wrap[data-theme].is-scrolled .gnav-glass { display: none; }
+.gnav-wrap.is-scrolled .gnav-glass { display: none; }
 
 /* logo: same size as the static bar's scrolled state — only the hairline ring color is themed */
-.gnav-wrap[data-theme].is-scrolled .gnav-logo { box-shadow: 0 0 0 1px var(--ng-edge); }
+.gnav-wrap.is-scrolled .gnav-logo { box-shadow: 0 0 0 1px var(--ng-edge); }
 
 /* links: same layout/sizing as the static bar's scrolled state — only colors are themed */
-.gnav-wrap[data-theme].is-scrolled .gnav-link {
+.gnav-wrap.is-scrolled .gnav-link {
   color: var(--ng-mu);
 }
-.gnav-wrap[data-theme].is-scrolled .gnav-link:hover {
+.gnav-wrap.is-scrolled .gnav-link:hover {
   color: var(--ng-tx);
   background: var(--ng-chip);
 }
-.gnav-wrap[data-theme].is-scrolled .gnav-link.on {
+.gnav-wrap.is-scrolled .gnav-link.on {
   color: var(--ng-tx);
   background: var(--ng-chip);
-}
-
-/* theme toggle: same swipe-switch layout as the static bar — only recolored */
-.gnav-wrap[data-theme].is-scrolled .gnav-toggle {
-  border-color: var(--ng-edge);
-  background: var(--ng-chip);
-}
-.gnav-wrap[data-theme].is-scrolled .gnav-toggle-thumb {
-  background: var(--ng-tx);
-  color: var(--ng-bg);
 }
 
 /* Contact CTA: same layout/sizing as the static bar's scrolled state — only recolored */
-.gnav-wrap[data-theme].is-scrolled .gnav-cta {
+.gnav-wrap.is-scrolled .gnav-cta {
   background: var(--ng-tx);
   color: var(--ng-bg);
 }
-.gnav-wrap[data-theme].is-scrolled .gnav-cta:hover { opacity: 0.88; }
+.gnav-wrap.is-scrolled .gnav-cta:hover { opacity: 0.88; }
 
 /* phones: same capsule design, but same layout/sizing as the static bar's own
    mobile rules (see the un-themed @media (max-width: 640px) block above) */
 @media (max-width: 640px) {
-  .gnav-wrap[data-theme].is-scrolled { padding: 6px 8px 0; }
-  .gnav-wrap[data-theme].is-scrolled .gnav { width: 100%; min-width: 0; }
+  .gnav-wrap.is-scrolled { padding: 6px 8px 0; }
+  .gnav-wrap.is-scrolled .gnav { width: 100%; min-width: 0; }
 }
 /* end navbar-glass-v4 */
 /* navbar-static-layout-floating-design-patch */
@@ -557,11 +476,11 @@ button, a {
 
 /* bar -> capsule: this is the rule the browser uses while scrolling DOWN,
    because a transition always follows the destination state's rule. */
-.gnav-wrap[data-theme].is-scrolled {
+.gnav-wrap.is-scrolled {
   padding: 16px 12px 0;
   transition: padding var(--gn-spring-dur) var(--gn-spring);
 }
-.gnav-wrap[data-theme].is-scrolled .gnav {
+.gnav-wrap.is-scrolled .gnav {
   /* explicit width (was auto) so it can animate; max-width: 100% keeps it
      inside the viewport on narrow screens */
   width: 760px;
@@ -581,12 +500,12 @@ button, a {
 
 /* phones: same layout as before (full width), only the spring on the gap */
 @media (max-width: 640px) {
-  .gnav-wrap[data-theme].is-scrolled { padding: 6px 8px 0; }
-  .gnav-wrap[data-theme].is-scrolled .gnav { width: 100%; min-width: 0; }
+  .gnav-wrap.is-scrolled { padding: 6px 8px 0; }
+  .gnav-wrap.is-scrolled .gnav { width: 100%; min-width: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .gnav-wrap[data-theme].is-scrolled,
-  .gnav-wrap[data-theme].is-scrolled .gnav { transition: none; }
+  .gnav-wrap.is-scrolled,
+  .gnav-wrap.is-scrolled .gnav { transition: none; }
 }
 /* end navbar-spring-morph-patch */

@@ -40,16 +40,6 @@ import { VscVscode } from "react-icons/vsc";
 
 const E = [0.25, 1, 0.25, 1];
 
-const DARK = {
-  bg: "#121212",
-  surface: "#1C1B1A",
-  text: "#F2EFEA",
-  muted: "#9A958D",
-  accent: "#FF6A4D",
-  accent2: "#C9A66B",
-  border: "rgba(242,239,234,0.16)",
-};
-
 const LIGHT = {
   bg: "#F6F5F2",
   surface: "#EAE6DF",
@@ -59,8 +49,6 @@ const LIGHT = {
   accent2: "#C9A66B",
   border: "rgba(20,20,20,0.14)",
 };
-
-const THEME_KEY = "bycarlo-theme";
 
 function interpolateHex(c1, c2, t) {
   const clamp = (v) => Math.max(0, Math.min(255, Math.round(v)));
@@ -131,66 +119,19 @@ function useIsMobile() {
   return isMobile;
 }
 
-/* ── ThemeToggle – light / dark switch (tap it, or swipe it left / right) ── */
-function ThemeToggle({ theme, onChange }) {
-  const startX = useRef(null);
-  const swiped = useRef(false);
-  const isDark = theme === "dark";
-
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={isDark}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      className="gnav-toggle"
-      data-theme={theme}
-      onPointerDown={(e) => {
-        startX.current = e.clientX;
-        swiped.current = false;
-        try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
-      }}
-      onPointerUp={(e) => {
-        if (startX.current === null) return;
-        const dx = e.clientX - startX.current;
-        startX.current = null;
-        if (Math.abs(dx) > 10) {
-          swiped.current = true;
-          onChange(dx > 0 ? "dark" : "light");
-        }
-      }}
-      onPointerCancel={() => { startX.current = null; }}
-      onClick={() => {
-        if (swiped.current) { swiped.current = false; return; }
-        onChange(isDark ? "light" : "dark");
-      }}
-    >
-      <span className="gnav-toggle-thumb" aria-hidden="true">
-        <svg className="gnav-ico gnav-ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
-        </svg>
-        <svg className="gnav-ico gnav-ico-moon" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5a.6.6 0 0 0-.8-.7A9.5 9.5 0 1 0 21.2 15a.6.6 0 0 0-.7-.8z" />
-        </svg>
-      </span>
-    </button>
-  );
-}
-
 /* ── GlassNavbar – compact, flush at the top, glass capsule on scroll ── */
-function GlassNavbar({ themeProgress, theme, onThemeChange }) {
+function GlassNavbar() {
   const [active, setActive] = useState("");
   const [scrolled, setScrolled] = useState(false);
 
-  // Colors follow the theme through the same eased motion value as the sections
-  const ink    = useTransform(themeProgress, [0, 1], ["#F2EFEA", "#141414"]);
-  const muted  = useTransform(themeProgress, [0, 1], ["rgba(242,239,234,0.65)", "rgba(20,20,20,0.60)"]);
-  const glass  = useTransform(themeProgress, [0, 1], ["rgba(18,18,18,0.62)", "rgba(246,245,242,0.72)"]);
-  const line   = useTransform(themeProgress, [0, 1], ["rgba(242,239,234,0.16)", "rgba(20,20,20,0.12)"]);
-  const chip   = useTransform(themeProgress, [0, 1], ["rgba(242,239,234,0.12)", "rgba(20,20,20,0.08)"]);
-  const ctaFg  = useTransform(themeProgress, [0, 1], ["#121212", "#F6F5F2"]);
-  const accent = useTransform(themeProgress, [0, 1], ["#FF6A4D", "#CC3419"]);
+  // Light-mode colors
+  const ink    = "#141414";
+  const muted  = "rgba(20,20,20,0.60)";
+  const glass  = "rgba(246,245,242,0.72)";
+  const line   = "rgba(20,20,20,0.12)";
+  const chip   = "rgba(20,20,20,0.08)";
+  const ctaFg  = "#F6F5F2";
+  const accent = "#CC3419";
 
   useEffect(() => {
     const onScroll = () => {
@@ -207,7 +148,7 @@ function GlassNavbar({ themeProgress, theme, onThemeChange }) {
   }, []);
 
   return (
-    <div className={"gnav-wrap" + (scrolled ? " is-scrolled" : "")} data-theme={theme}>
+    <div className={"gnav-wrap" + (scrolled ? " is-scrolled" : "")}>
       <motion.nav
         className="gnav"
         aria-label="Primary"
@@ -244,9 +185,7 @@ function GlassNavbar({ themeProgress, theme, onThemeChange }) {
           aria-label="byCarlo, back to top"
           onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
         >
-          {/* light mode -> bcdlogo.png, dark mode -> bcwlogo.png (both preloaded, cross-faded) */}
           <img src="/png/bcdlogo.png" alt="" width={26} height={26} className="gnav-logo gnav-logo-light" draggable={false} />
-          <img src="/png/bcwlogo.png" alt="" width={26} height={26} className="gnav-logo gnav-logo-dark" draggable={false} />
         </a>
 
         <div className="gnav-links">
@@ -264,7 +203,6 @@ function GlassNavbar({ themeProgress, theme, onThemeChange }) {
 
         <div className="gnav-end">
           <a href="#contact" className="gnav-cta">Contact</a>
-          <ThemeToggle theme={theme} onChange={onThemeChange} />
         </div>
       </motion.nav>
     </div>
@@ -323,14 +261,11 @@ function Cursor() {
 }
 
 /* ── Device Mockup ───────────────────────────────── */
-function DeviceMockup({ accent, themeProgress, isMobile }) {
+function DeviceMockup({ accent, isMobile }) {
   const acc = accent || "#CC3419";
-  const frameBg = useTransform(themeProgress, [0, 1], [DARK.surface, LIGHT.surface]);
-  const screenBg = useTransform(themeProgress, [0, 1], [DARK.bg, LIGHT.bg]);
-  const barColor = useTransform(themeProgress, [0, 1], [
-    "rgba(255,255,255,0.12)",
-    "rgba(0,0,0,0.05)",
-  ]);
+  const frameBg = LIGHT.surface;
+  const screenBg = LIGHT.bg;
+  const barColor = "rgba(0,0,0,0.05)";
 
   return (
     <div className="mt-6 mb-12">
@@ -372,15 +307,15 @@ function DeviceMockup({ accent, themeProgress, isMobile }) {
   );
 }
 
-/* ── Hero (always dark) ──────────────────────────── */
-function Hero({ globalProgress, themeProgress, isMobile }) {
+/* ── Hero ────────────────────────────────────────── */
+function Hero({ globalProgress, isMobile }) {
   const heroVars = {
-    "--h-text":    useTransform(themeProgress, [0, 1], [DARK.text, LIGHT.text]),
-    "--h-muted":   useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]),
-    "--h-accent":  useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]),
-    "--h-accent2": useTransform(themeProgress, [0, 1], [DARK.accent2, LIGHT.accent2]),
-    "--h-border":  useTransform(themeProgress, [0, 1], [DARK.border, LIGHT.border]),
-    "--h-on-accent": useTransform(themeProgress, [0, 1], [DARK.bg, LIGHT.bg]),
+    "--h-text":    LIGHT.text,
+    "--h-muted":   LIGHT.muted,
+    "--h-accent":  LIGHT.accent,
+    "--h-accent2": LIGHT.accent2,
+    "--h-border":  LIGHT.border,
+    "--h-on-accent": LIGHT.bg,
   };
   const ref = useRef(null);
   const [, setMouse] = useState({ x: 0.5, y: 0.5 });
@@ -444,14 +379,14 @@ function Hero({ globalProgress, themeProgress, isMobile }) {
 }
 
 /* ── Projects (transparent background) ───────────── */
-function Projects({ globalProgress, themeProgress, isMobile }) {
+function Projects({ globalProgress, isMobile }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
 
-  const textColor = useTransform(themeProgress, [0, 1], [DARK.text, LIGHT.text]);
-  const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
-  const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
-  const borderColor = useTransform(themeProgress, [0, 1], [DARK.border, LIGHT.border]);
+  const textColor = LIGHT.text;
+  const mutedColor = LIGHT.muted;
+  const accentColor = LIGHT.accent;
+  const borderColor = LIGHT.border;
 
   return (
     <motion.section
@@ -480,7 +415,7 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
             transition={{ delay: i * 0.15 + 0.3, duration: 0.8, ease: E }}
             className="group"
           >
-            <DeviceMockup accent={p.colorAccent} themeProgress={themeProgress} isMobile={isMobile} />
+            <DeviceMockup accent={p.colorAccent} isMobile={isMobile} />
             <div>
               <div className="flex items-center justify-between">
                 <motion.span className="text-[13px] font-medium" style={{ color: accentColor }}>
@@ -520,8 +455,8 @@ function Projects({ globalProgress, themeProgress, isMobile }) {
 
 
 /* ── Icon coloring ─────────────────────────────────
-   false = every icon follows the theme (light text in dark mode, dark text in light mode)
-   true  = keep each icon's brand color, but near-black brand icons still follow the theme */
+   false = every icon uses the site text color
+   true  = keep each icon's brand color, but near-black brand icons still use the site text color */
 const KEEP_BRAND_COLORS = false;
 const NEAR_BLACK_BRANDS = ["#000000", "#181717"];
 
@@ -610,7 +545,7 @@ const TECH_CATEGORIES = [
   },
 ];
 
-/* ── Tech Stack (theme-aware, RubberSegment-style tabs) ─ */
+/* ── Tech Stack (RubberSegment-style tabs) ─ */
 const RUBBER_EASE_OUT = [0.23, 1, 0.32, 1];
 const RUBBER_SPRING_UI = { type: "spring", duration: 0.3, bounce: 0 };
 const RUBBER_SPRING_MOMENTUM = { type: "spring", duration: 0.4, bounce: 0.2 };
@@ -651,7 +586,7 @@ const ICON3D_THICKNESS = 0.36;  // total thickness as a fraction of the icon siz
 const ICON3D_STAGGER_MS = 70;   // delay between icons when the category changes
 const ICON3D_SIZE = 39;         // icon size in px (was 30, now 1.3x bigger)
 
-// Colors come from CSS variables set on the icon grid, so they follow the theme live:
+// Colors come from CSS variables set on the icon grid:
 //   --ic-face (front), --ic-a (side next to the face) -> --ic-b (back of the icon)
 function Icon3D({ Icon, logo, brand, scale = 1, size = ICON3D_SIZE, autoSpin = false, index = 0 }) {
   // one turn per hover (mouse) or tap (touch); ignored while it is already turning
@@ -705,7 +640,7 @@ function Icon3D({ Icon, logo, brand, scale = 1, size = ICON3D_SIZE, autoSpin = f
   );
 }
 
-function TechStack({ themeProgress }) {
+function TechStack() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
   const [active, setActive] = useState(0);
@@ -729,20 +664,18 @@ function TechStack({ themeProgress }) {
   const edgeR = useMotionValue(0);
   const innerW = useMotionValue(0);
 
-  const textColor = useTransform(themeProgress, [0, 1], [DARK.text, LIGHT.text]);
-  const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
-  const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
-  const borderColor = useTransform(themeProgress, [0, 1], [DARK.border, LIGHT.border]);
-  // Matches the original RubberSegment CSS variables 1:1, swapped per theme:
-  // light mode = --rs-track:#27272a / --rs-thumb:#fafafa (dark track, light thumb)
-  // dark mode  = inverted, so the pill still reads clearly against a dark page.
-  const trackBg = useTransform(themeProgress, [0, 1], ["#2A2826", "#E4DFD6"]);
-  const thumbBg = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
-  const inkIdle = useTransform(themeProgress, [0, 1], ["#F6F5F2", "#141414"]); // --rs-ink, opacity 0.7 in CSS
-  const inkActive = useTransform(themeProgress, [0, 1], [DARK.bg, LIGHT.bg]); // --rs-ink-active, full opacity
-  // 3D icon colors (face = site text color, thickness = site gray tones), all theme-live
-  const iconSideA = useTransform(themeProgress, [0, 1], ["rgb(189,189,189)", "rgb(85,85,85)"]);
-  const iconSideB = useTransform(themeProgress, [0, 1], ["rgb(96,96,96)", "rgb(170,170,170)"]);
+  const textColor = LIGHT.text;
+  const mutedColor = LIGHT.muted;
+  const accentColor = LIGHT.accent;
+  const borderColor = LIGHT.border;
+  // Matches the original RubberSegment CSS variables (dark track, light thumb)
+  const trackBg = "#E4DFD6";
+  const thumbBg = LIGHT.accent;
+  const inkIdle = "#141414"; // --rs-ink, opacity 0.7 in CSS
+  const inkActive = LIGHT.bg; // --rs-ink-active, full opacity
+  // 3D icon colors (face = site text color, thickness = site gray tones)
+  const iconSideA = "rgb(85,85,85)";
+  const iconSideB = "rgb(170,170,170)";
   const clipPath = useTransform(
     () => `inset(0 ${Math.max(0, innerW.get() - edgeR.get())}px 0 ${Math.max(0, edgeL.get())}px round 10px)`
   );
@@ -1043,7 +976,7 @@ function TechStack({ themeProgress }) {
         >
           {current.tools.map((tool, toolIndex) => (
             <div key={tool.name} className="flex flex-col items-center gap-3 w-[30%] max-w-[110px]">
-              {/* 3D icon, no box around it; colors follow the theme live */}
+              {/* 3D icon, no box around it; */}
               <Icon3D
                 Icon={tool.Icon}
                 size={ICON3D_SIZE}
@@ -1063,11 +996,11 @@ function TechStack({ themeProgress }) {
 }
 
 /* ── Manifesto (transparent background) ──────────── */
-function Manifesto({ globalProgress, manifestoRef, themeProgress, isMobile }) {
+function Manifesto({ globalProgress, manifestoRef, isMobile }) {
   const inView = useInView(manifestoRef, { once: true, margin: "-5%" });
-  const textColor = useTransform(themeProgress, [0, 1], [DARK.text, LIGHT.text]);
-  const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
-  const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
+  const textColor = LIGHT.text;
+  const accentColor = LIGHT.accent;
+  const mutedColor = LIGHT.muted;
 
   const lines = [
     "One developer,",
@@ -1116,12 +1049,12 @@ function Manifesto({ globalProgress, manifestoRef, themeProgress, isMobile }) {
 }
 
 /* ── Story / About (transparent) ───────────────────── */
-function Story({ themeProgress }) {
+function Story() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
-  const textColor = useTransform(themeProgress, [0, 1], [DARK.text, LIGHT.text]);
-  const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
-  const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
+  const textColor = LIGHT.text;
+  const mutedColor = LIGHT.muted;
+  const accentColor = LIGHT.accent;
 
   return (
     <motion.section ref={ref} id="about" className="py-28 md:py-44 px-6 md:px-20 theme-section">
@@ -1160,8 +1093,8 @@ function Story({ themeProgress }) {
             className="text-center p-4 rounded-xl"
             style={{
               border: "1px solid",
-              borderColor: useTransform(themeProgress, [0, 1], [DARK.border, LIGHT.border]),
-              backgroundColor: useTransform(themeProgress, [0, 1], [DARK.bg, LIGHT.bg]),
+              borderColor: LIGHT.border,
+              backgroundColor: LIGHT.bg,
             }}
             initial={{ opacity: 0, y: 30 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -1177,15 +1110,15 @@ function Story({ themeProgress }) {
 }
 
 /* ── Testimonials (transparent background) ────────── */
-function Testimonials({ themeProgress }) {
+function Testimonials() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
   const [active, setActive] = useState(0);
   const t = TESTIMONIALS[active];
-  const dotIdle = useTransform(themeProgress, [0, 1], ["rgba(255,255,255,0.22)", "rgba(0,0,0,0.14)"]);
-  const textColor = useTransform(themeProgress, [0, 1], [DARK.text, LIGHT.text]);
-  const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
-  const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
+  const dotIdle = "rgba(0,0,0,0.14)";
+  const textColor = LIGHT.text;
+  const mutedColor = LIGHT.muted;
+  const accentColor = LIGHT.accent;
 
   const { scrollYProgress: tScroll } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const quoteY = useTransform(tScroll, [0, 1], [40, -40]);
@@ -1243,12 +1176,12 @@ function Testimonials({ themeProgress }) {
 }
 
 /* ── Contact (transparent background) ────────────── */
-function Contact({ themeProgress, isMobile }) {
+function Contact({ isMobile }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
-  const textColor = useTransform(themeProgress, [0, 1], [DARK.text, LIGHT.text]);
-  const accentColor = useTransform(themeProgress, [0, 1], [DARK.accent, LIGHT.accent]);
-  const mutedColor = useTransform(themeProgress, [0, 1], [DARK.muted, LIGHT.muted]);
+  const textColor = LIGHT.text;
+  const accentColor = LIGHT.accent;
+  const mutedColor = LIGHT.muted;
 
   return (
     <motion.section ref={ref} id="contact" className="py-28 md:py-44 px-6 md:px-20 theme-section">
@@ -1288,7 +1221,7 @@ function Contact({ themeProgress, isMobile }) {
   );
 }
 
-/* ── Page root – manual light / dark theme ──────── */
+/* ── Page root ───────────────────────────────────── */
 export default function Page() {
   const manifestoRef = useRef(null);
   const containerRef = useRef(null);
@@ -1305,42 +1238,18 @@ export default function Page() {
     mass: 0.2,
   });
 
-  // 1 = light (default), 0 = dark. Every section already reads colors from this value.
-  const themeProgress = useMotionValue(1);
-  const [theme, setTheme] = useState("light");
-
-  const applyTheme = useCallback((next, instant) => {
-    setTheme(next);
-    document.documentElement.dataset.theme = next;
-    const target = next === "light" ? 1 : 0;
-    if (instant) themeProgress.jump(target);
-    else animate(themeProgress, target, { duration: 0.45, ease: "easeInOut" });
-  }, [themeProgress]);
-
-  const handleThemeChange = useCallback((next) => {
-    applyTheme(next, false);
-    try { localStorage.setItem(THEME_KEY, next); } catch {}
-  }, [applyTheme]);
-
-  // restore the visitor's last choice (first visit = light)
-  useLayoutEffect(() => {
-    let saved = null;
-    try { saved = localStorage.getItem(THEME_KEY); } catch {}
-    applyTheme(saved === "dark" ? "dark" : "light", true);
-  }, [applyTheme]);
-
   return (
     <>
       <Cursor />
-      <GlassNavbar themeProgress={themeProgress} theme={theme} onThemeChange={handleThemeChange} />
+      <GlassNavbar />
       <main ref={containerRef} style={{ position: "relative", zIndex: 10 }}>
-        <Hero globalProgress={globalProgress} themeProgress={themeProgress} isMobile={isMobile} />
-        <Projects globalProgress={globalProgress} themeProgress={themeProgress} isMobile={isMobile} />
-        <TechStack themeProgress={themeProgress} />
-        <Manifesto globalProgress={globalProgress} manifestoRef={manifestoRef} themeProgress={themeProgress} isMobile={isMobile} />
-        <Story themeProgress={themeProgress} />
-        <Testimonials themeProgress={themeProgress} />
-        <Contact themeProgress={themeProgress} isMobile={isMobile} />
+        <Hero globalProgress={globalProgress} isMobile={isMobile} />
+        <Projects globalProgress={globalProgress} isMobile={isMobile} />
+        <TechStack />
+        <Manifesto globalProgress={globalProgress} manifestoRef={manifestoRef} isMobile={isMobile} />
+        <Story />
+        <Testimonials />
+        <Contact isMobile={isMobile} />
       </main>
     </>
   );
