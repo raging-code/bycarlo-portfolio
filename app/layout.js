@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Titillium_Web } from "next/font/google";
+import IntroAnimation from "./IntroAnimation";
 
 const titilliumWeb = Titillium_Web({
   subsets: ["latin"],
@@ -42,7 +43,8 @@ export default function RootLayout({ children }) {
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
       </head>
-      <body>{children}</body>
+      <body>
+        <IntroAnimation />{children}</body>
     </html>
   );
 }
