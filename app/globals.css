@@ -482,11 +482,12 @@ button, a {
 .gnav-wrap[data-theme].is-scrolled { padding: 16px 12px 0; }
 
 /* navbar-responsive-minwidth-patch */
+/* navbar-center-links-patch */
 .gnav-wrap[data-theme].is-scrolled .gnav {
   width: auto;
   min-width: min(760px, calc(100vw - 24px));
   max-width: 100%;
-  justify-content: flex-start;
+  justify-content: space-between;
   gap: 2px;
   padding: 5px 5px 5px 7px;
   border-radius: 999px;
@@ -514,7 +515,8 @@ button, a {
 
 /* links */
 .gnav-wrap[data-theme].is-scrolled .gnav-links {
-  flex: none;
+  flex: 1;
+  justify-content: center;
   gap: 2px;
 }
 .gnav-wrap[data-theme].is-scrolled .gnav-link {
