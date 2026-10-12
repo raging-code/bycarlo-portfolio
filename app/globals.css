@@ -505,121 +505,44 @@ button, a {
 /* the capsule is plain CSS glass now, so the SVG liquid-glass layer is not needed */
 .gnav-wrap[data-theme].is-scrolled .gnav-glass { display: none; }
 
-/* logo: 30px circle with a hairline ring */
-.gnav-wrap[data-theme].is-scrolled .gnav-brand {
-  width: 30px;
-  height: 30px;
-  margin: 0 6px 0 0;
-}
+/* logo: same size as the static bar's scrolled state — only the hairline ring color is themed */
 .gnav-wrap[data-theme].is-scrolled .gnav-logo { box-shadow: 0 0 0 1px var(--ng-edge); }
 
-/* links */
-.gnav-wrap[data-theme].is-scrolled .gnav-links {
-  flex: 1;
-  justify-content: center;
-  gap: 2px;
-}
+/* links: same layout/sizing as the static bar's scrolled state — only colors are themed */
 .gnav-wrap[data-theme].is-scrolled .gnav-link {
-  padding: 8px 13px;
-  border-radius: 999px;
-  font-size: 12.5px;
-  font-weight: 500;
-  letter-spacing: 0.005em;
-  line-height: 1.5;
   color: var(--ng-mu);
-  box-shadow: none;
-  background: transparent;
-  transition: background-color 0.3s, color 0.3s;
 }
 .gnav-wrap[data-theme].is-scrolled .gnav-link:hover {
   color: var(--ng-tx);
   background: var(--ng-chip);
 }
-/* active link: soft chip with a highlight on its top edge, no dot */
 .gnav-wrap[data-theme].is-scrolled .gnav-link.on {
   color: var(--ng-tx);
   background: var(--ng-chip);
-  border-radius: 999px;
-  box-shadow: inset 0 1px 0 var(--ng-hi);
 }
 
-/* right side: icon button first, then Contact */
-.gnav-wrap[data-theme].is-scrolled .gnav-end { gap: 0; }
-
+/* theme toggle: same swipe-switch layout as the static bar — only recolored */
 .gnav-wrap[data-theme].is-scrolled .gnav-toggle {
-  order: -1;
-  --tw: 30px; --th: 30px;
-  width: 30px;
-  height: 30px;
-  margin: 0 4px 0 6px;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--ng-tx);
-  transition: background-color 0.3s;
+  border-color: var(--ng-edge);
+  background: var(--ng-chip);
 }
-.gnav-wrap[data-theme].is-scrolled .gnav-toggle:hover { background: var(--ng-chip); }
 .gnav-wrap[data-theme].is-scrolled .gnav-toggle-thumb {
-  position: relative;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  background: transparent;
-  color: var(--ng-tx);
-  transform: none !important;
-}
-.gnav-wrap[data-theme].is-scrolled .gnav-ico { width: 15px; height: 15px; }
-.gnav-wrap[data-theme].is-scrolled .gnav-ico-sun { stroke-width: 1.7; }
-.gnav-wrap[data-theme].is-scrolled .gnav-ico-moon {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.7;
-  stroke-linejoin: round;
-}
-
-.gnav-wrap[data-theme].is-scrolled .gnav-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 8px 14px;
-  border: 0;
-  border-radius: 999px;
   background: var(--ng-tx);
   color: var(--ng-bg);
-  font-size: 12.5px;
-  font-weight: 500;
-  line-height: 1.5;
-  transition: background-color 0.4s, color 0.4s, opacity 0.25s;
 }
-.gnav-wrap[data-theme].is-scrolled .gnav-cta::after { content: "\2197"; }
+
+/* Contact CTA: same layout/sizing as the static bar's scrolled state — only recolored */
+.gnav-wrap[data-theme].is-scrolled .gnav-cta {
+  background: var(--ng-tx);
+  color: var(--ng-bg);
+}
 .gnav-wrap[data-theme].is-scrolled .gnav-cta:hover { opacity: 0.88; }
 
-/* phones: same capsule, sized to the screen so everything still fits (320px and up) */
+/* phones: same capsule design, but same layout/sizing as the static bar's own
+   mobile rules (see the un-themed @media (max-width: 640px) block above) */
 @media (max-width: 640px) {
   .gnav-wrap[data-theme].is-scrolled { padding: 6px 8px 0; }
-  .gnav-wrap[data-theme].is-scrolled .gnav { width: auto; min-width: 0; padding: 3px 3px 3px 5px; }
-  .gnav-wrap[data-theme].is-scrolled .gnav-brand { width: 22px; height: 22px; margin-right: 3px; }
-  .gnav-wrap[data-theme].is-scrolled .gnav-links { flex: none; overflow: visible; gap: 1px; }
-  .gnav-wrap[data-theme].is-scrolled .gnav-link {
-    font-size: clamp(9.5px, 2.9vw, 12px);
-    padding: 5px 0.55em;
-  }
-  .gnav-wrap[data-theme].is-scrolled .gnav-cta {
-    font-size: clamp(9.5px, 2.9vw, 12px);
-    padding: 5px 0.75em;
-    gap: 0.3em;
-  }
-  .gnav-wrap[data-theme].is-scrolled .gnav-toggle {
-    --tw: 24px; --th: 24px;
-    width: 24px;
-    height: 24px;
-    margin: 0 2px 0 3px;
-  }
-  .gnav-wrap[data-theme].is-scrolled .gnav-ico { width: 12px; height: 12px; }
-}
-@media (max-width: 359px) {
-  .gnav-wrap[data-theme].is-scrolled .gnav-cta::after { display: none; }
+  .gnav-wrap[data-theme].is-scrolled .gnav { width: 100%; min-width: 0; }
 }
 /* end navbar-glass-v4 */
+/* navbar-static-layout-floating-design-patch */
