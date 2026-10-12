@@ -546,3 +546,47 @@ button, a {
 }
 /* end navbar-glass-v4 */
 /* navbar-static-layout-floating-design-patch */
+
+/* navbar-spring-morph-patch */
+/* Spring morph: full-width bar -> floating capsule with a small bounce.
+   Tweak --gn-spring (more overshoot = bigger 2nd number) and --gn-spring-dur. */
+.gnav-wrap {
+  --gn-spring: cubic-bezier(0.34, 1.45, 0.5, 1);
+  --gn-spring-dur: 0.85s;
+}
+
+/* bar -> capsule: this is the rule the browser uses while scrolling DOWN,
+   because a transition always follows the destination state's rule. */
+.gnav-wrap[data-theme].is-scrolled {
+  padding: 16px 12px 0;
+  transition: padding var(--gn-spring-dur) var(--gn-spring);
+}
+.gnav-wrap[data-theme].is-scrolled .gnav {
+  /* explicit width (was auto) so it can animate; max-width: 100% keeps it
+     inside the viewport on narrow screens */
+  width: 760px;
+  min-width: 0;
+  transition:
+    width var(--gn-spring-dur) var(--gn-spring),
+    padding var(--gn-spring-dur) var(--gn-spring),
+    border-radius 0.5s ease-out,
+    background-color 0.4s,
+    border-color 0.4s,
+    box-shadow 0.6s ease-out;
+}
+
+/* capsule -> bar (scrolling back to the top) keeps the existing calm
+   ease from the base .gnav-wrap / .gnav rules: no overshoot, so the bar
+   never pokes past the screen edges. */
+
+/* phones: same layout as before (full width), only the spring on the gap */
+@media (max-width: 640px) {
+  .gnav-wrap[data-theme].is-scrolled { padding: 6px 8px 0; }
+  .gnav-wrap[data-theme].is-scrolled .gnav { width: 100%; min-width: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gnav-wrap[data-theme].is-scrolled,
+  .gnav-wrap[data-theme].is-scrolled .gnav { transition: none; }
+}
+/* end navbar-spring-morph-patch */

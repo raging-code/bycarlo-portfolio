@@ -194,7 +194,7 @@ function GlassNavbar({ themeProgress, theme, onThemeChange }) {
 
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > 24);
+      setScrolled((prev) => (prev ? window.scrollY > 6 : window.scrollY > 24)); // spring-morph: hysteresis
       let current = "";
       document.querySelectorAll("section[id]").forEach((s) => {
         if (s.getBoundingClientRect().top < window.innerHeight / 2) current = s.id;
