@@ -454,77 +454,167 @@ button, a {
   mask-size: contain;
 }
 
+/* navbar-glass-v4: exact "Glass" capsule (design 1) ───────────────────────── */
 
-/* navbar-glass-v3: refined floating glass capsule (scrolled state) ─────────────── */
-
-/* edge / highlight / shadow tokens, follow the site theme switch */
 .gnav-wrap[data-theme="dark"] {
-  --gn-edge: rgba(242, 239, 234, 0.11);
-  --gn-hi: rgba(255, 255, 255, 0.08);
-  --gn-shadow: rgba(0, 0, 0, 0.5);
+  --ng-tx: #F2EFEA;
+  --ng-bg: #121212;
+  --ng-mu: rgba(242, 239, 234, 0.62);
+  --ng-chip: rgba(242, 239, 234, 0.09);
+  --ng-gl: rgba(30, 29, 28, 0.55);
+  --ng-edge: rgba(242, 239, 234, 0.11);
+  --ng-hi: rgba(255, 255, 255, 0.08);
+  --ng-shadow: rgba(0, 0, 0, 0.5);
 }
 .gnav-wrap[data-theme="light"] {
-  --gn-edge: rgba(20, 20, 20, 0.1);
-  --gn-hi: rgba(255, 255, 255, 0.9);
-  --gn-shadow: rgba(40, 30, 20, 0.14);
+  --ng-tx: #141414;
+  --ng-bg: #F6F5F2;
+  --ng-mu: rgba(20, 20, 20, 0.58);
+  --ng-chip: rgba(20, 20, 20, 0.06);
+  --ng-gl: rgba(250, 249, 246, 0.6);
+  --ng-edge: rgba(20, 20, 20, 0.1);
+  --ng-hi: rgba(255, 255, 255, 0.9);
+  --ng-shadow: rgba(40, 30, 20, 0.14);
 }
 
-/* hairline edge, top highlight and soft layered shadow, drawn above the glass */
-.gnav-wrap.is-scrolled .gnav-glass::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border: 1px solid var(--gn-edge);
+/* floating, centered, always a capsule */
+.gnav-wrap[data-theme] { padding: 16px 12px 0; }
+
+.gnav-wrap[data-theme] .gnav {
+  width: auto;
+  max-width: 100%;
+  justify-content: flex-start;
+  gap: 2px;
+  padding: 5px 5px 5px 7px;
+  border-radius: 999px;
+  color: var(--ng-tx);
+  background: var(--ng-gl);
+  border: 1px solid var(--ng-edge);
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  backdrop-filter: blur(18px) saturate(1.5);
   box-shadow:
-    inset 0 1px 0 var(--gn-hi),
-    0 14px 40px var(--gn-shadow);
-  pointer-events: none;
+    inset 0 1px 0 var(--ng-hi),
+    0 14px 40px var(--ng-shadow);
+  transition: background-color 0.4s, border-color 0.4s, box-shadow 0.4s;
 }
 
-/* Safari / Firefox fallback glass: same tint as the capsule, edge comes from ::after */
-.gnav-wrap[data-theme="dark"] .glass-surface--fallback {
-  background: rgba(30, 29, 28, 0.55);
-  border: 0;
+/* the capsule is plain CSS glass now, so the SVG liquid-glass layer is not needed */
+.gnav-wrap[data-theme] .gnav-glass { display: none; }
+
+/* logo: 30px circle with a hairline ring */
+.gnav-wrap[data-theme] .gnav-brand {
+  width: 30px;
+  height: 30px;
+  margin: 0 6px 0 0;
+}
+.gnav-wrap[data-theme] .gnav-logo { box-shadow: 0 0 0 1px var(--ng-edge); }
+
+/* links */
+.gnav-wrap[data-theme] .gnav-links {
+  flex: none;
+  gap: 2px;
+}
+.gnav-wrap[data-theme] .gnav-link {
+  padding: 8px 13px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  line-height: 1.5;
+  color: var(--ng-mu);
   box-shadow: none;
+  background: transparent;
+  transition: background-color 0.3s, color 0.3s;
 }
-.gnav-wrap[data-theme="light"] .glass-surface--fallback {
-  background: rgba(250, 249, 246, 0.6);
+.gnav-wrap[data-theme] .gnav-link:hover {
+  color: var(--ng-tx);
+  background: var(--ng-chip);
+}
+/* active link: soft chip with a highlight on its top edge, no dot */
+.gnav-wrap[data-theme] .gnav-link.on {
+  color: var(--ng-tx);
+  background: var(--ng-chip);
+  border-radius: 999px;
+  box-shadow: inset 0 1px 0 var(--ng-hi);
+}
+
+/* right side: icon button first, then Contact */
+.gnav-wrap[data-theme] .gnav-end { gap: 0; }
+
+.gnav-wrap[data-theme] .gnav-toggle {
+  order: -1;
+  --tw: 30px; --th: 30px;
+  width: 30px;
+  height: 30px;
+  margin: 0 4px 0 6px;
   border: 0;
-  box-shadow: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ng-tx);
+  transition: background-color 0.3s;
+}
+.gnav-wrap[data-theme] .gnav-toggle:hover { background: var(--ng-chip); }
+.gnav-wrap[data-theme] .gnav-toggle-thumb {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  color: var(--ng-tx);
+  transform: none !important;
+}
+.gnav-wrap[data-theme] .gnav-ico { width: 15px; height: 15px; }
+.gnav-wrap[data-theme] .gnav-ico-sun { stroke-width: 1.7; }
+.gnav-wrap[data-theme] .gnav-ico-moon {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linejoin: round;
 }
 
-/* desktop / tablet only, phones keep their own sizing */
-@media (min-width: 641px) {
-  .gnav-wrap.is-scrolled { padding: 14px 10px 0; }
-
-  .gnav-wrap.is-scrolled .gnav {
-    width: 560px;
-    padding: 5px 5px 5px 7px;
-  }
-
-  .gnav-wrap.is-scrolled .gnav-links { gap: 2px; }
-
-  .gnav-wrap.is-scrolled .gnav-link {
-    padding: 9px 14px;
-    font-weight: 500;
-    letter-spacing: 0.005em;
-  }
-
-  /* active link: soft chip with a highlight on its top edge, no dot */
-  .gnav-wrap.is-scrolled .gnav-link.on {
-    background: var(--gn-chip);
-    box-shadow: inset 0 1px 0 var(--gn-hi);
-  }
-
-  .gnav-wrap.is-scrolled .gnav-cta {
-    padding: 9px 15px;
-    font-weight: 500;
-  }
-  .gnav-wrap.is-scrolled .gnav-cta::after {
-    content: "\2197";
-    margin-left: 5px;
-    font-size: 0.95em;
-  }
+.gnav-wrap[data-theme] .gnav-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--ng-tx);
+  color: var(--ng-bg);
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.5;
+  transition: background-color 0.4s, color 0.4s, opacity 0.25s;
 }
-/* end navbar-glass-v3 */
+.gnav-wrap[data-theme] .gnav-cta::after { content: "\2197"; }
+.gnav-wrap[data-theme] .gnav-cta:hover { opacity: 0.88; }
+
+/* phones: same capsule, sized to the screen so everything still fits (320px and up) */
+@media (max-width: 640px) {
+  .gnav-wrap[data-theme] { padding: 10px 8px 0; }
+  .gnav-wrap[data-theme] .gnav { width: auto; padding: 5px 5px 5px 6px; }
+  .gnav-wrap[data-theme] .gnav-brand { width: 28px; height: 28px; margin-right: 4px; }
+  .gnav-wrap[data-theme] .gnav-links { flex: none; overflow: visible; gap: 1px; }
+  .gnav-wrap[data-theme] .gnav-link {
+    font-size: clamp(10px, 3.1vw, 12.5px);
+    padding: 8px 0.65em;
+  }
+  .gnav-wrap[data-theme] .gnav-cta {
+    font-size: clamp(10px, 3.1vw, 12.5px);
+    padding: 8px 0.9em;
+    gap: 0.3em;
+  }
+  .gnav-wrap[data-theme] .gnav-toggle {
+    --tw: 28px; --th: 28px;
+    width: 28px;
+    height: 28px;
+    margin: 0 2px 0 4px;
+  }
+  .gnav-wrap[data-theme] .gnav-ico { width: 14px; height: 14px; }
+}
+@media (max-width: 359px) {
+  .gnav-wrap[data-theme] .gnav-cta::after { display: none; }
+}
+/* end navbar-glass-v4 */
