@@ -45,7 +45,7 @@ const LIGHT = {
   surface: "#EAE6DF",
   text: "#141414",
   muted: "#6B6762",
-  accent: "#CC3419",
+  accent: "#E02B20",
   accent2: "#C9A66B",
   border: "rgba(20,20,20,0.14)",
 };
@@ -67,22 +67,22 @@ const PROJECTS = [
   {
     id: "01", title: "Helix Protocol", cat: "Web3 Platform",
     desc: "A next-gen DeFi dashboard with real-time data visualisation.",
-    tech: ["Solidity", "Next.js", "D3"], live: "#", colorAccent: "#CC3419"
+    tech: ["Solidity", "Next.js", "D3"], live: "#", colorAccent: "#E02B20"
   },
   {
     id: "02", title: "Mirage Events", cat: "Experience Portal",
     desc: "Immersive event microsite blending video and 3D ticketing.",
-    tech: ["Three.js", "GSAP", "Firebase"], live: "#", colorAccent: "#CC3419"
+    tech: ["Three.js", "GSAP", "Firebase"], live: "#", colorAccent: "#E02B20"
   },
   {
     id: "03", title: "Core Studio", cat: "Agency Rebrand",
     desc: "Brutalist portfolio for a creative studio moving into architecture.",
-    tech: ["Tailwind", "Framer Motion", "Storyblok"], live: "#", colorAccent: "#CC3419"
+    tech: ["Tailwind", "Framer Motion", "Storyblok"], live: "#", colorAccent: "#E02B20"
   },
   {
     id: "04", title: "Void Commerce", cat: "Headless Store",
     desc: "Product-first shopping with AI search and zero-click checkout.",
-    tech: ["Medusa", "Algolia", "Astro"], live: "#", colorAccent: "#CC3419"
+    tech: ["Medusa", "Algolia", "Astro"], live: "#", colorAccent: "#E02B20"
   },
 ];
 
@@ -131,7 +131,7 @@ function GlassNavbar() {
   const line   = "rgba(20,20,20,0.12)";
   const chip   = "rgba(20,20,20,0.08)";
   const ctaFg  = "#F6F5F2";
-  const accent = "#CC3419";
+  const accent = "#E02B20";
 
   useEffect(() => {
     const onScroll = () => {
@@ -262,7 +262,7 @@ function Cursor() {
 
 /* ── Device Mockup ───────────────────────────────── */
 function DeviceMockup({ accent, isMobile }) {
-  const acc = accent || "#CC3419";
+  const acc = accent || "#E02B20";
   const frameBg = LIGHT.surface;
   const screenBg = LIGHT.bg;
   const barColor = "rgba(0,0,0,0.05)";

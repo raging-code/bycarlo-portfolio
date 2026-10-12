@@ -10,7 +10,7 @@
   --bg-primary:   #F6F5F2;
   --text-primary: #141414;
   --text-secondary: #6B6762;
-  --accent:       #CC3419;
+  --accent:       #E02B20;
   --accent-2:     #C9A66B;
   --border:       rgba(20,20,20,0.14);
   color-scheme: light;
@@ -296,7 +296,7 @@ button, a {
 }
 
 .logo-gradient {
-  color: #CC3419;
+  color: #E02B20;
 }
 
 .glow-bar-track {

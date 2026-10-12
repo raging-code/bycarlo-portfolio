@@ -12,7 +12,7 @@ module.exports = {
       colors: {
         bg:       "#F6F5F2",
         fg:       "#141414",
-        accent:   "#CC3419",
+        accent:   "#E02B20",
         gold:     "#C9A66B",
         surface:  "#EAE6DF",
         surface2: "#DDD8CF",
