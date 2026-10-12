@@ -481,9 +481,10 @@ button, a {
 /* floating, centered, always a capsule */
 .gnav-wrap[data-theme].is-scrolled { padding: 16px 12px 0; }
 
+/* navbar-responsive-minwidth-patch */
 .gnav-wrap[data-theme].is-scrolled .gnav {
   width: auto;
-  min-width: 760px;
+  min-width: min(760px, calc(100vw - 24px));
   max-width: 100%;
   justify-content: flex-start;
   gap: 2px;
@@ -596,7 +597,7 @@ button, a {
 /* phones: same capsule, sized to the screen so everything still fits (320px and up) */
 @media (max-width: 640px) {
   .gnav-wrap[data-theme].is-scrolled { padding: 6px 8px 0; }
-  .gnav-wrap[data-theme].is-scrolled .gnav { width: auto; padding: 3px 3px 3px 5px; }
+  .gnav-wrap[data-theme].is-scrolled .gnav { width: auto; min-width: 0; padding: 3px 3px 3px 5px; }
   .gnav-wrap[data-theme].is-scrolled .gnav-brand { width: 22px; height: 22px; margin-right: 3px; }
   .gnav-wrap[data-theme].is-scrolled .gnav-links { flex: none; overflow: visible; gap: 1px; }
   .gnav-wrap[data-theme].is-scrolled .gnav-link {
