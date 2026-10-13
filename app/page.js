@@ -378,115 +378,53 @@ function Hero({ globalProgress, isMobile }) {
   );
 }
 
-/* ── Intro Profile (rings + portrait, code-built) ─── */
+/* ── Intro Profile (about-hero v2) ─── */
 function IntroProfile({ isMobile }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
-  const textColor = LIGHT.text;
-  const mutedColor = LIGHT.muted;
-  const accentColor = LIGHT.accent;
-  const accent2Color = LIGHT.accent2;
-
-  const Rings = () => (
-    <svg
-      viewBox="0 0 600 600"
-      className="absolute pointer-events-none select-none"
-      style={{
-        width: "118%",
-        height: "118%",
-        left: "-9%",
-        top: "-9%",
-        zIndex: 0,
-      }}
-    >
-      <circle cx="300" cy="300" r="298" fill="none" stroke={accentColor} strokeOpacity="0.14" strokeWidth="1.5" />
-      <circle cx="300" cy="300" r="270" fill="none" stroke={accent2Color} strokeOpacity="0.5" strokeWidth="1.5" />
-      <circle cx="300" cy="300" r="252" fill="none" stroke={accentColor} strokeOpacity="0.85" strokeWidth="2" />
-    </svg>
-  );
-
-  // Source photo (/public/png/me.png) is 1086×1448 — taller than it is wide.
-  // Fit into a square with object-fit:cover alone never crops horizontally
-  // (width is already the limiting dimension), so the face ends up off-center
-  // with dead background space on one side. Oversizing the <img> to 128% and
-  // pulling it back with negative margins gives real room to pan both axes.
-  const Portrait = () => (
-    <div className="relative w-full" style={{ paddingBottom: "100%" }}>
-      <Rings />
-      <div
-        className="absolute z-10 overflow-hidden"
-        style={{
-          left: "50%",
-          top: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "72%",
-          height: "72%",
-          borderRadius: "9999px",
-        }}
-      >
-        <img
-          src="/png/me.png"
-          alt="Carlo"
-          draggable={false}
-          style={{
-            width: "128%",
-            height: "128%",
-            maxWidth: "none",
-            objectFit: "cover",
-            objectPosition: "56% 26%",
-            display: "block",
-            marginLeft: "-14%",
-            marginTop: "-14%",
-          }}
-        />
-        {/* Fade-to-background overlay: a mask-image gradient combined with a
-            circular border-radius clip renders inconsistently (the gradient
-            fights the circle clip), so the fade is a separate painted layer
-            instead, in the section's own background color. */}
-        <div
-          className="absolute inset-0"
-          style={{
-            borderRadius: "9999px",
-            background: `linear-gradient(to bottom, rgba(246,245,242,0) 55%, rgba(246,245,242,0.55) 75%, rgba(246,245,242,0.92) 90%, ${LIGHT.bg} 100%)`,
-          }}
-        />
-      </div>
-    </div>
-  );
+  const E = [0.22, 1, 0.36, 1];
 
   return (
-    <motion.section ref={ref} className="py-20 md:py-32 px-6 md:px-20 theme-section overflow-hidden">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-14 md:gap-10 items-center max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.92 }}
-          animate={inView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.9, ease: E }}
-          className="order-1 md:order-1 max-w-sm mx-auto md:mx-0 w-full"
-        >
-          <Portrait />
-        </motion.div>
+    <motion.section ref={ref} className="ip-section theme-section">
+      <div className="ip-stage">
+        <div className="ip-about">
+          <motion.div
+            className="ip-visual"
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={inView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 0.9, ease: E }}
+          >
+            <div className="ip-outer" aria-hidden="true">
+              <span className="ip-ring ip-r3" />
+              <span className="ip-ring ip-r2" />
+              <span className="ip-ring ip-r1" />
+            </div>
+            <span className="ip-ring ip-r0" aria-hidden="true" />
+            <div className="ip-me">
+              <img src="/png/me.png" alt="Carlo" draggable={false} />
+            </div>
+          </motion.div>
 
-        <div className="order-2 md:order-2">
-          <motion.h2
-            initial={{ opacity: 0, y: 30 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.15, ease: E }}
-            className="text-[clamp(2.2rem,6vw,4rem)] font-display font-extrabold leading-[1.05] tracking-[-0.045em]"
-            style={{ color: textColor }}
-          >
-            Hi, I&rsquo;m
-            <br />
-            Carlo<span style={{ color: accentColor }}>.</span>
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 24 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.3, ease: E }}
-            className="mt-6 text-lg leading-[1.6] max-w-xl"
-            style={{ color: mutedColor }}
-          >
-            I&rsquo;m a Computer Engineering student and a software developer passionate about building practical, innovative tech solutions. From web and mobile apps to AI, automation, and IoT, I enjoy turning ideas into real-world projects that solve problems and make life easier.
-          </motion.p>
+          <div className="ip-text">
+            <motion.h2
+              className="ip-title"
+              initial={{ opacity: 0, y: 30 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.15, ease: E }}
+            >
+              Hi, I&rsquo;m
+              <br />
+              Carlo<span className="ip-dot">.</span>
+            </motion.h2>
+            <motion.p
+              className="ip-copy"
+              initial={{ opacity: 0, y: 24 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.3, ease: E }}
+            >
+              I&rsquo;m a Computer Engineering student and a software developer passionate about building practical, innovative tech solutions. From web and mobile apps to AI, automation, and IoT, I enjoy turning ideas into real-world projects that solve problems and make life easier.
+            </motion.p>
+          </div>
         </div>
       </div>
     </motion.section>
