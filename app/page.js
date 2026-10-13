@@ -750,10 +750,13 @@ function Projects({ globalProgress, isMobile }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
 
-  const textColor = LIGHT.text;
-  const mutedColor = LIGHT.muted;
-  const accentColor = LIGHT.accent;
-  const borderColor = LIGHT.border;
+  /* projects-red:start */
+  // red section: cream text, cream accents (the old red accent would vanish on red)
+  const textColor = LIGHT.bg;
+  const mutedColor = "rgba(246,245,242,0.8)";
+  const accentColor = LIGHT.bg;
+  const borderColor = "rgba(246,245,242,0.45)";
+  /* projects-red:end */
 
   return (
     <motion.section

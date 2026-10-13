@@ -610,3 +610,9 @@ html, body { will-change: auto; }
 /* JS smoothing replaces CSS smooth scrolling (the two fight each other) */
 html { scroll-behavior: auto; }
 /* smooth-scroll:end */
+
+/* projects-red:css:start */
+/* "Selected projects" continues the red the About brush ends on (same as AB_COLOR) */
+#work { background-color: #E02B20; }
+#work ::selection { background: #F6F5F2; color: #E02B20; }
+/* projects-red:css:end */
