@@ -512,10 +512,10 @@ button, a {
 .ip-section { position: relative; overflow: hidden; }
 .ip-stage { container-type: inline-size; width: 100%; }
 .ip-about {
-  display: flex; align-items: center; gap: 1.6cqw;
-  min-height: 46cqw; padding: 3cqw 0 3cqw 7cqw;
+  display: flex; align-items: center; justify-content: center; gap: 1.4cqw;
+  padding: 4cqw 2cqw;
 }
-.ip-visual { position: relative; flex: none; width: 38.9cqw; aspect-ratio: 1; margin-top: 1.6cqw; }
+.ip-visual { position: relative; flex: none; width: 31cqw; aspect-ratio: 1; margin: 0 4cqw 0 4cqw; }
 .ip-ring { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); border-radius: 50%; aspect-ratio: 1; }
 .ip-r0 { width: 100%; border: 1.5px solid var(--accent);
   background: radial-gradient(circle at 32% 48%, #efe5d6 0%, #f2ece2 45%, #f6f5f2 100%); }
@@ -542,24 +542,24 @@ button, a {
   width: 164.8%; max-width: none; height: auto; display: block;
   user-select: none; -webkit-user-drag: none;
 }
-.ip-text { max-width: 42cqw; position: relative; z-index: 1; }
+.ip-text { max-width: 36cqw; position: relative; z-index: 1; }
 .ip-title {
   margin: 0; font-family: var(--font-display); font-weight: 800;
-  font-size: clamp(52px, 7.1cqw, 140px); line-height: 0.92; letter-spacing: -0.045em;
+  font-size: clamp(44px, 5.7cqw, 112px); line-height: 0.92; letter-spacing: -0.045em;
   color: var(--text-primary);
 }
 .ip-dot { color: var(--accent); }
 .ip-copy {
-  margin: 2.2cqw 0 0; font-family: var(--font-body); font-weight: 400;
-  font-size: clamp(15px, 1.5cqw, 30px); line-height: 1.63; color: var(--text-secondary);
+  margin: 1.8cqw 0 0; font-family: var(--font-body); font-weight: 400;
+  font-size: clamp(15px, 1.25cqw, 24px); line-height: 1.63; color: var(--text-secondary);
 }
 /* Phones: photo on top, text below */
 @container (max-width: 767px) {
-  .ip-about { flex-direction: column; align-items: flex-start; padding: 40px 24px 48px; min-height: 0; gap: 28px; }
-  .ip-visual { width: 64cqw; max-width: 300px; margin: 12px 0 0; align-self: center; }
+  .ip-about { flex-direction: column; align-items: flex-start; padding: 32px 24px 40px; gap: 24px; }
+  .ip-visual { width: 60cqw; max-width: 260px; margin: 16px 0 0; align-self: center; }
   .ip-outer { -webkit-mask-image: none; mask-image: none; }
   .ip-text { max-width: 100%; }
-  .ip-title { font-size: 56px; }
-  .ip-copy { font-size: 16px; margin-top: 18px; }
+  .ip-title { font-size: 48px; }
+  .ip-copy { font-size: 15px; margin-top: 16px; }
 }
 /* about-hero:end */
