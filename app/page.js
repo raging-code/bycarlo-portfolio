@@ -378,6 +378,96 @@ function Hero({ globalProgress, isMobile }) {
   );
 }
 
+/* ── Intro Profile (rings + portrait, code-built) ─── */
+function IntroProfile({ isMobile }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-10%" });
+  const textColor = LIGHT.text;
+  const mutedColor = LIGHT.muted;
+  const accentColor = LIGHT.accent;
+  const accent2Color = LIGHT.accent2;
+
+  const Rings = () => (
+    <svg
+      viewBox="0 0 600 600"
+      className="absolute pointer-events-none select-none"
+      style={{
+        width: "150%",
+        height: "150%",
+        left: "-25%",
+        top: "-25%",
+        zIndex: 0,
+      }}
+    >
+      <circle cx="300" cy="300" r="298" fill="none" stroke={accentColor} strokeOpacity="0.16" strokeWidth="1.5" />
+      <circle cx="300" cy="300" r="258" fill="none" stroke={accent2Color} strokeOpacity="0.55" strokeWidth="1.5" />
+      <circle cx="300" cy="300" r="232" fill="none" stroke={accentColor} strokeOpacity="0.85" strokeWidth="2" />
+    </svg>
+  );
+
+  const Portrait = () => (
+    <div className="relative flex items-center justify-center" style={{ aspectRatio: "1 / 1" }}>
+      <Rings />
+      <div
+        className="relative z-10 overflow-hidden"
+        style={{
+          width: "72%",
+          height: "72%",
+          borderRadius: "9999px",
+          WebkitMaskImage: "linear-gradient(to bottom, black 72%, transparent 97%)",
+          maskImage: "linear-gradient(to bottom, black 72%, transparent 97%)",
+        }}
+      >
+        <img
+          src="/png/me.png"
+          alt="Carlo"
+          draggable={false}
+          className="w-full h-full"
+          style={{ objectFit: "cover", objectPosition: "50% 22%" }}
+        />
+      </div>
+    </div>
+  );
+
+  return (
+    <motion.section ref={ref} className="py-20 md:py-32 px-6 md:px-20 theme-section overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-14 md:gap-10 items-center max-w-6xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92 }}
+          animate={inView ? { opacity: 1, scale: 1 } : {}}
+          transition={{ duration: 0.9, ease: E }}
+          className="order-1 md:order-1 max-w-sm mx-auto md:mx-0 w-full"
+        >
+          <Portrait />
+        </motion.div>
+
+        <div className="order-2 md:order-2">
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.15, ease: E }}
+            className="text-[clamp(2.2rem,6vw,4rem)] font-display font-extrabold leading-[1.05] tracking-[-0.045em]"
+            style={{ color: textColor }}
+          >
+            Hi, I&rsquo;m
+            <br />
+            Carlo<span style={{ color: accentColor }}>.</span>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 24 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.3, ease: E }}
+            className="mt-6 text-lg leading-[1.6] max-w-xl"
+            style={{ color: mutedColor }}
+          >
+            I&rsquo;m a Computer Engineering student and a software developer passionate about building practical, innovative tech solutions. From web and mobile apps to AI, automation, and IoT, I enjoy turning ideas into real-world projects that solve problems and make life easier.
+          </motion.p>
+        </div>
+      </div>
+    </motion.section>
+  );
+}
+
 /* ── Projects (transparent background) ───────────── */
 function Projects({ globalProgress, isMobile }) {
   const ref = useRef(null);
@@ -1244,6 +1334,7 @@ export default function Page() {
       <GlassNavbar />
       <main ref={containerRef} style={{ position: "relative", zIndex: 10 }}>
         <Hero globalProgress={globalProgress} isMobile={isMobile} />
+        <IntroProfile isMobile={isMobile} />
         <Projects globalProgress={globalProgress} isMobile={isMobile} />
         <TechStack />
         <Manifesto globalProgress={globalProgress} manifestoRef={manifestoRef} isMobile={isMobile} />
