@@ -105,7 +105,7 @@ const TESTIMONIALS = [
 const NAV_LINKS = [
   { id: "work", label: "Projects" },
   { id: "about", label: "About" },
-  { id: "", label: "Services" },
+  { id: "services", label: "Services" },
 ];
 
 function useIsMobile() {
@@ -1592,6 +1592,113 @@ function Contact({ isMobile }) {
 }
 
 /* ── Page root ───────────────────────────────────── */
+/* services:start */
+/* ── Services (pinned red panel, one service opens at a time) ──────── */
+const SERVICES = [
+  {
+    title: "Website Development",
+    text: "Modern, responsive websites designed to showcase your brand, engage visitors, and deliver a seamless experience across all devices.",
+  },
+  {
+    title: "Mobile & Web Apps",
+    text: "Custom mobile and web applications built to solve problems, simplify tasks, and provide accessible, user-friendly digital experiences.",
+  },
+  {
+    title: "Business Systems",
+    text: "Smart digital solutions that streamline business operations, manage data, automate workflows, and improve overall efficiency.",
+  },
+  {
+    title: "AI Automation & Integration",
+    text: "AI-powered solutions that automate repetitive tasks, enhance decision-making, and integrate intelligent features into existing systems.",
+  },
+  {
+    title: "IoT Solutions",
+    text: "Connected devices and smart systems that use sensors, microcontrollers, and real-time data to monitor, control, and automate processes.",
+  },
+  {
+    title: "Custom Full-Stack Development",
+    text: "End-to-end development of tailored digital solutions, combining intuitive frontends, powerful backends, databases, and APIs into one integrated system.",
+  },
+];
+
+function Services() {
+  const trackRef = useRef(null);
+  const pinRef = useRef(null);
+  const [active, setActive] = useState(-1);
+
+  // Which service is open depends only on how far you have scrolled through the pinned
+  // stretch (each service owns an equal slice), never on the rows' own height, so opening
+  // and closing rows can't make it flicker.
+  useEffect(() => {
+    const track = trackRef.current;
+    const pin = pinRef.current;
+    if (!track || !pin) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const span = track.offsetHeight - pin.offsetHeight;
+      const p = span > 0 ? -track.getBoundingClientRect().top / span : 0;
+      const idx = p < 0 ? -1 : Math.min(SERVICES.length - 1, Math.floor(p * SERVICES.length));
+      setActive((prev) => (prev === idx ? prev : idx));
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    update();
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  const jumpTo = (i) => {
+    const track = trackRef.current;
+    const pin = pinRef.current;
+    if (!track || !pin) return;
+    const span = track.offsetHeight - pin.offsetHeight;
+    const top = track.getBoundingClientRect().top + window.scrollY + span * ((i + 0.5) / SERVICES.length);
+    if (window.__lenis) window.__lenis.scrollTo(top, { duration: 1.2 });
+    else window.scrollTo({ top, behavior: "smooth" });
+  };
+
+  return (
+    <section
+      ref={trackRef}
+      id="services"
+      className="svc-track"
+      style={{ "--svc-n": SERVICES.length }}
+      aria-label="Services"
+    >
+      <div ref={pinRef} className="svc-pin">
+        <h2 className="svc-heading">Services</h2>
+        <ul className={"svc-list" + (active !== -1 ? " has-on" : "")}>
+          {SERVICES.map((s, i) => (
+            <li key={s.title} className={"svc-row" + (i === active ? " on" : "")}>
+              <h3>
+                <button
+                  type="button"
+                  className="svc-title"
+                  aria-expanded={i === active}
+                  onClick={() => jumpTo(i)}
+                >
+                  {s.title}
+                </button>
+              </h3>
+              <div className="svc-desc">
+                <div className="svc-desc-in">
+                  <p>{s.text}</p>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+/* services:end */
+
 export default function Page() {
   const manifestoRef = useRef(null);
   const containerRef = useRef(null);
@@ -1610,6 +1717,7 @@ export default function Page() {
         <IntroProfile isMobile={isMobile} />
         <Projects globalProgress={globalProgress} isMobile={isMobile} />
         <TechStack />
+        <Services />
         <Manifesto globalProgress={globalProgress} manifestoRef={manifestoRef} isMobile={isMobile} />
         <Story />
         <Testimonials />
