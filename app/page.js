@@ -392,38 +392,63 @@ function IntroProfile({ isMobile }) {
       viewBox="0 0 600 600"
       className="absolute pointer-events-none select-none"
       style={{
-        width: "150%",
-        height: "150%",
-        left: "-25%",
-        top: "-25%",
+        width: "118%",
+        height: "118%",
+        left: "-9%",
+        top: "-9%",
         zIndex: 0,
       }}
     >
-      <circle cx="300" cy="300" r="298" fill="none" stroke={accentColor} strokeOpacity="0.16" strokeWidth="1.5" />
-      <circle cx="300" cy="300" r="258" fill="none" stroke={accent2Color} strokeOpacity="0.55" strokeWidth="1.5" />
-      <circle cx="300" cy="300" r="232" fill="none" stroke={accentColor} strokeOpacity="0.85" strokeWidth="2" />
+      <circle cx="300" cy="300" r="298" fill="none" stroke={accentColor} strokeOpacity="0.14" strokeWidth="1.5" />
+      <circle cx="300" cy="300" r="270" fill="none" stroke={accent2Color} strokeOpacity="0.5" strokeWidth="1.5" />
+      <circle cx="300" cy="300" r="252" fill="none" stroke={accentColor} strokeOpacity="0.85" strokeWidth="2" />
     </svg>
   );
 
+  // Source photo (/public/png/me.png) is 1086×1448 — taller than it is wide.
+  // Fit into a square with object-fit:cover alone never crops horizontally
+  // (width is already the limiting dimension), so the face ends up off-center
+  // with dead background space on one side. Oversizing the <img> to 128% and
+  // pulling it back with negative margins gives real room to pan both axes.
   const Portrait = () => (
-    <div className="relative flex items-center justify-center" style={{ aspectRatio: "1 / 1" }}>
+    <div className="relative w-full" style={{ paddingBottom: "100%" }}>
       <Rings />
       <div
-        className="relative z-10 overflow-hidden"
+        className="absolute z-10 overflow-hidden"
         style={{
+          left: "50%",
+          top: "50%",
+          transform: "translate(-50%, -50%)",
           width: "72%",
           height: "72%",
           borderRadius: "9999px",
-          WebkitMaskImage: "linear-gradient(to bottom, black 72%, transparent 97%)",
-          maskImage: "linear-gradient(to bottom, black 72%, transparent 97%)",
         }}
       >
         <img
           src="/png/me.png"
           alt="Carlo"
           draggable={false}
-          className="w-full h-full"
-          style={{ objectFit: "cover", objectPosition: "50% 22%" }}
+          style={{
+            width: "128%",
+            height: "128%",
+            maxWidth: "none",
+            objectFit: "cover",
+            objectPosition: "56% 26%",
+            display: "block",
+            marginLeft: "-14%",
+            marginTop: "-14%",
+          }}
+        />
+        {/* Fade-to-background overlay: a mask-image gradient combined with a
+            circular border-radius clip renders inconsistently (the gradient
+            fights the circle clip), so the fade is a separate painted layer
+            instead, in the section's own background color. */}
+        <div
+          className="absolute inset-0"
+          style={{
+            borderRadius: "9999px",
+            background: `linear-gradient(to bottom, rgba(246,245,242,0) 55%, rgba(246,245,242,0.55) 75%, rgba(246,245,242,0.92) 90%, ${LIGHT.bg} 100%)`,
+          }}
         />
       </div>
     </div>
