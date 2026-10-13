@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect, useCallback, useLayoutEffect } from "react";
 import GlassSurface from "./GlassSurface";
+import Threads from "./Threads";
 import {
   motion,
   useScroll,
@@ -322,41 +323,43 @@ function Hero({ globalProgress, isMobile }) {
       className="relative min-h-screen flex flex-col justify-center items-start px-6 md:px-20 overflow-hidden pt-20"
       style={heroVars}
     >
+      {/* hero-threads:start */}
+      <div aria-hidden="true" className="absolute inset-0 z-0 pointer-events-none" style={{ background: "#FFFFFF" }}>
+        <Threads
+          color="#E02B20"
+          thickness={0.6}
+          softness={1}
+          waves={1.3}
+          split={0.04}
+          taper={0.85}
+          brightness={1.4}
+          parting={0}
+          enableMouseInteraction={true}
+          fade={0}
+          lineCount={94}
+          amplitude={0.9}
+          distance={0.45}
+          speed={0.4}
+          fray={0.3}
+          angle={11}
+          opacity={0.65}
+          seed={7}
+        />
+      </div>
+      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-40 z-[1] pointer-events-none" style={{ background: "linear-gradient(to bottom, rgba(255,255,255,0), #F6F5F2)" }} />
+      {/* hero-threads:end */}
       <div className="relative z-10 flex flex-col gap-6 md:gap-8">
         <motion.h1
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.4, ease: E }}
-          className="text-[clamp(2.4rem,8vw,5.5rem)] font-display font-extrabold leading-none tracking-[-0.055em]"
+          className="text-[clamp(2.6rem,9.5vw,8.5rem)] font-display font-extrabold leading-none tracking-[-0.055em]"
         >
-          <span className="block" style={{ color: "var(--h-text)" }}>Websites, apps</span>
-          <span className="block" style={{ color: "var(--h-text)" }}>and connected</span>
-          <span className="block" style={{ color: "var(--h-text)" }}>devices<span style={{ color: "var(--h-accent)" }}>.</span></span>
+          <span className="block" style={{ color: "var(--h-text)" }}>Building Systems</span>
+          <span className="block" style={{ color: "var(--h-text)" }}>That Make Ideas</span>
+          <span className="block" style={{ color: "var(--h-text)" }}>Work<span style={{ color: "var(--h-accent)" }}>.</span></span>
         </motion.h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.7, ease: E }}
-          className="max-w-xl text-[clamp(1.05rem,2.6vw,1.375rem)] leading-[1.5]"
-          style={{ color: "var(--h-muted)" }}
-        >
-          I design and build landing pages, full-stack web apps and IoT dashboards, and see each one through to launch.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 1.0, ease: E }}
-          className="flex flex-wrap gap-3 mt-4"
-        >
-          <a href="#work" className="px-7 py-3 rounded-full font-bold text-sm" style={{ background: "var(--h-accent)", color: "var(--h-on-accent)" }}>
-            See projects
-          </a>
-          <a href="#contact" className="px-7 py-3 rounded-full font-bold text-sm border" style={{ borderColor: "var(--h-border)", color: "var(--h-text)" }}>
-            Get in touch
-          </a>
-        </motion.div>
       </div>
 
     </motion.section>
