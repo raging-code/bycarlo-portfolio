@@ -1671,7 +1671,7 @@ function Services() {
       aria-label="Services"
     >
       <div ref={pinRef} className="svc-pin">
-        <h2 className="svc-heading">Services</h2>
+        <h2 className="svc-heading" aria-label="Services">{"< SERVICES />"}</h2>
         <ul className={"svc-list" + (active !== -1 ? " has-on" : "")}>
           {SERVICES.map((s, i) => (
             <li key={s.title} className={"svc-row" + (i === active ? " on" : "")}>

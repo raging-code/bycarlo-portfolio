@@ -633,7 +633,9 @@ html { scroll-behavior: auto; }
 .svc-track {
   --svc-n: 6;      /* number of services (set from React) */
   --svc-zone: 60;  /* scroll per service, in % of one screen: higher = slower, lower = faster */
+  --svc-pull: 100px; /* pulls Services up toward Projects: bigger = closer */
   position: relative;
+  margin-top: calc(var(--svc-pull) * -1);
   height: calc(100vh * (1 + var(--svc-n) * var(--svc-zone) / 100));
   height: calc(var(--ab-svh, 100vh) * (1 + var(--svc-n) * var(--svc-zone) / 100) + (var(--ab-lvh, 100vh) - var(--ab-svh, 100vh)));
 }
@@ -661,10 +663,10 @@ html { scroll-behavior: auto; }
   padding: 0 20px;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(1.15rem, min(3.6vw, 3.4vh), 1.9rem);
-  font-size: clamp(1.15rem, min(3.6vw, 3.4svh), 1.9rem);
+  font-size: clamp(1.35rem, min(4.6vw, 4.2vh), 2.4rem);
+  font-size: clamp(1.35rem, min(4.6vw, 4.2svh), 2.4rem);
   line-height: 1.1;
-  letter-spacing: -0.03em;
+  letter-spacing: 0.02em;
   opacity: 0.9;
 }
 
