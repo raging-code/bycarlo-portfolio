@@ -134,17 +134,21 @@ function GlassNavbar() {
   const accent = "#E02B20";
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled((prev) => (prev ? window.scrollY > 6 : window.scrollY > 24)); // spring-morph: hysteresis
+    let raf = 0, secs = [];
+    const run = () => {
+      raf = 0;
+      const y = window.scrollY;
+      setScrolled((prev) => (prev ? y > 6 : y > 24)); // spring-morph: hysteresis
+      if (!secs.length) secs = Array.from(document.querySelectorAll("section[id]"));
+      const mid = window.innerHeight / 2;
       let current = "";
-      document.querySelectorAll("section[id]").forEach((s) => {
-        if (s.getBoundingClientRect().top < window.innerHeight / 2) current = s.id;
-      });
+      for (const s of secs) if (s.getBoundingClientRect().top < mid) current = s.id;
       setActive(current);
     };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(run); }; /* perf-patch: once per frame */
     window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
+    run();
+    return () => { window.removeEventListener("scroll", onScroll); if (raf) cancelAnimationFrame(raf); };
   }, []);
 
   return (
@@ -222,21 +226,13 @@ function Cursor() {
       mx.set(e.clientX);
       my.set(e.clientY);
     };
-    window.addEventListener("mousemove", move);
-    const onEnter = () => setHover(true);
-    const onLeave = () => setHover(false);
-    const attach = () => {
-      document.querySelectorAll("a, button, [data-hover]").forEach((el) => {
-        el.addEventListener("mouseenter", onEnter);
-        el.addEventListener("mouseleave", onLeave);
-      });
-    };
-    attach();
-    const obs = new MutationObserver(attach);
-    obs.observe(document.body, { childList: true, subtree: true });
+    window.addEventListener("mousemove", move, { passive: true });
+    /* perf-patch: delegated hover, no MutationObserver */
+    const onOver = (e) => setHover(!!(e.target && e.target.closest && e.target.closest("a, button, [data-hover]")));
+    document.addEventListener("mouseover", onOver, { passive: true });
     return () => {
       window.removeEventListener("mousemove", move);
-      obs.disconnect();
+      document.removeEventListener("mouseover", onOver);
     };
   }, [mx, my]);
 
@@ -318,22 +314,11 @@ function Hero({ globalProgress, isMobile }) {
     "--h-on-accent": LIGHT.bg,
   };
   const ref = useRef(null);
-  const [, setMouse] = useState({ x: 0.5, y: 0.5 });
-
-  const handleMouse = useCallback(
-    (e) => {
-      if (isMobile) return;
-      const r = ref.current?.getBoundingClientRect();
-      if (!r) return;
-      setMouse({ x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height });
-    },
-    [isMobile]
-  );
+  /* perf-patch: removed unused mouse state (it re-rendered the hero on every mouse move) */
 
   return (
     <motion.section
       ref={ref}
-      onMouseMove={handleMouse}
       className="relative min-h-screen flex flex-col justify-center items-start px-6 md:px-20 overflow-hidden pt-20"
       style={heroVars}
     >
@@ -379,6 +364,16 @@ function Hero({ globalProgress, isMobile }) {
 }
 
 /* about-brush:start */
+/* perf-patch: ribbon renderer, see apply-perf-patch.mjs */
+const AB_TAU = 0.16;        // glide time constant in seconds (was 0.09 per frame, ~0.18s at 60Hz)
+const AB_MAX_PX = 2.2e6;    // canvas pixel budget (device px); keeps big screens light
+const AB_MAX_DPR = 2;
+const AB_FULL = 0.995;      // from here the screen is solid red, so just fill it
+const AB_COLOR = "#E02B20";
+const AB_TOL_XY = 0.45;     // ribbon simplification: centre-line tolerance (css px)
+const AB_TOL_R = 0.22;      // ribbon simplification: radius tolerance (css px, before swell)
+const AB_TAU2 = 6.283185307179586;
+
 const AB_SWELL = 1.8; // final extra thickness; closes every early gap (measured 0 gaps from 390px phones to 2560px screens)
 const abClamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const abSwell = (p) => {
@@ -468,6 +463,117 @@ function abBuild(W, H) {
   return { px, py, pr, pt };
 }
 
+// Reduce the dense centre-line (~1-2k points) to the few hundred that matter.
+function abSimplify(geo) {
+  const px = geo.px, py = geo.py, pr = geo.pr, pt = geo.pt;
+  const n = px.length;
+  const keep = new Uint8Array(n);
+  keep[0] = 1;
+  keep[n - 1] = 1;
+  const stack = [[0, n - 1]];
+  while (stack.length) {
+    const seg = stack.pop();
+    const a = seg[0], b = seg[1];
+    if (b - a < 2) continue;
+    const ax = px[a], ay = py[a], dx = px[b] - ax, dy = py[b] - ay;
+    const L2 = dx * dx + dy * dy || 1e-9;
+    const dt = pt[b] - pt[a] || 1e-9;
+    let worst = 0, wi = -1;
+    for (let i = a + 1; i < b; i++) {
+      const u = abClamp(((px[i] - ax) * dx + (py[i] - ay) * dy) / L2, 0, 1);
+      const ex = px[i] - (ax + u * dx), ey = py[i] - (ay + u * dy);
+      const exy = Math.sqrt(ex * ex + ey * ey) / AB_TOL_XY;
+      const tau = (pt[i] - pt[a]) / dt;
+      const er = Math.abs(pr[i] - (pr[a] + (pr[b] - pr[a]) * tau)) / AB_TOL_R;
+      const e = exy > er ? exy : er;
+      if (e > worst) { worst = e; wi = i; }
+    }
+    if (worst > 1) {
+      keep[wi] = 1;
+      stack.push([a, wi], [wi, b]);
+    }
+  }
+  let m = 0;
+  for (let i = 0; i < n; i++) m += keep[i];
+  const g = {
+    n: m,
+    x: new Float32Array(m), y: new Float32Array(m), r: new Float32Array(m), t: new Float32Array(m),
+    vx: new Float32Array(m + 1), vy: new Float32Array(m + 1), vr: new Float32Array(m + 1),
+  };
+  for (let i = 0, j = 0; i < n; i++) {
+    if (!keep[i]) continue;
+    g.x[j] = px[i]; g.y[j] = py[i]; g.r[j] = pr[i]; g.t[j] = pt[i]; j++;
+  }
+  return g;
+}
+
+// Every sub-path below is wound the same way, so a single nonzero fill() is a pure union.
+function abDisc(ctx, x, y, r) {
+  ctx.moveTo(x + r, y);
+  ctx.arc(x, y, r, AB_TAU2, 0, true);
+}
+function abWedge(ctx, px, py, R, ax, ay, bx, by) {
+  if (ax * by - ay * bx > 0) { const tx = ax; ax = bx; bx = tx; const ty = ay; ay = by; by = ty; }
+  ctx.moveTo(px, py);
+  ctx.lineTo(px + R * ax, py + R * ay);
+  ctx.arc(px, py, R, Math.atan2(ay, ax), Math.atan2(by, bx), true);
+  ctx.closePath();
+}
+
+// Adds the stroke painted up to progress p (radius scaled by f) to the current path.
+function abRibbon(ctx, g, p, f) {
+  const n = g.n, x = g.x, y = g.y, r = g.r, t = g.t, vx = g.vx, vy = g.vy, vr = g.vr;
+  let lo = 0, hi = n - 1;
+  while (lo < hi) {
+    const mid = (lo + hi + 1) >> 1;
+    if (t[mid] <= p) lo = mid; else hi = mid - 1;
+  }
+  let m = 0;
+  for (let i = 0; i <= lo; i++) { vx[m] = x[i]; vy[m] = y[i]; vr[m] = r[i] * f; m++; }
+  if (lo < n - 1 && p > t[lo]) {
+    const tau = (p - t[lo]) / (t[lo + 1] - t[lo] || 1e-9); // exact head position, no stepping
+    vx[m] = x[lo] + (x[lo + 1] - x[lo]) * tau;
+    vy[m] = y[lo] + (y[lo + 1] - y[lo]) * tau;
+    vr[m] = (r[lo] + (r[lo + 1] - r[lo]) * tau) * f;
+    m++;
+  }
+  abDisc(ctx, vx[0], vy[0], vr[0]);
+  if (m > 1) abDisc(ctx, vx[m - 1], vy[m - 1], vr[m - 1]);
+  let pok = false, pux = 0, puy = 0, pk = 0;
+  for (let j = 0; j < m - 1; j++) {
+    const x0 = vx[j], y0 = vy[j], r0 = vr[j], x1 = vx[j + 1], y1 = vy[j + 1], r1 = vr[j + 1];
+    const dx = x1 - x0, dy = y1 - y0, L = Math.sqrt(dx * dx + dy * dy);
+    const k = L > 1e-4 ? (r0 - r1) / L : 2;
+    const ok = k > -0.9999 && k < 0.9999;
+    let ux = 0, uy = 0;
+    if (ok) {
+      ux = dx / L; uy = dy / L;
+      const s = Math.sqrt(1 - k * k);
+      // outer tangent lines of the two end circles ("+" and "-" sides)
+      const nx = ux * k - uy * s, ny = uy * k + ux * s, mx = ux * k + uy * s, my = uy * k - ux * s;
+      ctx.moveTo(x0 + r0 * nx, y0 + r0 * ny);
+      ctx.lineTo(x1 + r1 * nx, y1 + r1 * ny);
+      ctx.lineTo(x1 + r1 * mx, y1 + r1 * my);
+      ctx.lineTo(x0 + r0 * mx, y0 + r0 * my);
+      ctx.closePath();
+    }
+    if (j > 0) {
+      if (ok && pok) {
+        // round join on the outer side of the turn
+        const ps = Math.sqrt(1 - pk * pk), cs = Math.sqrt(1 - k * k);
+        if (pux * uy - puy * ux > 0) {
+          abWedge(ctx, x0, y0, r0, pux * pk + puy * ps, puy * pk - pux * ps, ux * k + uy * cs, uy * k - ux * cs);
+        } else {
+          abWedge(ctx, x0, y0, r0, pux * pk - puy * ps, puy * pk + pux * ps, ux * k - uy * cs, uy * k + ux * cs);
+        }
+      } else {
+        abDisc(ctx, x0, y0, r0);
+      }
+    }
+    pok = ok; pux = ux; puy = uy; pk = k;
+  }
+}
+
 function AboutBrush({ trackRef }) {
   const canvasRef = useRef(null);
 
@@ -476,62 +582,99 @@ function AboutBrush({ trackRef }) {
     const track = trackRef.current;
     if (!cv || !track) return;
     const ctx = cv.getContext("2d");
+    if (!ctx) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let geo = null, dpr = 1, W = 0, H = 0, target = 0, cur = 0, raf = 0;
+    let geo = null, dpr = 1, W = 0, H = 0, range = 1;
+    let target = 0, cur = 0, drawn = -1, raf = 0, sizeRaf = 0, last = 0, live = false;
 
-    const draw = (p) => {
+    const paint = (p) => {
+      if (p === drawn) return; // nothing changed, nothing to do
+      drawn = p;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, W, H);
       if (p <= 0 || !geo) return;
-      const f = abSwell(p);
-      ctx.fillStyle = "#E02B20";
+      ctx.fillStyle = AB_COLOR;
+      if (p >= AB_FULL) { ctx.fillRect(0, 0, W, H); return; }
       ctx.beginPath();
-      for (let i = 0; i < geo.pt.length && geo.pt[i] <= p; i++) {
-        const r = geo.pr[i] * f;
-        ctx.moveTo(geo.px[i] + r, geo.py[i]);
-        ctx.arc(geo.px[i], geo.py[i], r, 0, 6.2832);
-      }
+      abRibbon(ctx, geo, p, abSwell(p));
       ctx.fill();
     };
 
     const read = () => {
       const top = track.getBoundingClientRect().top;
-      const range = Math.max(1, track.offsetHeight - H);
       const prog = abClamp(-top, 0, range) / range;
       target = abClamp((prog - 0.08) / 0.84, 0, 1); // short pause on About, then paint, then hold full red
     };
 
+    // the painted amount glides toward the scroll position; time-based so it feels the same at any refresh rate
+    const frame = (now) => {
+      raf = 0;
+      read();
+      const dt = Math.min(0.05, last ? (now - last) / 1000 : 0.016);
+      last = now;
+      cur = reduce ? target : cur + (target - cur) * (1 - Math.exp(-dt / AB_TAU));
+      if (Math.abs(target - cur) < 0.0005) cur = target;
+      paint(cur);
+      if (cur !== target) raf = requestAnimationFrame(frame);
+      else last = 0;
+    };
+    const wake = () => { if (!raf) raf = requestAnimationFrame(frame); };
+
     const setup = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      W = cv.clientWidth;
-      H = cv.clientHeight;
-      cv.width = Math.round(W * dpr);
-      cv.height = Math.round(H * dpr);
-      geo = abBuild(W, H);
+      const w = cv.clientWidth, h = cv.clientHeight;
+      if (!w || !h) return;
+      const want = Math.max(0.75, Math.min(window.devicePixelRatio || 1, AB_MAX_DPR, Math.sqrt(AB_MAX_PX / (w * h))));
+      const cw = Math.round(w * want), ch = Math.round(h * want);
+      if (w === W && h === H && cv.width === cw && cv.height === ch) return;
+      W = w; H = h; dpr = want;
+      if (cv.width !== cw) cv.width = cw;
+      if (cv.height !== ch) cv.height = ch;
+      geo = abSimplify(abBuild(W, H));
+      range = Math.max(1, track.offsetHeight - H);
       read();
       cur = target;
-      draw(cur);
-    };
-
-    // the painted amount glides toward the scroll position instead of jumping with each wheel notch
-    const loop = () => {
-      cur += (target - cur) * (reduce ? 1 : 0.09);
-      if (Math.abs(target - cur) < 0.0004) cur = target;
-      draw(cur);
-      raf = cur !== target ? requestAnimationFrame(loop) : 0;
-    };
-    const kick = () => {
-      read();
-      if (!raf) raf = requestAnimationFrame(loop);
+      drawn = -1;
+      paint(cur);
     };
 
     setup();
-    window.addEventListener("scroll", kick, { passive: true });
-    window.addEventListener("resize", setup);
+
+    // only listen to scroll while the About track is on (or near) the screen
+    const io = new IntersectionObserver(
+      (entries) => {
+        const on = entries[entries.length - 1].isIntersecting;
+        if (on === live) return;
+        live = on;
+        if (on) {
+          read();
+          cur = target;
+          paint(cur);
+          window.addEventListener("scroll", wake, { passive: true });
+        } else {
+          window.removeEventListener("scroll", wake);
+          if (raf) { cancelAnimationFrame(raf); raf = 0; }
+          last = 0;
+          read();
+          cur = target;
+        }
+      },
+      { rootMargin: "50% 0px 50% 0px" }
+    );
+    io.observe(track);
+
+    // resize: re-measure at most once per frame, and only if the size really changed
+    const ro = new ResizeObserver(() => {
+      if (sizeRaf) return;
+      sizeRaf = requestAnimationFrame(() => { sizeRaf = 0; setup(); });
+    });
+    ro.observe(cv);
+
     return () => {
-      window.removeEventListener("scroll", kick);
-      window.removeEventListener("resize", setup);
+      io.disconnect();
+      ro.disconnect();
+      window.removeEventListener("scroll", wake);
       if (raf) cancelAnimationFrame(raf);
+      if (sizeRaf) cancelAnimationFrame(sizeRaf);
     };
   }, [trackRef]);
 
@@ -565,7 +708,8 @@ function IntroProfile({ isMobile }) {
             </div>
             <span className="ip-ring ip-r0" aria-hidden="true" />
             <div className="ip-me">
-              <img src="/png/me.png" alt="Carlo" draggable={false} />
+              {/* perf-patch: about photo */}
+              <img src="/png/me.png" alt="Carlo" draggable={false} loading="lazy" decoding="async" width={1086} height={1448} />
             </div>
           </motion.div>
 
@@ -1447,16 +1591,9 @@ export default function Page() {
   const containerRef = useRef(null);
   const isMobile = useIsMobile();
 
-  const { scrollYProgress: globalScroll } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
-
-  const globalProgress = useSpring(globalScroll, {
-    stiffness: 120,
-    damping: 30,
-    mass: 0.2,
-  });
+  // perf-patch: no section reads globalProgress, and the useScroll + useSpring pair that fed it
+  // ran a spring on every scroll tick. Kept as a prop so the section signatures stay the same.
+  const globalProgress = null;
 
   return (
     <>
