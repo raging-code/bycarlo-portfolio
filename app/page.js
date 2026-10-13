@@ -1716,8 +1716,8 @@ export default function Page() {
         <Hero globalProgress={globalProgress} isMobile={isMobile} />
         <IntroProfile isMobile={isMobile} />
         <Projects globalProgress={globalProgress} isMobile={isMobile} />
-        <TechStack />
         <Services />
+        <TechStack />
         <Manifesto globalProgress={globalProgress} manifestoRef={manifestoRef} isMobile={isMobile} />
         <Story />
         <Testimonials />
