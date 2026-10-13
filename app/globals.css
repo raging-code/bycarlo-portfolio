@@ -592,3 +592,16 @@ button, a {
 }
 html, body { will-change: auto; }
 /* perf-patch:end */
+
+/* brush-viewport:start */
+/* The brush must cover the LARGE viewport (URL bar hidden) so no strip is left at the
+   bottom on phones. Content stays centered in the SMALL viewport (URL bar shown). */
+:root { --ab-svh: 100vh; --ab-lvh: 100vh; }
+@supports (height: 100lvh) {
+  :root { --ab-svh: 100svh; --ab-lvh: 100lvh; }
+}
+/* same scroll length as before: 4.3 x small viewport, plus the extra the taller pin adds */
+.ip-track { height: calc(var(--ab-svh) * 4.3 + (var(--ab-lvh) - var(--ab-svh))); }
+.ip-pin { height: var(--ab-lvh); }
+.ip-pin .ip-section { min-height: var(--ab-svh); }
+/* brush-viewport:end */
