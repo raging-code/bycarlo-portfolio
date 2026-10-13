@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
 import IntroAnimation from "./IntroAnimation";
+import SmoothScroll from "./SmoothScroll";
 
 // Display / headings
 const plusJakarta = Plus_Jakarta_Sans({
@@ -45,6 +46,7 @@ export default function RootLayout({ children }) {
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
       </head>
       <body>
+        <SmoothScroll />
         <IntroAnimation />{children}</body>
     </html>
   );

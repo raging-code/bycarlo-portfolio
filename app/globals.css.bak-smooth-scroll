@@ -563,3 +563,45 @@ button, a {
   .ip-copy { font-size: 15px; margin-top: 16px; }
 }
 /* about-hero:end */
+
+/* about-brush:start */
+/* About section is pinned while the brush paints */
+.ip-track { position: relative; height: 430vh; height: 430svh; }
+.ip-pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.ip-pin .ip-section { min-height: 100%; display: flex; align-items: center; }
+.ip-pin .ip-stage { width: 100%; }
+.ip-brush {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 5;
+}
+/* about-brush:end */
+
+/* perf-patch:start */
+/* Brush canvas: no full-screen CSS filter on every frame; isolate it on its own layer. */
+.ip-brush { filter: none; contain: strict; transform: translateZ(0); }
+
+/* Sections used to force a GPU layer each (will-change + translateZ + backface-visibility):
+   eight full-width layers cost memory and slow compositing, especially on phones.
+   contain: paint (from the base rule) still isolates them; delete this block to restore. */
+.theme-section {
+  will-change: auto;
+  -webkit-transform: none;
+  transform: none;
+  backface-visibility: visible;
+  -webkit-backface-visibility: visible;
+}
+html, body { will-change: auto; }
+/* perf-patch:end */
+
+/* brush-viewport:start */
+/* The brush must cover the LARGE viewport (URL bar hidden) so no strip is left at the
+   bottom on phones. Content stays centered in the SMALL viewport (URL bar shown). */
+:root { --ab-svh: 100vh; --ab-lvh: 100vh; }
+@supports (height: 100lvh) {
+  :root { --ab-svh: 100svh; --ab-lvh: 100lvh; }
+}
+/* same scroll length as before: 4.3 x small viewport, plus the extra the taller pin adds */
+.ip-track { height: calc(var(--ab-svh) * 4.3 + (var(--ab-lvh) - var(--ab-svh))); }
+.ip-pin { height: var(--ab-lvh); }
+.ip-pin .ip-section { min-height: var(--ab-svh); }
+/* brush-viewport:end */

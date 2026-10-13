@@ -605,3 +605,8 @@ html, body { will-change: auto; }
 .ip-pin { height: var(--ab-lvh); }
 .ip-pin .ip-section { min-height: var(--ab-svh); }
 /* brush-viewport:end */
+
+/* smooth-scroll:start */
+/* JS smoothing replaces CSS smooth scrolling (the two fight each other) */
+html { scroll-behavior: auto; }
+/* smooth-scroll:end */
