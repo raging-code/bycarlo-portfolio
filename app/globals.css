@@ -20,7 +20,6 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  will-change: background-color;
 }
 
 body {
@@ -33,7 +32,6 @@ body {
   background: var(--bg-primary);
   transition: background-color 0.45s ease-in-out;
   -webkit-overflow-scrolling: touch;
-  will-change: background-color;
 }
 
 /* Noise overlay (desktop only) */
@@ -60,7 +58,12 @@ body {
 }
 
 button, a {
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -72,7 +75,6 @@ button, a {
 
 /* Sections: promote to their own layer for smoother scrolling */
 .theme-section {
-  will-change: background-color, transform;
   contain: paint;
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
