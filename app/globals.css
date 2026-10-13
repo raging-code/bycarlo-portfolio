@@ -556,7 +556,7 @@ button, a {
 /* Phones: photo on top, text below */
 @container (max-width: 767px) {
   .ip-about { flex-direction: column; align-items: flex-start; padding: 32px 24px 40px; gap: 24px; }
-  .ip-visual { width: 60cqw; max-width: 260px; margin: 16px 0 0; align-self: center; }
+  .ip-visual { width: 52cqw; max-width: 225px; margin: 12px 0 0; align-self: center; }
   .ip-outer { -webkit-mask-image: none; mask-image: none; }
   .ip-text { max-width: 100%; }
   .ip-title { font-size: 48px; }
