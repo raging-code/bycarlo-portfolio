@@ -350,8 +350,20 @@ const Threads = ({
       const baseDpr = Math.min(window.devicePixelRatio || 1, 2);
       const longest = Math.max(width, height) * baseDpr;
       const dpr = longest > MAX_RENDER_DIM ? (baseDpr * MAX_RENDER_DIM) / longest : baseDpr;
-      canvas.width = Math.max(1, Math.round(width * dpr));
-      canvas.height = Math.max(1, Math.round(height * dpr));
+      const nextCanvasWidth = Math.max(1, Math.round(width * dpr));
+      const nextCanvasHeight = Math.max(1, Math.round(height * dpr));
+
+      // Mobile browsers fire ResizeObserver repeatedly while scrolling
+      // (address-bar show/hide shrinks and grows the viewport). Re-allocating
+      // the framebuffer texture on every one of those ticks, while the RAF
+      // loop is mid-draw, is what produced the torn/garbled frames. Skip the
+      // GPU work entirely when the pixel size hasn't actually changed.
+      if (nextCanvasWidth === canvas.width && nextCanvasHeight === canvas.height && state.width === width && state.height === height) {
+        return;
+      }
+
+      canvas.width = nextCanvasWidth;
+      canvas.height = nextCanvasHeight;
       state.width = width;
       state.height = height;
       gl.bindTexture(gl.TEXTURE_2D, target);
@@ -485,7 +497,15 @@ const Threads = ({
       wake();
     };
 
-    const resizeObserver = new ResizeObserver(resize);
+    let resizeRaf = 0;
+    const scheduleResize = () => {
+      if (resizeRaf) return;
+      resizeRaf = requestAnimationFrame(() => {
+        resizeRaf = 0;
+        resize();
+      });
+    };
+    const resizeObserver = new ResizeObserver(scheduleResize);
     resizeObserver.observe(container);
     const intersection = new IntersectionObserver(entries => {
       visible = entries.some(entry => entry.isIntersecting);
@@ -508,6 +528,7 @@ const Threads = ({
     return () => {
       alive = false;
       cancelAnimationFrame(raf);
+      cancelAnimationFrame(resizeRaf);
       wakeRef.current = null;
       resizeObserver.disconnect();
       intersection.disconnect();

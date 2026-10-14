@@ -320,7 +320,7 @@ function Hero({ globalProgress, isMobile }) {
   return (
     <motion.section
       ref={ref}
-      className="relative min-h-screen flex flex-col justify-center items-start px-6 md:px-20 overflow-hidden pt-20"
+      className="relative min-h-svh flex flex-col justify-center items-start px-6 md:px-20 overflow-hidden pt-20"
       style={heroVars}
     >
       {/* hero-threads:start */}
