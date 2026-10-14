@@ -629,175 +629,69 @@ html { scroll-behavior: auto; }
 /* about-gap:end */
 
 /* services:css:start */
-/* Services: pinned red panel. Same red (#E02B20) and cream (#F6F5F2) as the rest of the site.
-   Heights use the same small/large viewport variables as the About brush (--ab-svh / --ab-lvh)
-   so phones with a collapsing URL bar don't show a strip under the panel.
-   Motion: the cream panel blooms open from the centre, the focused row lifts with a soft
-   shadow while the rest recede into soft focus, titles/descriptions reveal word-by-word,
-   and a gold indicator slides to the active row. */
-.svc-track {
-  --svc-n: 6;      /* number of services (set from React) */
-  --svc-zone: 60;  /* scroll per service, in % of one screen: higher = slower, lower = faster */
-  --svc-pull: 100px; /* pulls Services up toward Projects: bigger = closer */
+/* services-grid: Services as a static 2-column x 3-row grid on the site red.
+   Same red (#E02B20) and cream (#F6F5F2) as the rest of the site. */
+.svc-section {
+  --svc-pull: 100px; /* tucks Services up toward Projects: bigger = closer, 0 = no overlap */
   position: relative;
   margin-top: calc(var(--svc-pull) * -1);
-  height: calc(100vh * (1 + var(--svc-n) * var(--svc-zone) / 100));
-  height: calc(var(--ab-svh, 100vh) * (1 + var(--svc-n) * var(--svc-zone) / 100) + (var(--ab-lvh, 100vh) - var(--ab-svh, 100vh)));
-}
-.svc-pin {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: var(--ab-lvh, 100vh);
-  overflow: hidden;
   background: #E02B20;
   color: #F6F5F2;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  /* extra space on top keeps the content clear of the floating navbar */
-  padding: calc(4vh + 48px) 0 4vh;
-  padding: calc(max(4svh, env(safe-area-inset-top, 0px)) + 48px) 0 calc(4svh + var(--ab-lvh, 100vh) - var(--ab-svh, 100vh));
+  /* extra top space keeps the heading clear of the floating navbar and the overlap above */
+  padding: calc(var(--svc-pull) + clamp(72px, 10vw, 140px)) clamp(20px, 5vw, 64px) clamp(72px, 10vw, 140px);
 }
-.svc-pin ::selection { background: #F6F5F2; color: #E02B20; }
+.svc-section ::selection { background: #F6F5F2; color: #E02B20; }
+.svc-wrap { max-width: 1180px; margin: 0 auto; }
 
 .svc-heading {
-  position: relative;
-  z-index: 1;
-  margin: 0 0 clamp(18px, 4.2vh, 44px);
-  margin-bottom: clamp(18px, 4.2svh, 44px);
-  padding: 0 20px;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(1.35rem, min(4.6vw, 4.2vh), 2.4rem);
-  font-size: clamp(1.35rem, min(4.6vw, 4.2svh), 2.4rem);
-  line-height: 1.1;
-  letter-spacing: 0.02em;
-  opacity: 0.9;
-}
-
-.svc-list { position: relative; z-index: 1; list-style: none; margin: 0; padding: 0; width: 100%; }
-
-.svc-row {
-  position: relative;
-  isolation: isolate;
+  margin: 0 0 clamp(24px, 4vw, 56px);
   text-align: center;
-  padding: 0;
-  transition: padding 0.75s cubic-bezier(0.34, 1.56, 0.64, 1),
-              opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-              color 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.svc-row + .svc-row { border-top: 1px solid rgba(246, 245, 242, 0.3); } /* edge-to-edge hairlines */
-.svc-row h3 { margin: 0; }
-
-/* the cream panel wipes open from the centre (transform, GPU-friendly), never a hard swap */
-.svc-row::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: 14px;
-  background: #F6F5F2;
-  transform: scaleX(0);
-  transform-origin: center;
-  transition: transform 0.75s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.svc-row.on::before { transform: scaleX(1); }
-
-/* the service in focus: white, black text */
-.svc-row.on {
-  z-index: 2;
-  color: #141414;
-  padding-top: clamp(10px, 2.2vh, 24px);
-  padding-top: clamp(10px, 2.2svh, 24px);
-}
-
-/* the rest recede */
-.svc-list.has-on .svc-row:not(.on) { opacity: 0.5; }
-
-/* gold indicator that slides down the left edge to the active row */
-.svc-indicator {
-  position: absolute;
-  left: clamp(10px, 2.6vw, 38px);
-  top: 0;
-  width: 4px;
-  border-radius: 4px;
-  background: #C9A66B;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.svc-title {
-  display: block;
-  width: 100%;
-  min-height: 0; /* beats the global mobile `button { min-height: 44px }` */
-  margin: 0;
-  padding: 0.27em clamp(20px, 6vw, 80px);
-  border: 0;
-  background: none;
-  color: inherit;
-  cursor: pointer;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(1.2rem, min(6.2vw, 5vh), 3.6rem);
-  font-size: clamp(1.2rem, min(6.2vw, 5svh), 3.6rem);
-  line-height: 1.08;
+  font-size: clamp(52px, 12.5vw, 176px);
+  line-height: 0.88;
+  letter-spacing: -0.055em;
+}
+
+.svc-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: clamp(16px, 2.4vw, 32px);
+  row-gap: 0;
+}
+
+/* one hairline above each service, no numbering, no hover or scroll motion */
+.svc-item {
+  border-top: 1px solid rgba(246, 245, 242, 0.34);
+  padding: clamp(14px, 1.8vw, 24px) clamp(20px, 4vw, 64px) clamp(16px, 2vw, 28px);
+  text-align: center;
+}
+.svc-title {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(24px, 3vw, 42px);
+  line-height: 1.05;
   letter-spacing: -0.04em;
   text-wrap: balance;
-  transition: letter-spacing 0.6s cubic-bezier(0.22, 1, 0.36, 1); /* beats the global `button { transition: all }` */
-  -webkit-tap-highlight-color: transparent;
 }
-.svc-title:focus-visible { outline: 2px solid currentColor; outline-offset: -6px; border-radius: 12px; }
-.svc-row.on .svc-title { letter-spacing: -0.05em; }
-
-/* word masks: each word rises from behind a hidden edge when its row opens */
-.svc-m { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.06em; }
-.svc-w { display: inline-block; }
-.svc-row.on .svc-title .svc-w {
-  animation: svc-rise 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-  animation-delay: calc(var(--i) * 50ms);
-}
-@keyframes svc-rise { from { transform: translateY(115%); } to { transform: translateY(0); } }
-
-/* description opens with a smooth height animation (grid rows 0fr -> 1fr) */
-.svc-desc {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.75s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.svc-row.on .svc-desc { grid-template-rows: 1fr; }
-.svc-desc-in { min-height: 0; overflow: hidden; }
-.svc-desc p {
+.svc-text {
   margin: 0 auto;
-  max-width: 50ch;
-  padding: 0 28px clamp(18px, 4vh, 48px);
-  padding-bottom: clamp(18px, 4svh, 48px);
+  max-width: 44ch;
   font-family: var(--font-body);
   font-weight: 400;
-  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+  font-size: clamp(14px, 1.2vw, 16px);
   line-height: 1.7;
-  text-align: center;
+  opacity: 0.9;
   text-wrap: balance;
 }
-.svc-desc p .svc-w { opacity: 0; transform: translateY(16px); }
-.svc-row.on .svc-desc p .svc-w {
-  animation: svc-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-  animation-delay: calc(var(--i) * 14ms + 240ms);
-}
-@keyframes svc-pop { to { opacity: 1; transform: none; } }
 
-/* short laptop screens: slightly smaller titles so everything still fits on one screen */
-@media (max-height: 640px) {
-  .svc-title { font-size: clamp(1.1rem, min(6.2vw, 4.4vh), 3rem); font-size: clamp(1.1rem, min(6.2vw, 4.4svh), 3rem); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .svc-row, .svc-title, .svc-desc, .svc-desc-in, .svc-indicator { transition: none !important; }
-  .svc-row::before { transition: none !important; }
-  .svc-row.on .svc-title .svc-w, .svc-row.on .svc-desc p .svc-w { animation: none !important; }
-  .svc-desc p .svc-w { opacity: 1; transform: none; }
+@media (max-width: 767px) {
+  .svc-grid { grid-template-columns: 1fr; }
+  .svc-item { padding: 16px 20px 20px; }
 }
 /* services:css:end */
 

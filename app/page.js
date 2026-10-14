@@ -1601,7 +1601,7 @@ function Contact({ isMobile }) {
 
 /* ── Page root ───────────────────────────────────── */
 /* services:start */
-/* ── Services (pinned red panel, one service opens at a time) ──────── */
+/* ── Services (services-grid: static 2-column grid on red) ─────────────────── */
 const SERVICES = [
   {
     title: "Website Development",
@@ -1629,116 +1629,16 @@ const SERVICES = [
   },
 ];
 
-// Splits a string into word spans so each word can animate from behind a mask.
-// Spaces are kept as text nodes between the inline-block masks so wrapping still works.
-function Masked({ text }) {
-  const words = text.trim().split(/\s+/);
-  const out = [];
-  words.forEach((w, i) => {
-    out.push(
-      <span className="svc-m" key={i}>
-        <span className="svc-w" style={{ "--i": i }}>{w}</span>
-      </span>
-    );
-    if (i < words.length - 1) out.push(" ");
-  });
-  return out;
-}
-
 function Services() {
-  const trackRef = useRef(null);
-  const pinRef = useRef(null);
-  const listRef = useRef(null);
-  const indRef = useRef(null);
-  const [active, setActive] = useState(-1);
-
-  // Which service is open depends only on how far you have scrolled through the pinned
-  // stretch (each service owns an equal slice), never on the rows' own height, so opening
-  // and closing rows can't make it flicker.
-  useEffect(() => {
-    const track = trackRef.current;
-    const pin = pinRef.current;
-    if (!track || !pin) return;
-    let raf = 0;
-    const update = () => {
-      raf = 0;
-      const span = track.offsetHeight - pin.offsetHeight;
-      const p = span > 0 ? -track.getBoundingClientRect().top / span : 0;
-      const idx = p < 0 ? -1 : Math.min(SERVICES.length - 1, Math.floor(p * SERVICES.length));
-      setActive((prev) => (prev === idx ? prev : idx));
-    };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    update();
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, []);
-
-  // Slide the gold indicator onto the active row. It keeps following for a short beat so it
-  // tracks the row's height/position while the open/close transition is still running.
-  useEffect(() => {
-    const list = listRef.current;
-    const ind = indRef.current;
-    if (!list || !ind) return;
-    const row = list.querySelectorAll(".svc-row")[active];
-    if (!row) { ind.style.opacity = 0; return; }
-    ind.style.opacity = 1;
-    let raf = 0;
-    const start = performance.now();
-    const place = () => {
-      const lr = list.getBoundingClientRect();
-      const rr = row.getBoundingClientRect();
-      ind.style.transform = `translateY(${rr.top - lr.top}px)`;
-      ind.style.height = `${rr.height}px`;
-      if (performance.now() - start < 1100) raf = requestAnimationFrame(place);
-    };
-    raf = requestAnimationFrame(place);
-    return () => cancelAnimationFrame(raf);
-  }, [active]);
-
-  const jumpTo = (i) => {
-    const track = trackRef.current;
-    const pin = pinRef.current;
-    if (!track || !pin) return;
-    const span = track.offsetHeight - pin.offsetHeight;
-    const top = track.getBoundingClientRect().top + window.scrollY + span * ((i + 0.5) / SERVICES.length);
-    if (window.__lenis) window.__lenis.scrollTo(top, { duration: 1.2 });
-    else window.scrollTo({ top, behavior: "smooth" });
-  };
-
   return (
-    <section
-      ref={trackRef}
-      id="services"
-      className="svc-track"
-      style={{ "--svc-n": SERVICES.length }}
-      aria-label="Services"
-    >
-      <div ref={pinRef} className="svc-pin">
-        <h2 className="svc-heading" aria-label="Services">{"< SERVICES />"}</h2>
-        <ul ref={listRef} className={"svc-list" + (active !== -1 ? " has-on" : "")}>
-          <span ref={indRef} className="svc-indicator" aria-hidden="true" />
-          {SERVICES.map((s, i) => (
-            <li key={s.title} className={"svc-row" + (i === active ? " on" : "")}>
-              <h3>
-                <button
-                  type="button"
-                  className="svc-title"
-                  aria-expanded={i === active}
-                  onClick={() => jumpTo(i)}
-                >
-                  <Masked text={s.title} />
-                </button>
-              </h3>
-              <div className="svc-desc">
-                <div className="svc-desc-in">
-                  <p><Masked text={s.text} /></p>
-                </div>
-              </div>
+    <section id="services" className="svc-section" aria-labelledby="services-heading">
+      <div className="svc-wrap">
+        <h2 id="services-heading" className="svc-heading">SERVICES</h2>
+        <ul className="svc-grid">
+          {SERVICES.map((s) => (
+            <li key={s.title} className="svc-item">
+              <h3 className="svc-title">{s.title}</h3>
+              <p className="svc-text">{s.text}</p>
             </li>
           ))}
         </ul>
