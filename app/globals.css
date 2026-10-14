@@ -677,8 +677,7 @@ html { scroll-behavior: auto; }
 .svc-row {
   text-align: center;
   transition: background-color 0.8s cubic-bezier(0.22, 1, 0.36, 1),
-              color 0.8s cubic-bezier(0.22, 1, 0.36, 1),
-              padding 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+              color 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .svc-row + .svc-row { border-top: 1px solid rgba(246, 245, 242, 0.3); } /* edge-to-edge hairlines */
 .svc-row h3 { margin: 0; }
@@ -708,10 +707,17 @@ html { scroll-behavior: auto; }
 /* description opens with a smooth height animation (grid rows 0fr -> 1fr) */
 .svc-desc {
   display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  grid-template-rows: 0fr; /* switches instantly now — the open animation lives on .svc-desc-in below */
 }
-.svc-desc-in { min-height: 0; overflow: hidden; }
+.svc-desc-in {
+  min-height: 0;
+  overflow: hidden;
+  transform: scaleY(0);
+  transform-origin: top;
+  opacity: 0;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
 .svc-desc p {
   margin: 0 auto;
   max-width: 50ch;
@@ -736,6 +742,7 @@ html { scroll-behavior: auto; }
   padding-top: clamp(10px, 2.2svh, 24px);
 }
 .svc-row.on .svc-desc { grid-template-rows: 1fr; }
+.svc-row.on .svc-desc-in { transform: scaleY(1); opacity: 1; }
 .svc-row.on .svc-desc p {
   opacity: 1;
   transform: none;
@@ -749,7 +756,7 @@ html { scroll-behavior: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .svc-row, .svc-title, .svc-desc, .svc-desc p { transition: none !important; }
+  .svc-row, .svc-title, .svc-desc, .svc-desc-in, .svc-desc p { transition: none !important; }
   .svc-desc p { transform: none; }
 }
 /* services:css:end */
