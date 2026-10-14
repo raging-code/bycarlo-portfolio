@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect, useCallback, useLayoutEffect } from "react";
 import GlassSurface from "./GlassSurface";
 import Threads from "./Threads";
+import ContactThreads from "./ContactThreads";
 import {
   motion,
   useScroll,
@@ -1554,10 +1555,17 @@ function Contact({ isMobile }) {
   const mutedColor = LIGHT.muted;
 
   return (
-    <motion.section ref={ref} id="contact" className="py-28 md:py-44 px-6 md:px-20 theme-section">
-      <div className="max-w-3xl">
+    <motion.section
+      ref={ref}
+      id="contact"
+      className="relative min-h-svh flex flex-col justify-between overflow-hidden pt-52 pb-12 md:py-44 px-6 md:px-20 theme-section"
+    >
+      {/* contact-threads:start */}
+      <ContactThreads />
+      {/* contact-threads:end */}
+      <div className="relative z-10 max-w-3xl">
         <motion.h2
-          className="text-[clamp(2.4rem,9vw,5.5rem)] font-display font-extrabold leading-none tracking-[-0.055em] mb-8"
+          className="contact-h2 font-display font-extrabold leading-none tracking-[-0.055em] mb-8"
           style={{ color: textColor }}
           initial={{ y: 40, opacity: 0 }}
           animate={inView ? { y: 0, opacity: 1 } : {}}
@@ -1578,7 +1586,7 @@ function Contact({ isMobile }) {
         </motion.a>
       </div>
       <motion.footer
-        className="mt-32 flex flex-col md:flex-row justify-between gap-2 text-xs tracking-widest uppercase"
+        className="relative z-10 mt-12 md:mt-32 flex flex-col md:flex-row justify-between gap-2 text-xs tracking-widest uppercase"
         style={{ color: mutedColor }}
         initial={{ opacity: 0 }}
         animate={inView ? { opacity: 1 } : {}}

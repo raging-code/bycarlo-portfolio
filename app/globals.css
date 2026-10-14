@@ -800,3 +800,11 @@ html { scroll-behavior: auto; }
   .svc-desc p .svc-w { opacity: 1; transform: none; }
 }
 /* services:css:end */
+
+/* contact-threads:start */
+/* Contact heading: as large as fits on one line on phones, original size on desktop */
+.contact-h2 { font-size: min(4.5rem, calc((100vw - 3rem) * 0.154)); }
+@media (min-width: 768px) {
+  .contact-h2 { font-size: clamp(2.4rem, 9vw, 5.5rem); }
+}
+/* contact-threads:end */
