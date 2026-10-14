@@ -631,7 +631,10 @@ html { scroll-behavior: auto; }
 /* services:css:start */
 /* Services: pinned red panel. Same red (#E02B20) and cream (#F6F5F2) as the rest of the site.
    Heights use the same small/large viewport variables as the About brush (--ab-svh / --ab-lvh)
-   so phones with a collapsing URL bar don't show a strip under the panel. */
+   so phones with a collapsing URL bar don't show a strip under the panel.
+   Motion: the cream panel blooms open from the centre, the focused row lifts with a soft
+   shadow while the rest recede into soft focus, titles/descriptions reveal word-by-word,
+   and a gold indicator slides to the active row. */
 .svc-track {
   --svc-n: 6;      /* number of services (set from React) */
   --svc-zone: 60;  /* scroll per service, in % of one screen: higher = slower, lower = faster */
@@ -660,6 +663,8 @@ html { scroll-behavior: auto; }
 .svc-pin ::selection { background: #F6F5F2; color: #E02B20; }
 
 .svc-heading {
+  position: relative;
+  z-index: 1;
   margin: 0 0 clamp(18px, 4.2vh, 44px);
   margin-bottom: clamp(18px, 4.2svh, 44px);
   padding: 0 20px;
@@ -672,15 +677,57 @@ html { scroll-behavior: auto; }
   opacity: 0.9;
 }
 
-.svc-list { list-style: none; margin: 0; padding: 0; }
+.svc-list { position: relative; z-index: 1; list-style: none; margin: 0; padding: 0; width: 100%; }
 
 .svc-row {
+  position: relative;
+  isolation: isolate;
   text-align: center;
-  transition: background-color 0.8s cubic-bezier(0.22, 1, 0.36, 1),
-              color 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  padding: 0;
+  transition: padding 0.75s cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+              color 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .svc-row + .svc-row { border-top: 1px solid rgba(246, 245, 242, 0.3); } /* edge-to-edge hairlines */
 .svc-row h3 { margin: 0; }
+
+/* the cream panel wipes open from the centre (transform, GPU-friendly), never a hard swap */
+.svc-row::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 14px;
+  background: #F6F5F2;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.75s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.svc-row.on::before { transform: scaleX(1); }
+
+/* the service in focus: white, black text */
+.svc-row.on {
+  z-index: 2;
+  color: #141414;
+  padding-top: clamp(10px, 2.2vh, 24px);
+  padding-top: clamp(10px, 2.2svh, 24px);
+}
+
+/* the rest recede */
+.svc-list.has-on .svc-row:not(.on) { opacity: 0.5; }
+
+/* gold indicator that slides down the left edge to the active row */
+.svc-indicator {
+  position: absolute;
+  left: clamp(10px, 2.6vw, 38px);
+  top: 0;
+  width: 4px;
+  border-radius: 4px;
+  background: #C9A66B;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
 
 .svc-title {
   display: block;
@@ -699,25 +746,29 @@ html { scroll-behavior: auto; }
   line-height: 1.08;
   letter-spacing: -0.04em;
   text-wrap: balance;
-  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1); /* beats the global `button { transition: all }` */
+  transition: letter-spacing 0.6s cubic-bezier(0.22, 1, 0.36, 1); /* beats the global `button { transition: all }` */
   -webkit-tap-highlight-color: transparent;
 }
 .svc-title:focus-visible { outline: 2px solid currentColor; outline-offset: -6px; border-radius: 12px; }
+.svc-row.on .svc-title { letter-spacing: -0.05em; }
+
+/* word masks: each word rises from behind a hidden edge when its row opens */
+.svc-m { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.06em; }
+.svc-w { display: inline-block; }
+.svc-row.on .svc-title .svc-w {
+  animation: svc-rise 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: calc(var(--i) * 50ms);
+}
+@keyframes svc-rise { from { transform: translateY(115%); } to { transform: translateY(0); } }
 
 /* description opens with a smooth height animation (grid rows 0fr -> 1fr) */
 .svc-desc {
   display: grid;
-  grid-template-rows: 0fr; /* switches instantly now — the open animation lives on .svc-desc-in below */
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.75s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.svc-desc-in {
-  min-height: 0;
-  overflow: hidden;
-  transform: scaleY(0);
-  transform-origin: top;
-  opacity: 0;
-  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-              opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-}
+.svc-row.on .svc-desc { grid-template-rows: 1fr; }
+.svc-desc-in { min-height: 0; overflow: hidden; }
 .svc-desc p {
   margin: 0 auto;
   max-width: 50ch;
@@ -729,26 +780,13 @@ html { scroll-behavior: auto; }
   line-height: 1.7;
   text-align: center;
   text-wrap: balance;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.4s, transform 0.4s;
 }
-
-/* the service in focus: white, black text, expanded */
-.svc-row.on {
-  background: #F6F5F2;
-  color: #141414;
-  padding-top: clamp(10px, 2.2vh, 24px);
-  padding-top: clamp(10px, 2.2svh, 24px);
+.svc-desc p .svc-w { opacity: 0; transform: translateY(16px); }
+.svc-row.on .svc-desc p .svc-w {
+  animation: svc-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: calc(var(--i) * 14ms + 240ms);
 }
-.svc-row.on .svc-desc { grid-template-rows: 1fr; }
-.svc-row.on .svc-desc-in { transform: scaleY(1); opacity: 1; }
-.svc-row.on .svc-desc p {
-  opacity: 1;
-  transform: none;
-  transition: opacity 0.7s 0.25s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s 0.25s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.svc-list.has-on .svc-row:not(.on) .svc-title { opacity: 0.5; }
+@keyframes svc-pop { to { opacity: 1; transform: none; } }
 
 /* short laptop screens: slightly smaller titles so everything still fits on one screen */
 @media (max-height: 640px) {
@@ -756,7 +794,9 @@ html { scroll-behavior: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .svc-row, .svc-title, .svc-desc, .svc-desc-in, .svc-desc p { transition: none !important; }
-  .svc-desc p { transform: none; }
+  .svc-row, .svc-title, .svc-desc, .svc-desc-in, .svc-indicator { transition: none !important; }
+  .svc-row::before { transition: none !important; }
+  .svc-row.on .svc-title .svc-w, .svc-row.on .svc-desc p .svc-w { animation: none !important; }
+  .svc-desc p .svc-w { opacity: 1; transform: none; }
 }
 /* services:css:end */

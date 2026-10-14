@@ -1621,9 +1621,27 @@ const SERVICES = [
   },
 ];
 
+// Splits a string into word spans so each word can animate from behind a mask.
+// Spaces are kept as text nodes between the inline-block masks so wrapping still works.
+function Masked({ text }) {
+  const words = text.trim().split(/\s+/);
+  const out = [];
+  words.forEach((w, i) => {
+    out.push(
+      <span className="svc-m" key={i}>
+        <span className="svc-w" style={{ "--i": i }}>{w}</span>
+      </span>
+    );
+    if (i < words.length - 1) out.push(" ");
+  });
+  return out;
+}
+
 function Services() {
   const trackRef = useRef(null);
   const pinRef = useRef(null);
+  const listRef = useRef(null);
+  const indRef = useRef(null);
   const [active, setActive] = useState(-1);
 
   // Which service is open depends only on how far you have scrolled through the pinned
@@ -1652,6 +1670,28 @@ function Services() {
     };
   }, []);
 
+  // Slide the gold indicator onto the active row. It keeps following for a short beat so it
+  // tracks the row's height/position while the open/close transition is still running.
+  useEffect(() => {
+    const list = listRef.current;
+    const ind = indRef.current;
+    if (!list || !ind) return;
+    const row = list.querySelectorAll(".svc-row")[active];
+    if (!row) { ind.style.opacity = 0; return; }
+    ind.style.opacity = 1;
+    let raf = 0;
+    const start = performance.now();
+    const place = () => {
+      const lr = list.getBoundingClientRect();
+      const rr = row.getBoundingClientRect();
+      ind.style.transform = `translateY(${rr.top - lr.top}px)`;
+      ind.style.height = `${rr.height}px`;
+      if (performance.now() - start < 1100) raf = requestAnimationFrame(place);
+    };
+    raf = requestAnimationFrame(place);
+    return () => cancelAnimationFrame(raf);
+  }, [active]);
+
   const jumpTo = (i) => {
     const track = trackRef.current;
     const pin = pinRef.current;
@@ -1672,7 +1712,8 @@ function Services() {
     >
       <div ref={pinRef} className="svc-pin">
         <h2 className="svc-heading" aria-label="Services">{"< SERVICES />"}</h2>
-        <ul className={"svc-list" + (active !== -1 ? " has-on" : "")}>
+        <ul ref={listRef} className={"svc-list" + (active !== -1 ? " has-on" : "")}>
+          <span ref={indRef} className="svc-indicator" aria-hidden="true" />
           {SERVICES.map((s, i) => (
             <li key={s.title} className={"svc-row" + (i === active ? " on" : "")}>
               <h3>
@@ -1682,12 +1723,12 @@ function Services() {
                   aria-expanded={i === active}
                   onClick={() => jumpTo(i)}
                 >
-                  {s.title}
+                  <Masked text={s.title} />
                 </button>
               </h3>
               <div className="svc-desc">
                 <div className="svc-desc-in">
-                  <p>{s.text}</p>
+                  <p><Masked text={s.text} /></p>
                 </div>
               </div>
             </li>
