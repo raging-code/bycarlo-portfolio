@@ -1,0 +1,727 @@
+#!/usr/bin/env node
+/**
+ * patch-contact.mjs
+ * Replaces the Contact section of bycarlo-portfolio with the "liquid morph +
+ * ribbon threads" design from contact-morph-ribbon-version.html.
+ *
+ * Run from the repo root:
+ *   node patch-contact.mjs            apply
+ *   node patch-contact.mjs --dry      show what would happen, write nothing
+ *   node patch-contact.mjs --target app/components/Contact.jsx
+ *                                     force a specific file
+ *
+ * What it does
+ *  1. Writes a self-contained client component  ContactMorphSection.(jsx|tsx|js)
+ *     (markup + scoped CSS + the morph and ribbon animations, all prefixed "ct-"
+ *     so nothing leaks into the rest of your site).
+ *  2. Hooks it up, in this order of preference:
+ *       a. an existing Contact component file  -> turned into a thin wrapper
+ *       b. a <section id="contact"> block in a page/component -> swapped for
+ *          <ContactMorphSection /> (+ import added)
+ *       c. neither found -> only writes the component and tells you what to add
+ *  3. Backs up every file it modifies into .patch-backup/contact-<timestamp>/
+ *
+ * Safe to run twice: the second run just refreshes the component file.
+ */
+import fs from "node:fs";
+import path from "node:path";
+
+const argv = process.argv.slice(2);
+const DRY = argv.includes("--dry");
+const ti = argv.indexOf("--target");
+const TARGET_ARG = ti >= 0 ? argv[ti + 1] : null;
+const ROOT = process.cwd();
+const MARK = "contact-morph-patch";
+const COMP = "ContactMorphSection";
+
+const log = (...a) => console.log(...a);
+const die = (m) => {
+  console.error("\n✖ " + m + "\n");
+  process.exit(1);
+};
+const rel = (p) => path.relative(ROOT, p).split(path.sep).join("/");
+
+/* ------------------------------------------------------------------ */
+/*  CSS (scoped under .ct-root, converted from the attached HTML)      */
+/* ------------------------------------------------------------------ */
+const CSS = String.raw`
+.ct-root,.ct-root *{box-sizing:border-box}
+.ct-root{--ct-bg:#F6F5F2;--ct-fg:#141414;--ct-muted:#6B6762;--ct-accent:#E02B20;color-scheme:light;position:relative;isolation:isolate;min-height:100svh;display:grid;place-items:center;overflow:hidden;padding:1.5rem 1rem;background:var(--ct-bg);color:var(--ct-fg);font-family:'Plus Jakarta Sans','Noto Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.ct-root ::selection{background:var(--ct-accent);color:var(--ct-bg)}
+.ct-root .ct-morph{margin:0;display:grid;font-weight:800;font-size:clamp(3rem,14.2vw,13.5rem);letter-spacing:-.055em;line-height:1.15;padding:.1em .06em}
+.ct-root .ct-morph.ct-on{filter:url(#ct-goo) blur(.55px)}
+.ct-root .ct-morph.ct-plain.ct-on{filter:none}
+.ct-root .ct-layer{grid-area:1/1;justify-self:center;display:block;white-space:nowrap;min-height:1.15em}
+.ct-root .ct-u{position:relative}
+.ct-root .ct-dot{color:var(--ct-accent)}
+.ct-root .ct-wrap{display:grid;justify-items:center;text-align:center;max-width:100%;position:relative;z-index:1;top:-6vh}
+.ct-root .ct-lead{margin:0 0 clamp(.9rem,2.4vw,2rem);max-width:13em;font-weight:700;font-size:clamp(2.2rem,7.4vw,6.5rem);line-height:1.08;letter-spacing:-.04em;text-wrap:balance}
+.ct-root .ct-lead em{font-style:normal}
+.ct-root .ct-top{margin:0 0 clamp(.4rem,2.6vw,2.2rem);display:grid;gap:0;font-family:'DM Sans',system-ui,sans-serif;font-weight:400;font-size:clamp(1rem,2.9vw,2.4rem);line-height:1.7;letter-spacing:0;color:var(--ct-fg)}
+.ct-root .ct-top span:last-child{color:var(--ct-accent)}
+.ct-root .ct-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0}
+.ct-root .ct-defs{position:absolute;width:0;height:0}
+.ct-root .ct-threads{position:absolute;inset:0;z-index:0;pointer-events:none}
+.ct-root .ct-glow{position:absolute;inset:0;background:radial-gradient(48% 55% at 50% 58%,rgba(224,43,32,.09),rgba(224,43,32,0) 70%),radial-gradient(34% 40% at 72% 52%,rgba(201,166,107,.15),rgba(201,166,107,0) 72%)}
+.ct-root .ct-threads canvas{position:absolute;inset:0;width:100%;height:100%;display:block;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 22%,#000 82%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 22%,#000 82%,transparent 100%)}
+@media (min-width:768px){.ct-root::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E")}}
+`;
+
+/* ------------------------------------------------------------------ */
+/*  Component source (no backticks / ${ in here, on purpose)           */
+/* ------------------------------------------------------------------ */
+const COMPONENT_BODY = String.raw`
+const FONT_HREF =
+  "https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400..800&family=Noto+Sans+Arabic:wght@400..800&family=Noto+Sans+Devanagari:wght@400..800&family=Noto+Sans+JP:wght@400..800&family=Noto+Sans+KR:wght@400..800&family=Noto+Sans+Thai:wght@400..800&family=DM+Sans:wght@400..600&family=Plus+Jakarta+Sans:wght@500..800&display=swap";
+
+const CSS = [
+/*__CSS__*/
+].join("\n");
+
+/* loads the Google fonts once and resolves when the stylesheet is ready */
+function ensureFonts() {
+  return new Promise(function (resolve) {
+    var existing = document.querySelector("link[data-ct-fonts]");
+    if (existing) {
+      if (existing.sheet) resolve();
+      else {
+        existing.addEventListener("load", function () { resolve(); });
+        existing.addEventListener("error", function () { resolve(); });
+      }
+      return;
+    }
+    var p1 = document.createElement("link");
+    p1.rel = "preconnect";
+    p1.href = "https://fonts.googleapis.com";
+    var p2 = document.createElement("link");
+    p2.rel = "preconnect";
+    p2.href = "https://fonts.gstatic.com";
+    p2.crossOrigin = "anonymous";
+    var l = document.createElement("link");
+    l.rel = "stylesheet";
+    l.href = FONT_HREF;
+    l.setAttribute("data-ct-fonts", "1");
+    l.addEventListener("load", function () { resolve(); });
+    l.addEventListener("error", function () { resolve(); });
+    document.head.appendChild(p1);
+    document.head.appendChild(p2);
+    document.head.appendChild(l);
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/*  Liquid-morph CONTACT word                                          */
+/* ------------------------------------------------------------------ */
+function initMorph(root, fontsReady) {
+  var $ = function (s) { return root.querySelector(s); };
+  var SANS = "'Plus Jakarta Sans','Noto Sans',system-ui,sans-serif";
+  var LAT = { font: SANS, ls: "-0.055em", fs: 1 };
+  function W(t, code, lang, o) {
+    var w = { t: t, code: code, lang: lang };
+    o = o || LAT;
+    for (var k in o) w[k] = o[k];
+    return w;
+  }
+  var WORDS = [
+    W("CONTACT", "en", "English"),
+    W("CONTACTO", "es", "Spanish"),
+    W("KONTAKT", "de", "German"),
+    W("コンタクト", "ja", "Japanese", { font: "'Noto Sans JP'," + SANS, ls: "-0.02em", fs: 0.95 }),
+    W("CONTACT", "fr", "French"),
+    W("CONTATTO", "it", "Italian"),
+    W("КОНТАКТ", "ru", "Russian", { font: SANS, ls: "-0.05em", fs: 0.98 }),
+    W("콘택트", "ko", "Korean", { font: "'Noto Sans KR'," + SANS, ls: "-0.02em", fs: 0.95 }),
+    W("KONTAK", "fil", "Filipino"),
+    W("कॉन्टैक्ट", "hi", "Hindi", { font: "'Noto Sans Devanagari'," + SANS, ls: "0", fs: 0.95, parts: ["कॉ", "न्टै", "क्ट"] }),
+    W("CONTACT", "nl", "Dutch"),
+    W("คอนแทค", "th", "Thai", { font: "'Noto Sans Thai'," + SANS, ls: "0", fs: 0.9 }),
+    W("KONTAK", "id", "Indonesian"),
+    W("كونتاكت", "ar", "Arabic", { font: "'Noto Sans Arabic'," + SANS, ls: "0", fs: 1.05, dir: "rtl", parts: ["كونتاكت"] }),
+    W("KONTAKT", "pl", "Polish")
+  ];
+  var N = WORDS.length;
+
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var MORPH = reduce ? 1 : 1800, HOLD = 1900, SPREAD = 0.45, DRIP = 0.16;
+  var morph = $('[data-ct="morph"]'), A = $('[data-ct="la"]'), B = $('[data-ct="lb"]');
+  var turb = $('[data-ct="turb"]'), disp = $('[data-ct="disp"]'), live = $('[data-ct="live"]');
+  var front = A, back = B, cur = 0, to = 0, phase = "hold", t0 = 0, holdLeft = HOLD, said = true, K = 3;
+  var raf = 0, alive = true;
+  if (reduce) morph.classList.add("ct-plain");
+
+  var clamp = function (x) { return x < 0 ? 0 : x > 1 ? 1 : x; };
+  var ease = function (x) { return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+  function measureK() { K = Math.max(1, parseFloat(getComputedStyle(morph).fontSize) / 36); }
+
+  /* every letter is its own droplet (Arabic stays one piece so it keeps joining) */
+  function paint(el, w) {
+    el.dir = w.dir || "ltr";
+    el.lang = w.code;
+    el.style.fontFamily = w.font;
+    el.style.fontSize = w.fs + "em";
+    el.style.letterSpacing = w.ls;
+    el.style.lineHeight = (1.15 / w.fs).toFixed(3);
+    el.textContent = "";
+    el._u = [];
+    var cs = (w.parts || Array.from(w.t)).concat(".");
+    cs.forEach(function (c, k) {
+      var s = document.createElement("span");
+      s.className = k === cs.length - 1 ? "ct-u ct-dot" : "ct-u";
+      s.textContent = c;
+      el.appendChild(s);
+      el._u.push({ el: s, x: 0 });
+    });
+  }
+  /* each droplet's x (0-1, across the whole word area) decides when the wave reaches it */
+  function measure(el, r0) {
+    el._u.forEach(function (u) {
+      var r = u.el.getBoundingClientRect();
+      u.x = clamp((r.left + r.width / 2 - r0.left) / r0.width);
+    });
+  }
+  /* blur-crossfade per droplet; the SVG threshold on the parent turns it into liquid */
+  function setU(el, fr, dy) {
+    var s = el.style;
+    if (fr <= 0.001) { s.opacity = 0; s.filter = "none"; s.top = "0"; return; }
+    fr = Math.min(1, fr);
+    s.opacity = Math.pow(fr, 0.4).toFixed(3);
+    s.filter = reduce || fr > 0.995 ? "none" : "blur(" + (Math.min(8 / fr - 8, 100) * K).toFixed(1) + "px)";
+    s.top = dy ? dy.toFixed(3) + "em" : "0";
+  }
+
+  function start(i) {
+    to = i;
+    paint(back, WORDS[i]);
+    back._u.forEach(function (u) { setU(u.el, 0, 0); });
+    var r0 = morph.getBoundingClientRect();
+    measure(front, r0);
+    measure(back, r0);
+    phase = "morph";
+    t0 = performance.now();
+    said = false;
+    morph.classList.add("ct-on");
+  }
+  var last = performance.now();
+  function frame(now) {
+    if (!alive) return;
+    var dt = Math.min(64, now - last);
+    last = now;
+    if (phase === "morph") {
+      var p = Math.min(1, (now - t0) / MORPH);
+      /* a wave sweeps left to right: old letters melt and sink, new ones pour in from above */
+      front._u.forEach(function (u) {
+        var e = ease(clamp((p - u.x * SPREAD) / (1 - SPREAD)));
+        setU(u.el, 1 - e, e * e * DRIP);
+      });
+      back._u.forEach(function (u) {
+        var e = ease(clamp((p - u.x * SPREAD) / (1 - SPREAD)));
+        setU(u.el, e, -(1 - e) * (1 - e) * DRIP);
+      });
+      /* the liquid itself ripples, strongest mid-morph */
+      disp.setAttribute("scale", (Math.sin(Math.PI * p) * K * 4).toFixed(1));
+      turb.setAttribute(
+        "baseFrequency",
+        ((0.034 + 0.01 * Math.sin(p * 5)) / K).toFixed(5) + " " + ((0.05 + 0.01 * Math.cos(p * 4)) / K).toFixed(5)
+      );
+      if (!said && p > 0.45) {
+        said = true;
+        live.textContent = WORDS[to].t + " (" + WORDS[to].lang + ")";
+      }
+      if (p >= 1) {
+        var f = front;
+        front = back;
+        back = f;
+        back.textContent = "";
+        back._u = [];
+        front._u.forEach(function (u) { setU(u.el, 1, 0); });
+        disp.setAttribute("scale", 0);
+        cur = to;
+        phase = "hold";
+        holdLeft = HOLD;
+        morph.classList.remove("ct-on");
+      }
+    } else {
+      holdLeft -= dt;
+      if (holdLeft <= 0) start((cur + 1) % N);
+    }
+    raf = requestAnimationFrame(frame);
+  }
+
+  measureK();
+  paint(front, WORDS[0]);
+  front._u.forEach(function (u) { setU(u.el, 1, 0); });
+  raf = requestAnimationFrame(function (t) {
+    last = t;
+    raf = requestAnimationFrame(frame);
+  });
+  window.addEventListener("resize", measureK);
+  if (document.fonts) {
+    document.fonts.ready.then(function () { if (alive) measureK(); });
+    /* warm up every script so the first morph never swaps fonts mid-flight */
+    fontsReady.then(function () {
+      if (!alive) return;
+      measureK();
+      WORDS.forEach(function (w) {
+        document.fonts.load("800 80px " + w.font, w.t).catch(function () {});
+      });
+    });
+  }
+
+  return function () {
+    alive = false;
+    cancelAnimationFrame(raf);
+    window.removeEventListener("resize", measureK);
+    A.textContent = "";
+    B.textContent = "";
+    A._u = [];
+    B._u = [];
+    morph.classList.remove("ct-on");
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/*  Ribbon threads canvas                                              */
+/* ------------------------------------------------------------------ */
+function initThreads(root) {
+  const wrap = root.querySelector('[data-ct="threads"]');
+  const cv = root.querySelector('[data-ct="canvas"]');
+  if (!wrap || !cv) return function () {};
+  const section = root;
+  const ctx = cv.getContext("2d");
+  if (!ctx) return function () {};
+
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const ptr = { x: 0, y: 0, tx: 0, ty: 0, last: -1e9, has: false };
+  let W = 0;
+  let H = 0;
+  let raf = 0;
+  let running = false;
+  let visible = true;
+
+  const onMove = (e) => {
+    const r = section.getBoundingClientRect();
+    ptr.tx = e.clientX - r.left;
+    ptr.ty = e.clientY - r.top;
+    if (!ptr.has) {
+      ptr.x = ptr.tx;
+      ptr.y = ptr.ty;
+      ptr.has = true;
+    }
+    ptr.last = performance.now();
+  };
+
+  /* idle "ghost cursor" so it keeps moving on touch screens / when the mouse is still */
+  const idleTarget = (t) => {
+    if (performance.now() - ptr.last > 2500) {
+      ptr.tx = W * (0.62 + 0.26 * Math.sin(t * 0.00031));
+      ptr.ty = H * ((W < 700 ? 0.72 : 0.55) + 0.14 * Math.sin(t * 0.00047 + 1));
+      if (!ptr.has) {
+        ptr.x = ptr.tx;
+        ptr.y = ptr.ty;
+        ptr.has = true;
+      }
+    }
+  };
+
+  const draw = (t) => {
+    idleTarget(t);
+    const sec = t * 0.00036;
+    const small = W < 700; /* phone layout */
+    const Z = small ? 1.6 : 1; /* phone: zoom in, the ends run off-screen */
+    const n = small ? 36 : 46; /* identical, evenly spaced lines */
+    const step = small ? 7 : 8;
+    const base = H * (small ? 0.72 : 0.6);
+    const A = H * (small ? 0.075 : 0.14) * (1 + 0.1 * Math.sin(sec * 0.8)); /* S-curve height */
+    const HW = H * (small ? 0.09 : 0.16); /* half-width of the ribbon */
+    const p0 = 0.49 + 0.05 * Math.sin(sec * 0.7); /* where the ribbon twists */
+    const ph = 0.85 * Math.sin(sec * 0.6);
+    const tilt = (-0.2 + 0.2 * Math.sin(sec * 0.55 + 1)) * (small ? 0.6 : 1); /* swing of the whole ribbon */
+    const reach = small ? 120 : 160; /* cursor influence */
+
+    const g = ctx.createLinearGradient(0, 0, W, 0);
+    g.addColorStop(0, "rgba(176,34,52,0.75)");
+    g.addColorStop(0.38, "rgba(206,38,68,0.8)");
+    g.addColorStop(0.52, "rgba(218,40,56,0.85)");
+    g.addColorStop(0.78, "rgba(226,84,40,0.8)");
+    g.addColorStop(1, "rgba(201,166,107,0.85)");
+    ctx.strokeStyle = g;
+    ctx.lineWidth = small ? 0.9 : 1;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    for (let i = 0; i < n; i++) {
+      const s = (i / (n - 1)) * 2 - 1; /* -1 .. 1 across the ribbon */
+      ctx.beginPath();
+      for (let x = -10; x <= W + 10; x += step) {
+        const nx = 0.5 + (x / W - 0.5) / Z;
+        const c = base - A * Math.sin((2 * Math.PI * (nx + 0.035 * s - 0.3)) / 0.76 + Math.PI / 2 + ph);
+        /* the width flips sign at the pinch, so the lines cross over each other there */
+        const hw = HW * Math.tanh((nx - p0 - 0.035 * s) * 4.4);
+        let y = c + s * hw + (nx - 0.5) * H * tilt;
+        y = base + (y - base) * Z;
+        const dx = x - ptr.x;
+        const dy = y - ptr.y;
+        y += (ptr.y - y) * 0.09 * Math.exp(-(dx * dx + dy * dy) / (2 * reach * reach));
+        if (x === -10) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    if (!small) {
+      /* desktop: keep the heading area quiet */
+      ctx.globalCompositeOperation = "destination-out";
+      const m = ctx.createRadialGradient(W * 0.2, H * 0.3, 0, W * 0.2, H * 0.3, W * 0.3);
+      m.addColorStop(0, "rgba(0,0,0,0.85)");
+      m.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = m;
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalCompositeOperation = "source-over";
+    }
+  };
+
+  const size = () => {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const r = wrap.getBoundingClientRect();
+    W = r.width;
+    H = r.height;
+    cv.width = Math.round(W * dpr);
+    cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  };
+
+  const frame = (t) => {
+    ptr.x += (ptr.tx - ptr.x) * 0.08;
+    ptr.y += (ptr.ty - ptr.y) * 0.08;
+    ctx.clearRect(0, 0, W, H);
+    draw(reduce ? 4000 : t);
+    if (running) raf = requestAnimationFrame(frame);
+  };
+
+  const start = () => {
+    if (running || reduce || !visible || document.hidden) return;
+    running = true;
+    raf = requestAnimationFrame(frame);
+  };
+  const stop = () => {
+    running = false;
+    cancelAnimationFrame(raf);
+  };
+
+  const ro = new ResizeObserver(() => {
+    size();
+    if (!running) frame(performance.now());
+  });
+  ro.observe(wrap);
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      visible = entries[0].isIntersecting;
+      if (visible) start();
+      else stop();
+    },
+    { threshold: 0 }
+  );
+  io.observe(wrap);
+
+  const onVis = () => (document.hidden ? stop() : start());
+  document.addEventListener("visibilitychange", onVis);
+  section.addEventListener("pointermove", onMove, { passive: true });
+
+  size();
+  frame(performance.now());
+  start();
+
+  return () => {
+    stop();
+    ro.disconnect();
+    io.disconnect();
+    document.removeEventListener("visibilitychange", onVis);
+    section.removeEventListener("pointermove", onMove);
+  };
+}
+
+export default function ContactMorphSection() {
+  const rootRef = useRef(null);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return undefined;
+    const fontsReady = ensureFonts();
+    const stopMorph = initMorph(root, fontsReady);
+    const stopThreads = initThreads(root);
+    return () => {
+      stopMorph();
+      stopThreads();
+    };
+  }, []);
+
+  return (
+    <section id="contact" ref={rootRef} className="ct-root" aria-label="Contact">
+      <div className="ct-threads" data-ct="threads" aria-hidden="true">
+        <div className="ct-glow" />
+        <canvas data-ct="canvas" />
+      </div>
+
+      <svg className="ct-defs" aria-hidden="true" focusable="false">
+        <defs>
+          <filter id="ct-goo" x="-6%" y="-18%" width="112%" height="136%" colorInterpolationFilters="sRGB">
+            <feTurbulence data-ct="turb" type="fractalNoise" baseFrequency="0.006 0.009" numOctaves="2" seed="7" result="n" />
+            <feDisplacementMap data-ct="disp" in="SourceGraphic" in2="n" scale="0" xChannelSelector="R" yChannelSelector="G" result="d" />
+            <feColorMatrix in="d" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10" />
+          </filter>
+        </defs>
+      </svg>
+
+      <div className="ct-wrap">
+        <h2 className="ct-lead">Got a project in mind? <em>Let&apos;s Talk!</em></h2>
+        <p className="ct-top">
+          <span>Free consultation</span>
+          <span>No commitment</span>
+        </p>
+        <div className="ct-morph" data-ct="morph" aria-hidden="true">
+          <span className="ct-layer" data-ct="la" />
+          <span className="ct-layer" data-ct="lb" />
+        </div>
+      </div>
+
+      <p className="ct-sr" data-ct="live" aria-live="polite">Contact</p>
+      <style dangerouslySetInnerHTML={{ __html: CSS }} />
+    </section>
+  );
+}
+`;
+
+function buildComponent() {
+  const cssLines = CSS.trim()
+    .split("\n")
+    .map((l) => "  " + JSON.stringify(l))
+    .join(",\n");
+  const body = COMPONENT_BODY.replace("/*__CSS__*/", () => cssLines);
+  return [
+    "// @ts-nocheck",
+    "/* eslint-disable */",
+    "// " + MARK + ":component  (generated by patch-contact.mjs)",
+    '"use client";',
+    "",
+    'import { useEffect, useRef } from "react";',
+    body.trimEnd(),
+    "",
+  ].join("\n");
+}
+
+/* ------------------------------------------------------------------ */
+/*  File discovery                                                     */
+/* ------------------------------------------------------------------ */
+const SKIP = new Set(["node_modules", ".next", ".git", "out", "dist", "build", ".patch-backup", ".vercel", ".turbo"]);
+function walk(dir, out = []) {
+  for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (SKIP.has(e.name)) continue;
+    const p = path.join(dir, e.name);
+    if (e.isDirectory()) walk(p, out);
+    else if (/\.(jsx|tsx|js)$/.test(e.name)) out.push(p);
+  }
+  return out;
+}
+const baseName = (f) => path.basename(f).replace(/\.(jsx|tsx|js)$/, "");
+const read = (f) => fs.readFileSync(f, "utf8");
+const ID_RE = /<([A-Za-z][\w.]*)\b[^>]*\bid\s*=\s*(?:\{\s*)?["']contact["']/;
+
+if (!fs.existsSync(path.join(ROOT, "package.json"))) {
+  die("Run this from the repo root (no package.json found in " + ROOT + ").");
+}
+
+const allFiles = walk(ROOT);
+const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+const BACKUP_DIR = path.join(ROOT, ".patch-backup", "contact-" + stamp);
+
+function backup(file) {
+  const dest = path.join(BACKUP_DIR, path.relative(ROOT, file));
+  if (DRY) return log("  (dry) would back up " + rel(file));
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  fs.copyFileSync(file, dest);
+  log("  backed up  " + rel(file) + "  ->  " + rel(dest));
+}
+function write(file, content) {
+  if (DRY) return log("  (dry) would write " + rel(file));
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, content);
+  log("  wrote      " + rel(file));
+}
+
+/* ------------------------------------------------------------------ */
+/*  Decide where to hook in                                            */
+/* ------------------------------------------------------------------ */
+let target = null;
+let mode = "none"; // "replace-file" | "replace-section" | "none"
+let alreadyHooked = false;
+
+if (TARGET_ARG) {
+  target = path.resolve(ROOT, TARGET_ARG);
+  if (!fs.existsSync(target)) die("--target file not found: " + TARGET_ARG);
+  mode = /^contact/i.test(baseName(target)) ? "replace-file" : "replace-section";
+  const src = read(target);
+  alreadyHooked = src.includes(MARK + ":wrapper") || src.includes("<" + COMP);
+} else {
+  const others = allFiles.filter((f) => baseName(f) !== COMP);
+  const wrapper = others.filter((f) => read(f).includes(MARK + ":wrapper"));
+  const hooked = others.filter((f) => read(f).includes("<" + COMP));
+  const exact = others.filter((f) => /^contact(section)?$/i.test(baseName(f)));
+  const withId = others.filter((f) => ID_RE.test(read(f)));
+  const loose = others.filter((f) => /^contact/i.test(baseName(f)) && !/threads|morph/i.test(baseName(f)));
+
+  const pick = (list, m, hooked_) => {
+    if (list.length === 0) return false;
+    if (list.length > 1) {
+      die(
+        "Found several possible Contact files:\n  " +
+          list.map(rel).join("\n  ") +
+          "\n\nRe-run with  --target <path>  to choose one."
+      );
+    }
+    target = list[0];
+    mode = m;
+    alreadyHooked = hooked_;
+    return true;
+  };
+
+  pick(wrapper, "replace-file", true) ||
+    pick(hooked, "replace-section", true) ||
+    pick(exact, "replace-file", false) ||
+    pick(withId, "replace-section", false) ||
+    pick(loose, "replace-file", false);
+}
+
+/* where the component file lives */
+const existingComp = allFiles.find((f) => baseName(f) === COMP);
+const extOf = (f) => path.extname(f) || ".jsx";
+let compPath;
+if (existingComp) {
+  compPath = existingComp;
+} else if (mode === "replace-file") {
+  compPath = path.join(path.dirname(target), COMP + extOf(target));
+} else {
+  const dirs = ["app/components", "src/app/components", "src/components", "components"]
+    .map((d) => path.join(ROOT, d))
+    .filter((d) => fs.existsSync(d));
+  const fallback = ["app", "src/app"].map((d) => path.join(ROOT, d)).find((d) => fs.existsSync(d)) || ROOT;
+  const dir = dirs[0] || (target ? path.dirname(target) : fallback);
+  compPath = path.join(dir, COMP + (target ? extOf(target) : ".jsx"));
+}
+
+log("\nContact patch" + (DRY ? "  [dry run]" : ""));
+log("  mode:      " + mode + (target ? "  (" + rel(target) + ")" : ""));
+log("  component: " + rel(compPath) + "\n");
+
+/* 1) component */
+write(compPath, buildComponent());
+
+/* 2) hook-up */
+function wrapperSource(orig) {
+  const named = new Set();
+  for (const m of orig.matchAll(/export\s+(?:async\s+)?(?:function|const|let|var|class)\s+([A-Za-z_$][\w$]*)/g)) {
+    named.add(m[1]);
+  }
+  for (const m of orig.matchAll(/export\s*\{([^}]*)\}/g)) {
+    m[1].split(",").forEach((s) => {
+      const parts = s.trim().split(/\s+as\s+/);
+      const n = (parts[1] || parts[0] || "").trim();
+      if (n && n !== "default") named.add(n);
+    });
+  }
+  const lines = [
+    "// " + MARK + ":wrapper",
+    "// The contact section now lives in ./" + COMP + " (original saved in .patch-backup/).",
+    'export { default } from "./' + COMP + '";',
+  ];
+  for (const n of named) lines.push("export { default as " + n + ' } from "./' + COMP + '";');
+  return lines.join("\n") + "\n";
+}
+
+function findSectionRange(src) {
+  const m = ID_RE.exec(src);
+  if (!m) return null;
+  const tag = m[1].replace(/\./g, "\\.");
+  const start = m.index;
+  const re = new RegExp("<(/?)" + tag + "(?=[\\s>/])", "g");
+  re.lastIndex = start;
+  let depth = 0;
+  let mm;
+  while ((mm = re.exec(src))) {
+    const gt = src.indexOf(">", mm.index);
+    if (gt < 0) return null;
+    if (mm[1] === "/") {
+      depth--;
+      if (depth === 0) return [start, gt + 1];
+    } else if (src[gt - 1] === "/") {
+      if (depth === 0) return [start, gt + 1];
+    } else {
+      depth++;
+    }
+  }
+  return null;
+}
+
+function addImport(src, line) {
+  if (src.includes(line)) return src;
+  let end = -1;
+  const re = /^import\b[^;]*?\bfrom\s*["'][^"']+["'];?[ \t]*$/gm;
+  let m;
+  while ((m = re.exec(src))) end = m.index + m[0].length;
+  const re2 = /^import\s*["'][^"']+["'];?[ \t]*$/gm;
+  while ((m = re2.exec(src))) end = Math.max(end, m.index + m[0].length);
+  if (end >= 0) return src.slice(0, end) + "\n" + line + src.slice(end);
+  const d = /^\s*(?:\/\/[^\n]*\n|\/\*[\s\S]*?\*\/\s*)*["']use (?:client|server)["'];?[ \t]*\n/.exec(src);
+  if (d) return src.slice(0, d[0].length) + line + "\n" + src.slice(d[0].length);
+  return line + "\n" + src;
+}
+
+if (mode === "replace-file") {
+  if (alreadyHooked) {
+    log("  contact file already points at the new component, nothing else to do.");
+  } else {
+    const orig = read(target);
+    backup(target);
+    write(target, wrapperSource(orig));
+    log("\n  note: anything else that lived in the old contact file (form, handlers, etc.)");
+    log("        is replaced by the new design. The original is in .patch-backup/.");
+  }
+} else if (mode === "replace-section") {
+  if (alreadyHooked) {
+    log("  <" + COMP + " /> is already in " + rel(target) + ", nothing else to do.");
+  } else {
+    const src = read(target);
+    const range = findSectionRange(src);
+    if (!range) {
+      die(
+        "Could not find a matching element with id=\"contact\" in " + rel(target) +
+          ".\nThe component was written; add this yourself:\n  import " + COMP + " from \"" + rel(compPath).replace(/\.(jsx|tsx|js)$/, "") + "\";\n  <" + COMP + " />"
+      );
+    }
+    let importPath = path
+      .relative(path.dirname(target), compPath)
+      .split(path.sep)
+      .join("/")
+      .replace(/\.(jsx|tsx|js)$/, "");
+    if (!importPath.startsWith(".")) importPath = "./" + importPath;
+    let out = src.slice(0, range[0]) + "<" + COMP + " />" + src.slice(range[1]);
+    out = addImport(out, "import " + COMP + ' from "' + importPath + '";');
+    backup(target);
+    write(target, out);
+  }
+} else {
+  log("  No existing contact section/component was found automatically.");
+  log("  Add this where your contact section should go:\n");
+  let ip = path
+    .relative(ROOT, compPath)
+    .split(path.sep)
+    .join("/")
+    .replace(/\.(jsx|tsx|js)$/, "");
+  log('    import ' + COMP + ' from "@/' + ip.replace(/^src\//, "") + '";   // or a relative path');
+  log("    <" + COMP + " />\n");
+  log("  Or re-run with  --target <file>  (a Contact component, or a page containing id=\"contact\").");
+}
+
+log("\nDone." + (DRY ? " (nothing was written)" : ""));
+log("Next:  npm run dev   ->  check the #contact section (nav links to #contact keep working).");
+log("Undo:  git checkout -- <file>   or copy the file back from .patch-backup/.\n");
