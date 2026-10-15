@@ -38,6 +38,7 @@ import {
   SiNpm,
 } from "react-icons/si";
 import { VscVscode } from "react-icons/vsc";
+import ContactMorphSection from "./ContactMorphSection";
 
 
 const E = [0.25, 1, 0.25, 1];
@@ -1555,53 +1556,13 @@ function Contact({ isMobile }) {
   const mutedColor = LIGHT.muted;
 
   return (
-    <motion.section
-      ref={ref}
-      id="contact"
-      className="relative min-h-svh flex flex-col justify-between overflow-hidden pt-52 pb-12 md:py-44 px-6 md:px-20 theme-section"
-    >
-      {/* contact-threads:start */}
-      <ContactThreads />
-      {/* contact-threads:end */}
-      <div className="relative z-10 max-w-3xl">
-        <motion.h2
-          className="contact-h2 font-display font-extrabold leading-none tracking-[-0.055em] mb-8"
-          style={{ color: textColor }}
-          initial={{ y: 40, opacity: 0 }}
-          animate={inView ? { y: 0, opacity: 1 } : {}}
-          transition={{ duration: 0.8, ease: E }}
-        >
-          Have a project<br />
-          in mind?
-        </motion.h2>
-        <motion.a
-          href="mailto:hello@bycarlo.dev"
-          className="inline-flex items-center gap-3 mt-8 text-lg font-semibold transition-all"
-          style={{ color: accentColor }}
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.4 }}
-        >
-          hello@bycarlo.dev <span className="text-2xl">&#8594;</span>
-        </motion.a>
-      </div>
-      <motion.footer
-        className="relative z-10 mt-12 md:mt-32 flex flex-col md:flex-row justify-between gap-2 text-xs tracking-widest uppercase"
-        style={{ color: mutedColor }}
-        initial={{ opacity: 0 }}
-        animate={inView ? { opacity: 1 } : {}}
-        transition={{ delay: 1 }}
-      >
-        <span>&#169; 2025 byCarlo</span>
-        <span>Based in Manila, working worldwide</span>
-      </motion.footer>
-    </motion.section>
+    <ContactMorphSection />
   );
 }
 
 /* ── Page root ───────────────────────────────────── */
 /* services:start */
-/* ── Services (services-grid: static 2-column grid on red) ─────────────────── */
+/* ── Services (accordion on red: premium, clean, mobile-first) ─────────────── */
 const SERVICES = [
   {
     title: "Website Development",
@@ -1630,17 +1591,42 @@ const SERVICES = [
 ];
 
 function Services() {
+  const [openIndex, setOpenIndex] = useState(0);
   return (
     <section id="services" className="svc-section" aria-labelledby="services-heading">
       <div className="svc-wrap">
         <h2 id="services-heading" className="svc-heading">SERVICES</h2>
-        <ul className="svc-grid">
-          {SERVICES.map((s) => (
-            <li key={s.title} className="svc-item">
-              <h3 className="svc-title">{s.title}</h3>
-              <p className="svc-text">{s.text}</p>
-            </li>
-          ))}
+        <ul className="svc-list">
+          {SERVICES.map((s, i) => {
+            const isOpen = openIndex === i;
+            return (
+              <li key={s.title} className={isOpen ? "svc-row is-open" : "svc-row"}>
+                <h3 className="svc-head">
+                  <button
+                    type="button"
+                    id={"svc-btn-" + i}
+                    className="svc-trigger"
+                    aria-expanded={isOpen}
+                    aria-controls={"svc-panel-" + i}
+                    onClick={() => setOpenIndex(isOpen ? null : i)}
+                  >
+                    <span className="svc-title">{s.title}</span>
+                    <span className="svc-icon" aria-hidden="true" />
+                  </button>
+                </h3>
+                <div
+                  id={"svc-panel-" + i}
+                  role="region"
+                  aria-labelledby={"svc-btn-" + i}
+                  className="svc-panel"
+                >
+                  <div className="svc-panel-inner">
+                    <p className="svc-text">{s.text}</p>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </section>

@@ -322,7 +322,7 @@ function Hero({ globalProgress, isMobile }) {
   return (
     <motion.section
       ref={ref}
-      className="relative min-h-svh flex flex-col justify-center items-start px-6 md:px-20 overflow-hidden pt-20"
+      className="relative min-h-svh flex flex-col justify-center items-center px-6 md:px-20 overflow-hidden pt-20"
       style={heroVars}
     >
       {/* hero-threads:start */}
@@ -350,12 +350,12 @@ function Hero({ globalProgress, isMobile }) {
       </div>
       <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-40 z-[1] pointer-events-none" style={{ background: "linear-gradient(to bottom, rgba(255,255,255,0), #F6F5F2)" }} />
       {/* hero-threads:end */}
-      <div className="relative z-10 flex flex-col gap-6 md:gap-8">
+      <div className="relative z-10 flex flex-col items-center gap-6 md:gap-8 text-center">
         <motion.h1
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.4, ease: E }}
-          className="text-[clamp(2.6rem,9.5vw,8.5rem)] font-display font-extrabold leading-none tracking-[-0.055em]"
+          className="text-[clamp(2.6rem,9.5vw,8.5rem)] font-display font-extrabold leading-none tracking-[-0.055em] text-center"
         >
           <span className="block" style={{ color: "var(--h-text)" }}>Building Systems</span>
           <span className="block" style={{ color: "var(--h-text)" }}>That Make Ideas</span>
