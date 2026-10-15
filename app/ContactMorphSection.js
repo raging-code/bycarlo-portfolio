@@ -28,7 +28,12 @@ const CSS = [
   ".ct-root .ct-threads{position:absolute;inset:0;z-index:0;pointer-events:none}",
   ".ct-root .ct-glow{position:absolute;inset:0;background:radial-gradient(48% 55% at 50% 58%,rgba(224,43,32,.09),rgba(224,43,32,0) 70%),radial-gradient(34% 40% at 72% 52%,rgba(201,166,107,.15),rgba(201,166,107,0) 72%)}",
   ".ct-root .ct-threads canvas{position:absolute;inset:0;width:100%;height:100%;display:block;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 22%,#000 82%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 22%,#000 82%,transparent 100%)}",
-  "@media (min-width:768px){.ct-root::after{content:\"\";position:absolute;inset:0;pointer-events:none;z-index:2;opacity:.025;background-image:url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E\")}}"
+  "@media (min-width:768px){.ct-root::after{content:\"\";position:absolute;inset:0;pointer-events:none;z-index:2;opacity:.025;background-image:url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E\")}}",
+  "/* ct-tweak-v2 */",
+  ".ct-root .ct-dot{color:inherit}",
+  "@media (max-width:767px){.ct-root .ct-wrap{top:-15vh}}",
+  "@media (min-width:768px){.ct-root .ct-lead{font-size:clamp(2rem,6.6vw,5.8rem);margin-bottom:0}.ct-root .ct-top{margin-top:-.2em}}",
+  "/* /ct-tweak-v2 */"
 ].join("\n");
 
 /* loads the Google fonts once and resolves when the stylesheet is ready */
@@ -116,10 +121,10 @@ function initMorph(root, fontsReady) {
     el.style.lineHeight = (1.15 / w.fs).toFixed(3);
     el.textContent = "";
     el._u = [];
-    var cs = (w.parts || Array.from(w.t)).concat(".");
+    var cs = (w.parts || Array.from(w.t));
     cs.forEach(function (c, k) {
       var s = document.createElement("span");
-      s.className = k === cs.length - 1 ? "ct-u ct-dot" : "ct-u";
+      s.className = "ct-u";
       s.textContent = c;
       el.appendChild(s);
       el._u.push({ el: s, x: 0 });
