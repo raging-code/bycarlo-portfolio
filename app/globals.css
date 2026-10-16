@@ -326,6 +326,8 @@ button, a {
   --tsd-top-pad: clamp(24px, 3vw, 48px); /* space above the heading: Services (red) sits right above, so this stays small */
   --tsd-s: 1; /* overall deck scale, raised on bigger screens below (the page reads it too) */
   --tsd-stage-h: 460px;
+  --tsd-card-h: 340px; /* techstack-closer: same as the .tsd-card height at this breakpoint */
+  --tsd-gap: clamp(20px, 3vw, 40px); /* techstack-closer: space between the heading and the top of the front card (smaller = closer) */
   position: relative;
   overflow: hidden; /* the fanned cards can poke past the screen edge: no sideways scroll */
   background: var(--tsd-bg);
@@ -333,10 +335,10 @@ button, a {
   padding-bottom: clamp(72px, 9vw, 140px);
 }
 @media (max-width: 480px) {
-  .tsd-sec { --tsd-stage-h: 420px; }
+  .tsd-sec { --tsd-stage-h: 420px; --tsd-card-h: 300px; }
 }
 @media (min-width: 768px) {
-  .tsd-sec { --tsd-s: 1.1; --tsd-stage-h: calc(460px * var(--tsd-s)); }
+  .tsd-sec { --tsd-s: 1.1; --tsd-stage-h: calc(460px * var(--tsd-s)); --tsd-card-h: calc(340px * var(--tsd-s)); }
 }
 @media (min-width: 1100px) {
   .tsd-sec { --tsd-s: 1.25; }
@@ -346,7 +348,7 @@ button, a {
   background: var(--tsd-accent);
   color: var(--tsd-bg);
   text-align: center;
-  padding: var(--tsd-top-pad) var(--tsd-pad) calc(var(--tsd-stage-h) * 0.5 + 30px);
+  padding: var(--tsd-top-pad) var(--tsd-pad) calc(var(--tsd-card-h) * 0.5 + var(--tsd-gap)); /* techstack-closer */
 }
 .tsd-top ::selection { background: var(--tsd-bg); color: var(--tsd-accent); }
 .tsd-title {
