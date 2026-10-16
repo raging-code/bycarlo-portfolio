@@ -30,7 +30,10 @@ const CSS = [
   ".ct-root .ct-dot{color:inherit}",
   "@media (max-width:767px){.ct-root .ct-wrap{top:-15vh}}",
   "@media (min-width:768px){.ct-root .ct-lead{font-size:clamp(2rem,6.6vw,5.8rem);margin-bottom:0}.ct-root .ct-top{margin-top:-.2em}}",
-  "/* /ct-tweak-v2 */"
+  "/* /ct-tweak-v2 */",
+  "/* ct-one-line */",
+  "@media (min-width:768px){.ct-root .ct-top{display:flex;flex-wrap:nowrap;justify-content:center;align-items:baseline;gap:0 .6em;white-space:nowrap}}",
+  "/* /ct-one-line */"
 ].join("\n");
 
 /* loads the Google fonts once and resolves when the stylesheet is ready */
