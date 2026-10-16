@@ -1,0 +1,757 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: var(--font-jakarta), 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-body:    var(--font-dmsans), 'DM Sans', system-ui, sans-serif;
+
+  /* light */
+  --bg-primary:   #F6F5F2;
+  --text-primary: #141414;
+  --text-secondary: #6B6762;
+  --accent:       #E02B20;
+  --accent-2:     #C9A66B;
+  --border:       rgba(20,20,20,0.14);
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 16.5px;
+  line-height: 1.7;
+  overflow-x: hidden;
+  background: var(--bg-primary);
+  transition: background-color 0.45s ease-in-out;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Noise overlay (desktop only) */
+@media (min-width: 768px) {
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10000;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  }
+}
+
+/* Custom cursor (desktop only) */
+@media (pointer: fine) {
+  * { cursor: none !important; }
+}
+
+::selection {
+  background: var(--accent);
+  color: #F6F5F2;
+}
+
+button, a {
+  transition: color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Sections: promote to their own layer for smoother scrolling */
+.theme-section {
+  contain: paint;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Mobile performance tweaks */
+@media (max-width: 767px) {
+  .blur-3xl {
+    --tw-blur: blur(32px) !important;
+    filter: blur(32px) !important;
+  }
+
+  .glow-orb {
+    will-change: transform;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+
+  a, button {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+/* Gather navbar – compact, flush at the top, glass capsule after scroll */
+/* navbar-static-then-float-patch */
+.gnav-wrap {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  pointer-events: none;
+  transition: padding 0.6s cubic-bezier(0.65, 0, 0.2, 1);
+}
+.gnav-wrap.is-scrolled { padding: 8px 10px 0; }
+
+.gnav {
+  pointer-events: auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  max-width: 100%;
+  padding: 12px 20px;
+  border-radius: 0;
+  color: var(--gn-ink, #141414);
+  font-family: var(--font-body), system-ui, sans-serif;
+  transition:
+    width 0.6s cubic-bezier(0.65, 0, 0.2, 1),
+    padding 0.6s cubic-bezier(0.65, 0, 0.2, 1),
+    border-radius 0.6s cubic-bezier(0.65, 0, 0.2, 1),
+    box-shadow 0.5s;
+}
+.gnav-wrap.is-scrolled .gnav {
+  width: 680px;
+  padding: 8px 8px 8px 10px;
+  border-radius: 999px;
+}
+.gnav > *:not(.gnav-glass) { position: relative; z-index: 1; }
+
+/* the global mobile rule gives every a/button a 44px min-height, which would make the bar tall */
+.gnav a, .gnav button { min-height: 0; }
+
+/* gnav-glass-surface */
+/* liquid glass: drawn by <GlassSurface /> (app/GlassSurface.js). This layer only
+   handles position, fade-in on scroll and the corner radius. */
+.gnav-glass {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s;
+}
+/* follow the navbar's flat -> pill corner morph instead of a fixed radius */
+.gnav-glass .glass-surface {
+  border-radius: inherit !important;
+}
+/* Safari / Firefox fallback */
+.gnav-wrap .glass-surface--fallback {
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(20, 20, 20, 0.14);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.6),
+    0 8px 24px -8px rgba(0, 0, 0, 0.25);
+}
+.gnav-wrap.is-scrolled .gnav-glass { opacity: 1; }
+
+.gnav a:focus-visible,
+.gnav button:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+
+/* logo – 1:1 circle */
+.gnav-brand {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  line-height: 0;
+  text-decoration: none;
+  transition: width 0.6s cubic-bezier(0.65, 0, 0.2, 1), height 0.6s cubic-bezier(0.65, 0, 0.2, 1), transform 0.3s;
+}
+.gnav-wrap.is-scrolled .gnav-brand { width: 24px; height: 24px; }
+.gnav-brand:hover { transform: scale(1.06); }
+/* logo-nudge-right */
+.gnav-brand { margin-left: 5px; }
+.gnav-logo {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  user-select: none;
+  box-shadow: 0 0 0 1px var(--gn-line, rgba(20, 20, 20, 0.14));
+  transition: opacity 0.45s ease-in-out;
+}
+
+.gnav-links {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-width: 0;
+  transition: gap 0.6s cubic-bezier(0.65, 0, 0.2, 1);
+}
+.gnav-wrap.is-scrolled .gnav-links { gap: 2px; }
+
+.gnav-link {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--gn-muted);
+  transition: background-color 0.3s;
+}
+/* navbar-tweaks-v2 */
+.gnav-link:hover { color: var(--gn-ink); background: var(--gn-chip); }
+.gnav-link.on {
+  color: var(--gn-ink);
+  border-radius: 0;
+  box-shadow: inset 0 -2px 0 var(--gn-accent);
+}
+.gnav-wrap.is-scrolled .gnav-link.on {
+  border-radius: 999px;
+  box-shadow: none;
+  background: var(--gn-chip);
+}
+
+.gnav-end {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.gnav-cta {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--gn-ink);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--gn-ink);
+  transition: background-color 0.4s, color 0.4s;
+}
+.gnav-wrap.is-scrolled .gnav-cta {
+  background: var(--gn-ink);
+  color: var(--gn-cta-fg);
+}
+
+/* mobile – everything stays visible: logo, all links, Contact and the switch */
+@media (max-width: 640px) {
+  .gnav-wrap.is-scrolled { padding: 6px 8px 0; }
+  /* navbar-mobile-bigger */
+  .gnav { padding: 12px 10px; gap: 4px; }
+  .gnav-wrap.is-scrolled .gnav { width: 100%; padding: 8px 10px 8px 8px; }
+
+  .gnav-brand, .gnav-wrap.is-scrolled .gnav-brand { width: 27px; height: 27px; }
+
+  .gnav-links,
+  .gnav-wrap.is-scrolled .gnav-links {
+    flex: 1;
+    justify-content: center;
+    gap: 0;
+    overflow-x: auto;          /* safety net on very narrow phones */
+    scrollbar-width: none;
+  }
+  .gnav-links::-webkit-scrollbar { display: none; }
+
+  /* one size knob: font scales with the screen width */
+  .gnav-link, .gnav-cta { font-size: clamp(9.5px, 2.8vw, 14px); }
+  .gnav-link { padding: 7px 0.45em; }
+  .gnav-cta  { padding: 9px 0.55em; }
+
+  .gnav-end { gap: 6px; }
+}
+@media (max-width: 380px) {
+  .gnav-link { padding: 7px 0.36em; }
+  .gnav-cta  { padding: 9px 0.45em; }
+  .gnav-end  { gap: 4px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gnav-wrap, .gnav, .gnav-glass, .gnav-links, .gnav-link, .gnav-cta, .gnav-logo,
+  .gnav-brand, body { transition: none; }
+}
+
+.logo-gradient {
+  color: #E02B20;
+}
+
+.glow-bar-track {
+  position: relative;
+}
+
+.nav-links-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.nav-links-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Tech stack tabs: always fit the screen (scale down on phones) */
+/* shared by the tab buttons and the sliding-pill labels so both layers stay identical */
+.ts-seg {
+  --ts-pad-y: 8px;                    /* tab height: bigger number = taller tabs */
+  font-family: var(--font-body); /* DM Sans is narrower than Jakarta: keeps six tabs readable on phones */
+  font-size: clamp(9.5px, 3.1vw, 17px);  /* scales down so all six tabs fit */
+  line-height: 1.2;
+  padding: var(--ts-pad-y) clamp(4px, 1.9vw, 9px);
+}
+@media (min-width: 768px) {
+  .ts-seg { font-size: 17px; padding: var(--ts-pad-y) 12px; }
+}
+
+/* the generic `button { transition: all }` fights the per-frame tab animation */
+.ts-tab {
+  min-height: 0;                       /* beats the global mobile `button { min-height: 44px }` */
+  transition: none !important;
+  touch-action: pan-y;                 /* sideways drag on the pill = rubber drag, vertical = page scroll, no double-tap zoom */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Tech stack 3D icons: face forward, one horizontal turn in place every few seconds */
+.ts-icon3d-wrap {
+  position: relative;
+  display: block;
+}
+/* slightly larger pointer target than the icon itself (easy to tap on phones) */
+.ts-icon3d-hit {
+  display: block;
+  padding: 8px;
+  margin: -8px;
+  -webkit-tap-highlight-color: transparent;
+}
+.ts-icon3d {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+/* one horizontal turn, started by hover / tap (class is set from JS) */
+.ts-icon3d.is-spinning {
+  animation: ts-turn-once 0.9s cubic-bezier(0.65, 0, 0.25, 1);
+}
+.ts-icon3d-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@keyframes ts-turn-once {
+  from { transform: rotateY(0deg); }
+  to   { transform: rotateY(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ts-icon3d.is-spinning { animation: none; }
+}
+
+
+/* Full-colour 3D logos: front = real logo, thickness = brand-coloured silhouette */
+.ts-icon3d-img {
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.ts-icon3d-sil {
+  display: block;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+/* navbar-glass-v4: exact "Glass" capsule (design 1) ───────────────────────── */
+
+.gnav-wrap {
+  --ng-tx: #141414;
+  --ng-bg: #F6F5F2;
+  --ng-mu: rgba(20, 20, 20, 0.58);
+  --ng-chip: rgba(20, 20, 20, 0.06);
+  --ng-gl: rgba(250, 249, 246, 0.6);
+  --ng-edge: rgba(20, 20, 20, 0.1);
+  --ng-hi: rgba(255, 255, 255, 0.9);
+  --ng-shadow: rgba(40, 30, 20, 0.14);
+}
+
+/* floating, centered, always a capsule */
+.gnav-wrap.is-scrolled { padding: 16px 12px 0; }
+
+/* navbar-responsive-minwidth-patch */
+/* navbar-center-links-patch */
+.gnav-wrap.is-scrolled .gnav {
+  width: auto;
+  min-width: min(760px, calc(100vw - 24px));
+  max-width: 100%;
+  justify-content: space-between;
+  gap: 2px;
+  padding: 5px 5px 5px 7px;
+  border-radius: 999px;
+  color: var(--ng-tx);
+  background: var(--ng-gl);
+  border: 1px solid var(--ng-edge);
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  backdrop-filter: blur(18px) saturate(1.5);
+  box-shadow:
+    inset 0 1px 0 var(--ng-hi),
+    0 14px 40px var(--ng-shadow);
+  transition: background-color 0.4s, border-color 0.4s, box-shadow 0.4s;
+}
+
+/* the capsule is plain CSS glass now, so the SVG liquid-glass layer is not needed */
+.gnav-wrap.is-scrolled .gnav-glass { display: none; }
+
+/* logo: same size as the static bar's scrolled state — only the hairline ring color is themed */
+.gnav-wrap.is-scrolled .gnav-logo { box-shadow: 0 0 0 1px var(--ng-edge); }
+
+/* links: same layout/sizing as the static bar's scrolled state — only colors are themed */
+.gnav-wrap.is-scrolled .gnav-link {
+  color: var(--ng-mu);
+}
+.gnav-wrap.is-scrolled .gnav-link:hover {
+  color: var(--ng-tx);
+  background: var(--ng-chip);
+}
+.gnav-wrap.is-scrolled .gnav-link.on {
+  color: var(--ng-tx);
+  background: var(--ng-chip);
+}
+
+/* Contact CTA: same layout/sizing as the static bar's scrolled state — only recolored */
+.gnav-wrap.is-scrolled .gnav-cta {
+  background: var(--ng-tx);
+  color: var(--ng-bg);
+}
+.gnav-wrap.is-scrolled .gnav-cta:hover { opacity: 0.88; }
+
+/* phones: same capsule design, but same layout/sizing as the static bar's own
+   mobile rules (see the un-themed @media (max-width: 640px) block above) */
+@media (max-width: 640px) {
+  .gnav-wrap.is-scrolled { padding: 6px 8px 0; }
+  .gnav-wrap.is-scrolled .gnav { width: 100%; min-width: 0; }
+}
+/* end navbar-glass-v4 */
+/* navbar-static-layout-floating-design-patch */
+
+/* navbar-spring-morph-patch */
+/* Spring morph: full-width bar -> floating capsule with a small bounce.
+   Tweak --gn-spring (more overshoot = bigger 2nd number) and --gn-spring-dur. */
+.gnav-wrap {
+  --gn-spring: cubic-bezier(0.34, 1.45, 0.5, 1);
+  --gn-spring-dur: 0.85s;
+}
+
+/* bar -> capsule: this is the rule the browser uses while scrolling DOWN,
+   because a transition always follows the destination state's rule. */
+.gnav-wrap.is-scrolled {
+  padding: 16px 12px 0;
+  transition: padding var(--gn-spring-dur) var(--gn-spring);
+}
+.gnav-wrap.is-scrolled .gnav {
+  /* explicit width (was auto) so it can animate; max-width: 100% keeps it
+     inside the viewport on narrow screens */
+  width: 760px;
+  min-width: 0;
+  transition:
+    width var(--gn-spring-dur) var(--gn-spring),
+    padding var(--gn-spring-dur) var(--gn-spring),
+    border-radius 0.5s ease-out,
+    background-color 0.4s,
+    border-color 0.4s,
+    box-shadow 0.6s ease-out;
+}
+
+/* capsule -> bar (scrolling back to the top) keeps the existing calm
+   ease from the base .gnav-wrap / .gnav rules: no overshoot, so the bar
+   never pokes past the screen edges. */
+
+/* phones: same layout as before (full width), only the spring on the gap */
+@media (max-width: 640px) {
+  .gnav-wrap.is-scrolled { padding: 6px 8px 0; }
+  .gnav-wrap.is-scrolled .gnav { width: 100%; min-width: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gnav-wrap.is-scrolled,
+  .gnav-wrap.is-scrolled .gnav { transition: none; }
+}
+/* end navbar-spring-morph-patch */
+
+/* about-hero:start */
+.ip-section { position: relative; overflow: hidden; }
+.ip-stage { container-type: inline-size; width: 100%; }
+.ip-about {
+  display: flex; align-items: center; justify-content: center; gap: 1.4cqw;
+  padding: 4cqw 2cqw;
+}
+.ip-visual { position: relative; flex: none; width: 31cqw; aspect-ratio: 1; margin: 0 4cqw 0 4cqw; }
+.ip-ring { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); border-radius: 50%; aspect-ratio: 1; }
+.ip-r0 { width: 100%; border: 1.5px solid var(--accent);
+  background: radial-gradient(circle at 32% 48%, #efe5d6 0%, #f2ece2 45%, #f6f5f2 100%); }
+.ip-outer {
+  position: absolute; left: 50%; top: 50%; width: 150%; aspect-ratio: 1;
+  transform: translate(-50%, -50%); pointer-events: none;
+  -webkit-mask-image: linear-gradient(to right, #000 62%, transparent 84%);
+          mask-image: linear-gradient(to right, #000 62%, transparent 84%);
+}
+.ip-r1 { width: 77.6%; border: 1.2px solid rgba(201, 166, 107, 0.65); }
+.ip-r2 { width: 88.7%; border: 1.2px solid rgba(224, 43, 32, 0.38); }
+.ip-r3 { width: 100%;  border: 1px solid rgba(224, 43, 32, 0.14); }
+/* me.png is 1086x1448 with transparent padding; the figure itself occupies
+   x 405-1064, y 424-1448. The wrapper is the figure's box and the image is
+   offset inside it, so no re-cropping of the file is needed. */
+.ip-me {
+  position: absolute; left: 29%; top: 2%; width: 62.5%;
+  aspect-ratio: 659 / 1024; overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
+          mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
+}
+.ip-me img {
+  position: absolute; left: -61.46%; top: -41.41%;
+  width: 164.8%; max-width: none; height: auto; display: block;
+  user-select: none; -webkit-user-drag: none;
+}
+.ip-text { max-width: 36cqw; position: relative; z-index: 1; }
+.ip-title {
+  margin: 0; font-family: var(--font-display); font-weight: 800;
+  font-size: clamp(44px, 5.7cqw, 112px); line-height: 0.92; letter-spacing: -0.045em;
+  color: var(--text-primary);
+}
+.ip-dot { color: var(--accent); }
+.ip-copy {
+  margin: 1.8cqw 0 0; font-family: var(--font-body); font-weight: 400;
+  font-size: clamp(15px, 1.25cqw, 24px); line-height: 1.63; color: var(--text-secondary);
+}
+/* Phones: photo on top, text below */
+@container (max-width: 767px) {
+  .ip-about { flex-direction: column; align-items: flex-start; padding: 32px 24px 40px; gap: 24px; }
+  .ip-visual { width: 52cqw; max-width: 225px; margin: 12px 0 0; align-self: center; }
+  .ip-outer { -webkit-mask-image: none; mask-image: none; }
+  .ip-text { max-width: 100%; }
+  .ip-title { font-size: 48px; }
+  .ip-copy { font-size: 15px; margin-top: 16px; }
+}
+/* about-hero:end */
+
+/* about-brush:start */
+/* About section is pinned while the brush paints */
+.ip-track { position: relative; height: 430vh; height: 430svh; }
+.ip-pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.ip-pin .ip-section { min-height: 100%; display: flex; align-items: center; }
+.ip-pin .ip-stage { width: 100%; }
+.ip-brush {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 5;
+}
+/* about-brush:end */
+
+/* perf-patch:start */
+/* Brush canvas: no full-screen CSS filter on every frame; isolate it on its own layer. */
+.ip-brush { filter: none; contain: strict; transform: translateZ(0); }
+
+/* Sections used to force a GPU layer each (will-change + translateZ + backface-visibility):
+   eight full-width layers cost memory and slow compositing, especially on phones.
+   contain: paint (from the base rule) still isolates them; delete this block to restore. */
+.theme-section {
+  will-change: auto;
+  -webkit-transform: none;
+  transform: none;
+  backface-visibility: visible;
+  -webkit-backface-visibility: visible;
+}
+html, body { will-change: auto; }
+/* perf-patch:end */
+
+/* brush-viewport:start */
+/* The brush must cover the LARGE viewport (URL bar hidden) so no strip is left at the
+   bottom on phones. Content stays centered in the SMALL viewport (URL bar shown). */
+:root { --ab-svh: 100vh; --ab-lvh: 100vh; }
+@supports (height: 100lvh) {
+  :root { --ab-svh: 100svh; --ab-lvh: 100lvh; }
+}
+/* same scroll length as before: 4.3 x small viewport, plus the extra the taller pin adds */
+.ip-track { height: calc(var(--ab-svh) * 4.3 + (var(--ab-lvh) - var(--ab-svh))); }
+.ip-pin { height: var(--ab-lvh); }
+.ip-pin .ip-section { min-height: var(--ab-svh); }
+/* brush-viewport:end */
+
+/* smooth-scroll:start */
+/* JS smoothing replaces CSS smooth scrolling (the two fight each other) */
+html { scroll-behavior: auto; }
+/* smooth-scroll:end */
+
+/* projects-red:css:start */
+/* "Selected projects" continues the red the About brush ends on (same as AB_COLOR) */
+#work { background-color: #E02B20; }
+#work ::selection { background: #F6F5F2; color: #E02B20; }
+/* projects-red:css:end */
+
+/* about-gap:start */
+/* Phones: About content sits low on the pinned screen (bottom-anchored), so less empty
+   space is left between the paragraph and the Selected projects section. */
+@media (max-width: 767px) {
+  .ip-pin .ip-section { align-items: flex-end; }
+  .ip-pin .ip-about { padding-bottom: 28px; }
+}
+/* about-gap:end */
+
+/* services:css:start */
+/* services-accordion: premium accordion on the site red (#E02B20) with cream (#F6F5F2). */
+.svc-section {
+  --svc-pull: 100px; /* tucks Services up toward Projects: bigger = closer, 0 = no overlap */
+  position: relative;
+  margin-top: calc(var(--svc-pull) * -1);
+  background: #E02B20;
+  color: #F6F5F2;
+  /* extra top space keeps the heading clear of the floating navbar and the overlap above */
+  padding: calc(var(--svc-pull) + clamp(72px, 10vw, 140px)) clamp(20px, 5vw, 64px) clamp(72px, 10vw, 140px);
+}
+.svc-section ::selection { background: #F6F5F2; color: #E02B20; }
+.svc-wrap { max-width: 1180px; margin: 0 auto; }
+
+.svc-heading {
+  margin: 0 0 clamp(40px, 6vw, 80px);
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(52px, 12.5vw, 176px);
+  line-height: 0.88;
+  letter-spacing: -0.055em;
+}
+
+.svc-list { list-style: none; margin: 0; padding: 0; }
+.svc-row { border-top: 1px solid rgba(246, 245, 242, 0.34); }
+.svc-row:last-child { border-bottom: 1px solid rgba(246, 245, 242, 0.34); }
+.svc-head { margin: 0; font: inherit; }
+
+.svc-trigger {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: clamp(20px, 2.6vw, 34px) 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.svc-trigger:focus-visible { outline: 2px solid #F6F5F2; outline-offset: 4px; border-radius: 8px; }
+
+.svc-title {
+  flex: 1;
+  text-align: left;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(24px, 4.2vw, 56px);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+  transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@media (hover: hover) {
+  .svc-trigger:hover .svc-title { transform: translateX(10px); }
+  .svc-trigger:hover .svc-icon { border-color: #F6F5F2; }
+}
+
+/* plus / minus circle */
+.svc-icon {
+  flex: none;
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(246, 245, 242, 0.5);
+  transition: background 0.35s, color 0.35s, border-color 0.35s, transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.svc-icon::before,
+.svc-icon::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 1.5px;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+}
+.svc-icon::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+  transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.svc-row.is-open .svc-icon {
+  background: #F6F5F2;
+  color: #E02B20;
+  border-color: #F6F5F2;
+  transform: rotate(180deg);
+}
+.svc-row.is-open .svc-icon::after { transform: translate(-50%, -50%) rotate(0deg); }
+
+/* smooth height animation without measuring */
+.svc-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.svc-row.is-open .svc-panel { grid-template-rows: 1fr; }
+.svc-panel-inner { overflow: hidden; }
+.svc-text {
+  margin: 0;
+  max-width: 62ch;
+  padding: 0 60px clamp(24px, 3vw, 40px) 0;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(15px, 1.3vw, 18px);
+  line-height: 1.7;
+  opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+  .svc-icon { width: 38px; height: 38px; }
+  .svc-trigger { gap: 12px; }
+  .svc-text { padding-right: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .svc-title, .svc-icon, .svc-icon::after, .svc-panel { transition: none; }
+}
+/* services:css:end */
+
+/* contact-threads:start */
+/* Contact heading: as large as fits on one line on phones, original size on desktop */
+.contact-h2 { font-size: min(4.5rem, calc((100vw - 3rem) * 0.154)); }
+@media (min-width: 768px) {
+  .contact-h2 { font-size: clamp(2.4rem, 9vw, 5.5rem); }
+}
+/* contact-threads:end */

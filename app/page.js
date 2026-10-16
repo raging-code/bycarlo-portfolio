@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback, useLayoutEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import GlassSurface from "./GlassSurface";
 import Threads from "./Threads";
 import ContactThreads from "./ContactThreads";
@@ -14,30 +14,6 @@ import {
   animate,
   AnimatePresence,
 } from "framer-motion";
-import {
-  SiReact,
-  SiNextdotjs,
-  SiTypescript,
-  SiTailwindcss,
-  SiNodedotjs,
-  SiExpress,
-  SiGraphql,
-  SiPython,
-  SiPostman,
-  SiPostgresql,
-  SiMongodb,
-  SiCloudflare,
-  SiJsonwebtokens,
-  SiAuth0,
-  SiVercel,
-  SiDocker,
-  SiGit,
-  SiGithub,
-  SiEslint,
-  SiJest,
-  SiNpm,
-} from "react-icons/si";
-import { VscVscode } from "react-icons/vsc";
 import ContactMorphSection from "./ContactMorphSection";
 
 
@@ -826,546 +802,289 @@ function Projects({ globalProgress, isMobile }) {
 }
 
 
-/* ── Icon coloring ─────────────────────────────────
-   false = every icon uses the site text color
-   true  = keep each icon's brand color, but near-black brand icons still use the site text color */
-const KEEP_BRAND_COLORS = false;
-const NEAR_BLACK_BRANDS = ["#000000", "#181717"];
-
-/* ── Full-colour logos ─────────────────────────────
-   file  = /public/logos/<file>.svg (real multi-colour logo)
-   side  = colour of the 3D thickness (darkened automatically towards the back)
-   scale = visual size tweak so every logo looks the same size (1 = fills the 39px box)
-   No entry = black-brand tool: plain react-icon in the site accent colour */
-const TECH_LOGOS = {
-  /* logos-v3 */
-  "React": { file: "react", side: "#1FB6D9", scale: 1.1 },
-  "TypeScript": { file: "typescript", side: "#3178C6", scale: 0.85 },
-  "Tailwind": { file: "tailwindcss", side: "#06B6D4", scale: 1.2 },
-  "Node.js": { file: "nodejs", side: "#5FA04E", scale: 1.05 },
-  "GraphQL": { file: "graphql", side: "#E535AB", scale: 1.1 },
-  "Python": { file: "python", side: "#3776AB", scale: 0.92 },
-  "Postman": { file: "postman", side: "#FF6C37", scale: 0.88 },
-  "PostgreSQL": { file: "postgresql", side: "#336791", scale: 0.88 },
-  "MongoDB": { file: "mongodb", side: "#47A248", scale: 0.85 },
-  "Cloudflare D1": { file: "cloudflare", side: "#F38020", scale: 1.2 },
-  "JWT": { file: "jwt", side: "#D63AFF" },
-  "OAuth": { file: "auth0", side: "#EB5424" },
-  "Cloudflare": { file: "cloudflare", side: "#F38020", scale: 1.2 },
-  "Docker": { file: "docker", side: "#2396ED", scale: 1.15 },
-  "Git": { file: "git", side: "#DE4C36" },
-  "VS Code": { file: "vscode", side: "#007ACC", scale: 0.95 },
-  "ESLint": { file: "eslint", side: "#4B32C3" },
-  "Jest": { file: "jest", side: "#C21325", scale: 0.95 },
-  "npm": { file: "npm", side: "#CB3837", scale: 0.82 },
-};
-
-/* ── Tech stack data (edit icons/labels here) ─────── */
+/* techstack-deck:start */
+/* ── Tech stack: fanned card deck ───────────────────
+   One card per category. Drag the front card sideways, click a card behind it,
+   or focus the deck and use the arrow keys.
+   Edit the tools here: file = /public/logos/<file>.svg */
 const TECH_CATEGORIES = [
   {
     label: "Frontend",
     tools: [
-      { name: "React", Icon: SiReact, color: "#61DAFB" },
-      { name: "Next.js", Icon: SiNextdotjs, color: "#000000" },
-      { name: "TypeScript", Icon: SiTypescript, color: "#3178C6" },
-      { name: "Tailwind", Icon: SiTailwindcss, color: "#06B6D4" },
+      { name: "React", file: "react" },
+      { name: "Next.js", file: "nextjs" },
+      { name: "TypeScript", file: "typescript" },
+      { name: "Tailwind", file: "tailwindcss" },
     ],
   },
   {
     label: "Backend",
     tools: [
-      { name: "Node.js", Icon: SiNodedotjs, color: "#5FA04E" },
-      { name: "Express", Icon: SiExpress, color: "#000000" },
-      { name: "GraphQL", Icon: SiGraphql, color: "#E10098" },
-      { name: "Python", Icon: SiPython, color: "#3776AB" },
-      { name: "Postman", Icon: SiPostman, color: "#FF6C37" },
+      { name: "Node.js", file: "nodejs" },
+      { name: "Express", file: "express" },
+      { name: "GraphQL", file: "graphql" },
+      { name: "Python", file: "python" },
+      { name: "Postman", file: "postman" },
     ],
   },
   {
     label: "Database",
     tools: [
-      { name: "PostgreSQL", Icon: SiPostgresql, color: "#4169E1" },
-      { name: "MongoDB", Icon: SiMongodb, color: "#47A248" },
-      { name: "Cloudflare D1", Icon: SiCloudflare, color: "#F38020" },
+      { name: "PostgreSQL", file: "postgresql" },
+      { name: "MongoDB", file: "mongodb" },
+      { name: "Cloudflare D1", file: "cloudflare" },
     ],
   },
   {
     label: "Security",
     tools: [
-      { name: "JWT", Icon: SiJsonwebtokens, color: "#000000" },
-      { name: "OAuth", Icon: SiAuth0, color: "#EB5424" },
+      { name: "JWT", file: "jwt" },
+      { name: "OAuth", file: "auth0" },
     ],
   },
   {
     label: "Deploy",
     tools: [
-      { name: "Cloudflare", Icon: SiCloudflare, color: "#F38020" },
-      { name: "Vercel", Icon: SiVercel, color: "#000000" },
-      { name: "Docker", Icon: SiDocker, color: "#2496ED" },
+      { name: "Cloudflare", file: "cloudflare" },
+      { name: "Vercel", file: "vercel" },
+      { name: "Docker", file: "docker" },
     ],
   },
   {
     label: "Dev tools",
     tools: [
-      { name: "Git", Icon: SiGit, color: "#F05032" },
-      { name: "GitHub", Icon: SiGithub, color: "#181717" },
-      { name: "VS Code", Icon: VscVscode, color: "#007ACC" },
-      { name: "ESLint", Icon: SiEslint, color: "#4B32C3" },
-      { name: "Jest", Icon: SiJest, color: "#C21325" },
-      { name: "npm", Icon: SiNpm, color: "#CB3837" },
+      { name: "Git", file: "git" },
+      { name: "GitHub", file: "github" },
+      { name: "VS Code", file: "vscode" },
+      { name: "ESLint", file: "eslint" },
+      { name: "Jest", file: "jest" },
+      { name: "npm", file: "npm" },
+    ],
+  },
+  {
+    label: "Mobile",
+    tools: [
+      { name: "React Native", file: "react" },
+      { name: "Expo", file: "expo" },
+      { name: "Flutter", file: "flutter" },
     ],
   },
 ];
 
-/* ── Tech Stack (RubberSegment-style tabs) ─ */
-const RUBBER_EASE_OUT = [0.23, 1, 0.32, 1];
-const RUBBER_SPRING_UI = { type: "spring", duration: 0.3, bounce: 0 };
-const RUBBER_SPRING_MOMENTUM = { type: "spring", duration: 0.4, bounce: 0.2 };
-const RUBBER_SPRING_RELAX = { type: "spring", duration: 0.16, bounce: 0 };
-const RUBBER_DILATE = 0.19;
-const RUBBER_HANDOFF = 0.15;
-const RUBBER_FLICK = 110;
-const RUBBER_MAX_VELOCITY = 2000;
-const RUBBER_DEADZONE = 4;
-const RUBBER_SLOP = 10;
-const RUBBER_STRENGTH = 0.55;
-const RUBBER_SQUASH = 3;
+const TSD_DRAG_THRESHOLD = 70; // px a card has to travel to count as a swipe
+const TSD_STAGGER = 0.09; // seconds between each ring of cards when the deck fans out
+// how far each ring of cards sits from the front card (index = distance from the front card)
+const TSD_FAN_X = [0, 64, 112, 150];
+const TSD_FAN_Y = [0, 14, 26, 38];
+const TSD_FAN_ROTATE = [0, 6, 11, 15];
+const TSD_FAN_SCALE = [1, 0.93, 0.87, 0.81];
+const TSD_FAN_SHADE = [0, 0.12, 0.22, 0.31];
 
-const rubberClamp = (v, min, max) => Math.min(max, Math.max(min, v));
-const rubberOverscroll = (over, dim) => (over * dim * RUBBER_STRENGTH) / (dim + RUBBER_STRENGTH * Math.abs(over));
-const rubberProject = (v, glide) => {
-  const d = 1 - 0.1 * Math.pow(0.05, glide / 100);
-  return ((v / 1000) * d) / (1 - d);
-};
-const rubberVelocityOf = (hist, now) => {
-  const recent = hist.filter(([t]) => now - t <= 100);
-  if (recent.length < 2) return 0;
-  const [t0, x0] = recent[0];
-  const [t1, x1] = recent[recent.length - 1];
-  return t1 - t0 >= 8 ? ((x1 - x0) / (t1 - t0)) * 1000 : 0;
-};
-const rubberNearestSlot = (slots, x) => {
-  let best = 0;
-  for (let i = 1; i < slots.length; i++) {
-    if (Math.abs((slots[i].l + slots[i].r) / 2 - x) < Math.abs((slots[best].l + slots[best].r) / 2 - x)) best = i;
-  }
-  return best;
-};
+function tsdReducedMotion() {
+  return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
 
-/* ── 3D icon: stacked copies along the depth axis = a thick, extruded icon ── */
-const ICON3D_DEPTH = 14;        // number of layers
-const ICON3D_THICKNESS = 0.36;  // total thickness as a fraction of the icon size
-const ICON3D_STAGGER_MS = 70;   // delay between icons when the category changes
-const ICON3D_SIZE = 39;         // icon size in px (was 30, now 1.3x bigger)
-
-// Colors come from CSS variables set on the icon grid:
-//   --ic-face (front), --ic-a (side next to the face) -> --ic-b (back of the icon)
-function Icon3D({ Icon, logo, brand, scale = 1, size = ICON3D_SIZE, autoSpin = false, index = 0 }) {
-  // one turn per hover (mouse) or tap (touch); ignored while it is already turning
-  // autoSpin: the icon mounts already turning (used when the category changes)
-  // logo: path to a full-colour SVG (front layer) - its silhouette becomes the thickness
-  // brand: colour of the thickness (any CSS colour or var)
-  const [spinning, setSpinning] = useState(autoSpin);
-  const [autoDelay, setAutoDelay] = useState(autoSpin ? index * ICON3D_STAGGER_MS : 0);
-  const step = (size * ICON3D_THICKNESS) / (ICON3D_DEPTH - 1);
-  const half = (ICON3D_DEPTH - 1) / 2; // centers the thickness on z=0 so it spins around its own middle
-  const px = Math.round(size * scale);
-  const maskUrl = logo ? "url(" + logo + ")" : undefined;
-  const layers = [];
-  for (let k = ICON3D_DEPTH - 1; k >= 0; k--) {
-    // thickness = brand colour, mixed with more black towards the back (22% -> 52%)
-    const dark = Math.round(22 + (k / (ICON3D_DEPTH - 1)) * 30);
-    const side = "color-mix(in srgb, " + brand + " " + (100 - dark) + "%, black)";
-    let content;
-    if (logo) {
-      content = k === 0
-        ? <img src={logo} alt="" width={px} height={px} draggable={false} className="ts-icon3d-img" style={{ width: px, height: px, maxWidth: "none" }} />
-        : <span className="ts-icon3d-sil" style={{ width: px, height: px, background: side, WebkitMaskImage: maskUrl, maskImage: maskUrl }} />;
-    } else {
-      content = <Icon size={size} />;
-    }
-    layers.push(
-      <span
-        key={k}
-        className="ts-icon3d-layer"
-        style={{
-          color: k === 0 ? brand : side,
-          transform: "translateZ(" + ((half - k) * step).toFixed(2) + "px)",
-        }}
-      >
-        {content}
-      </span>
-    );
-  }
-  return (
-    <span className="ts-icon3d-hit" onPointerEnter={() => { setAutoDelay(0); setSpinning(true); }}>
-      <span className="ts-icon3d-wrap" aria-hidden="true" style={{ width: size, height: size, perspective: size * 15 }}>
-        <span
-          className={"ts-icon3d" + (spinning ? " is-spinning" : "")}
-          style={autoDelay ? { animationDelay: autoDelay + "ms" } : undefined}
-          onAnimationEnd={(e) => { if (e.target === e.currentTarget) { setSpinning(false); setAutoDelay(0); } }}
-        >
-          {layers}
-        </span>
-      </span>
-    </span>
-  );
+// shortest signed distance from the front card, so the deck wraps around
+function tsdRelative(i, active, total) {
+  let rel = i - active;
+  if (rel > total / 2) rel -= total;
+  if (rel < -total / 2) rel += total;
+  return rel;
 }
 
 function TechStack() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-10%" });
+  const total = TECH_CATEGORIES.length;
+  const sectionRef = useRef(null);
+  const stageRef = useRef(null);
+  const sectionInView = useInView(sectionRef, { once: true, amount: 0.12 });
+  const deckInView = useInView(stageRef, { once: true, amount: 0.6 });
+
   const [active, setActive] = useState(0);
-  // icons spin on mount only after the category has actually changed (not on page load)
-  const initialActive = useRef(active);
-  const switched = useRef(false);
-  if (active !== initialActive.current) switched.current = true;
-
-  const trackRef = useRef(null);
-  const itemRefs = useRef([]);
-  const slots = useRef([]);
-  const box = useRef(null);
-  const committed = useRef(0);
-  const handoff = useRef(0);
+  const [revealed, setRevealed] = useState(false);
+  const [staggering, setStaggering] = useState(false);
+  const [scale, setScale] = useState(1); // follows --tsd-s so the fan spreads with the card size
+  const [dragging, setDragging] = useState(false);
+  const [dragDx, setDragDx] = useState(0);
   const drag = useRef(null);
-  const gen = useRef(0);
-  const watchdog = useRef(0);
-  const glide = 75;
+  const revealedRef = useRef(false);
+  const timers = useRef([]);
 
-  const edgeL = useMotionValue(0);
-  const edgeR = useMotionValue(0);
-  const innerW = useMotionValue(0);
-
-  const textColor = LIGHT.text;
-  const mutedColor = LIGHT.muted;
-  const accentColor = LIGHT.accent;
-  const borderColor = LIGHT.border;
-  // Matches the original RubberSegment CSS variables (dark track, light thumb)
-  const trackBg = "#E4DFD6";
-  const thumbBg = LIGHT.accent;
-  const inkIdle = "#141414"; // --rs-ink, opacity 0.7 in CSS
-  const inkActive = LIGHT.bg; // --rs-ink-active, full opacity
-  // 3D icon colors (face = site text color, thickness = site gray tones)
-  const iconSideA = "rgb(85,85,85)";
-  const iconSideB = "rgb(170,170,170)";
-  const clipPath = useTransform(
-    () => `inset(0 ${Math.max(0, innerW.get() - edgeR.get())}px 0 ${Math.max(0, edgeL.get())}px round 10px)`
-  );
-
-  const jumpTo = useCallback((i) => {
-    const s = slots.current[i];
-    if (!s) return;
-    clearTimeout(handoff.current);
-    gen.current += 1;
-    edgeL.jump(s.l);
-    edgeR.jump(s.r);
-  }, [edgeL, edgeR]);
-
-  // Safety net: some time after the last interaction, if the thumb is not sitting
-  // on the active tab (interrupted spring, lost pointer event...), put it there.
-  const armWatchdog = useCallback(() => {
-    clearTimeout(watchdog.current);
-    watchdog.current = setTimeout(() => {
-      if (drag.current) return;
-      const s = slots.current[committed.current];
-      if (!s) return;
-      if (Math.abs(edgeL.get() - s.l) > 0.5 || Math.abs(edgeR.get() - s.r) > 0.5) jumpTo(committed.current);
-    }, 800);
-  }, [edgeL, edgeR, jumpTo]);
-
-  const measure = useCallback(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    const rect = track.getBoundingClientRect();
-    box.current = rect;
-    slots.current = TECH_CATEGORIES.map((_, i) => {
-      const el = itemRefs.current[i];
-      if (!el) return { l: 0, r: 0 };
-      const r = el.getBoundingClientRect();
-      return { l: r.left - rect.left - 4, r: r.right - rect.left - 4 };
-    });
-    innerW.set(rect.width - 8);
-    jumpTo(committed.current);
-  }, [innerW, jumpTo]);
-
-  useLayoutEffect(() => { measure(); }, [measure]);
-  useEffect(() => {
-    const observer = new ResizeObserver(measure);
-    if (trackRef.current) observer.observe(trackRef.current);
-    window.addEventListener("resize", measure);
-    return () => { observer.disconnect(); window.removeEventListener("resize", measure); };
-  }, [measure]);
-
-  useEffect(() => () => { clearTimeout(handoff.current); clearTimeout(watchdog.current); edgeL.stop(); edgeR.stop(); }, [edgeL, edgeR]);
-
-  const commit = useCallback((i) => {
-    committed.current = i;
-    setActive(i);
+  const reveal = useCallback(() => {
+    if (revealedRef.current) return;
+    revealedRef.current = true;
+    setRevealed(true);
+    if (!tsdReducedMotion()) {
+      setStaggering(true);
+      timers.current.push(setTimeout(() => setStaggering(false), 1400));
+    }
   }, []);
 
-  const land = useCallback((to, v, flick, withSquash) => {
-    const b = slots.current[to];
-    if (!b) return;
-    const g = ++gen.current;
-    const dir = Math.sign((b.l + b.r) / 2 - (edgeL.get() + edgeR.get()) / 2) || 1;
-    const [lead, leadTo, trail, trailTo] = dir > 0 ? [edgeR, b.r, edgeL, b.l] : [edgeL, b.l, edgeR, b.r];
-    const velocityFor = (mv) => rubberClamp(v === null ? mv.getVelocity() : v, -RUBBER_MAX_VELOCITY, RUBBER_MAX_VELOCITY);
-    animate(lead, leadTo, { ...(flick ? RUBBER_SPRING_MOMENTUM : RUBBER_SPRING_UI), velocity: velocityFor(lead) });
-    const trailVelocity = velocityFor(trail);
-    if (!withSquash || RUBBER_SQUASH <= 0) {
-      animate(trail, trailTo, { ...RUBBER_SPRING_UI, velocity: trailVelocity });
-      return;
-    }
-    animate(trail, trailTo + dir * RUBBER_SQUASH, { ...RUBBER_SPRING_UI, velocity: trailVelocity }).then(() => {
-      if (gen.current === g) animate(trail, trailTo, RUBBER_SPRING_RELAX);
-    });
-  }, [edgeL, edgeR]);
+  // only the front card at first; the rest fan out once the deck is mostly on screen
+  useEffect(() => {
+    if (!deckInView) return;
+    timers.current.push(setTimeout(reveal, tsdReducedMotion() ? 0 : 250));
+  }, [deckInView, reveal]);
 
-  const travel = useCallback((from, to) => {
-    const b = slots.current[to];
-    if (!b) return;
-    clearTimeout(handoff.current);
-    gen.current += 1;
-    // stretch from where the thumb actually is right now, not from where the
-    // previous tab was, so rapid presses never snap or get left behind
-    const l0 = edgeL.get();
-    const r0 = edgeR.get();
-    const tween = { duration: RUBBER_DILATE, ease: RUBBER_EASE_OUT };
-    animate(edgeL, Math.min(l0, b.l), tween);
-    animate(edgeR, Math.max(r0, b.r), tween);
-    handoff.current = setTimeout(() => land(to, null, false, true), RUBBER_HANDOFF * 1000);
-    armWatchdog();
-  }, [edgeL, edgeR, land, armWatchdog]);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
-  const localX = (e) => e.clientX - (box.current ? box.current.left : 0) - 4;
+  useEffect(() => {
+    const read = () => {
+      if (!sectionRef.current) return;
+      const s = parseFloat(getComputedStyle(sectionRef.current).getPropertyValue("--tsd-s"));
+      setScale(Number.isFinite(s) && s > 0 ? s : 1);
+    };
+    read();
+    window.addEventListener("resize", read);
+    return () => window.removeEventListener("resize", read);
+  }, []);
+
+  const goTo = useCallback(
+    (i) => {
+      reveal();
+      setActive(((i % total) + total) % total);
+    },
+    [reveal, total]
+  );
+
+  // relative moves use the latest state, so quick repeated key presses never lose a step
+  const step = useCallback(
+    (delta) => {
+      reveal();
+      setActive((a) => (((a + delta) % total) + total) % total);
+    },
+    [reveal, total]
+  );
 
   const handlePointerDown = (e, i) => {
-    if (e.button !== 0) return;
-    drag.current = null; // a stale drag must never swallow a new press
-    box.current = trackRef.current.getBoundingClientRect();
-    try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
-    const x = localX(e);
-    const onThumb = x >= edgeL.get() && x <= edgeR.get();
-    drag.current = { id: e.pointerId, x0: x, slot: i, onThumb, live: false, offset: 0, w: 0, hist: [[e.timeStamp, x]] };
-    if (onThumb) {
-      clearTimeout(handoff.current);
-      gen.current += 1;
-      edgeL.stop();
-      edgeR.stop();
+    if (tsdRelative(i, active, total) !== 0) {
+      goTo(i);
+      return;
     }
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    drag.current = { id: e.pointerId, x0: e.clientX, t0: performance.now(), dx: 0 };
+    setDragDx(0);
+    setDragging(true);
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
   };
 
   const handlePointerMove = (e) => {
     const d = drag.current;
-    if (!d || e.pointerId !== d.id || !d.onThumb) return;
-    const x = localX(e);
-    d.hist.push([e.timeStamp, x]);
-    if (d.hist.length > 8) d.hist.shift();
-    if (!d.live) {
-      if (Math.abs(x - d.x0) < RUBBER_DEADZONE) return;
-      d.live = true;
-      d.offset = x - edgeL.get();
-      d.w = edgeR.get() - edgeL.get();
-    }
-    const width = innerW.get();
-    const l = x - d.offset;
-    const maxL = width - d.w;
-    if (l < 0) {
-      edgeL.set(0);
-      edgeR.set(d.w - rubberOverscroll(-l, d.w));
-    } else if (l > maxL) {
-      edgeR.set(width);
-      edgeL.set(maxL + rubberOverscroll(l - maxL, d.w));
-    } else {
-      edgeL.set(l);
-      edgeR.set(l + d.w);
-    }
-  };
-
-  const release = () => {
-    const d = drag.current;
-    drag.current = null;
-    return d;
+    if (!d || e.pointerId !== d.id) return;
+    d.dx = e.clientX - d.x0;
+    setDragDx(d.dx);
   };
 
   const handlePointerUp = (e) => {
     const d = drag.current;
     if (!d || e.pointerId !== d.id) return;
-    release();
-    const x = localX(e);
-    if (!d.live) {
-      if (Math.abs(x - d.x0) <= RUBBER_SLOP && d.slot !== committed.current) {
-        const from = committed.current;
-        commit(d.slot);
-        travel(from, d.slot);
-      } else if (d.onThumb) {
-        // the press froze the thumb; always let it finish on the active tab
-        land(committed.current, null, false, false);
-      }
-      armWatchdog();
-      return;
-    }
-    const v = rubberVelocityOf(d.hist, e.timeStamp);
-    const flick = Math.abs(v) > RUBBER_FLICK;
-    let to = rubberNearestSlot(slots.current, (edgeL.get() + edgeR.get()) / 2 + rubberProject(v, glide));
-    if (flick && to === committed.current) to = rubberClamp(to + Math.sign(v), 0, TECH_CATEGORIES.length - 1);
-    commit(to);
-    land(to, v, flick, flick);
-    armWatchdog();
+    drag.current = null;
+    setDragging(false);
+    setDragDx(0);
+    const velocity = d.dx / Math.max(performance.now() - d.t0, 1);
+    if (d.dx < -TSD_DRAG_THRESHOLD || velocity < -0.5) step(1);
+    else if (d.dx > TSD_DRAG_THRESHOLD || velocity > 0.5) step(-1);
   };
 
+  // the browser took the gesture over (e.g. a vertical page scroll): just put the card back
   const handlePointerCancel = (e) => {
     const d = drag.current;
     if (!d || e.pointerId !== d.id) return;
-    release();
-    if (d.live || d.onThumb) land(committed.current, null, false, false);
-    armWatchdog();
+    drag.current = null;
+    setDragging(false);
+    setDragDx(0);
   };
 
   const handleKeyDown = (e) => {
-    const last = TECH_CATEGORIES.length - 1;
-    let next = null;
-    if (e.key === "ArrowRight" || e.key === "ArrowDown") next = Math.min(last, active + 1);
-    else if (e.key === "ArrowLeft" || e.key === "ArrowUp") next = Math.max(0, active - 1);
-    else if (e.key === "Home") next = 0;
-    else if (e.key === "End") next = last;
-    if (next === null || next === active) return;
-    e.preventDefault();
-    commit(next);
-    jumpTo(next);
-    itemRefs.current[next]?.focus();
+    if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
   };
 
-  const total = TECH_CATEGORIES.length;
-  const current = TECH_CATEGORIES[active];
-  const progress = total > 1 ? (active / (total - 1)) * 100 : 100;
+  const cardStyle = (i) => {
+    const rel = tsdRelative(i, active, total);
+    const abs = Math.abs(rel);
+    const dir = Math.sign(rel);
+    const style = { zIndex: 50 - abs, "--shade": String(TSD_FAN_SHADE[Math.min(abs, 3)]) };
+    if (staggering) style.transitionDelay = Math.max(abs - 1, 0) * TSD_STAGGER + "s";
+    if (abs > 3) {
+      style.visibility = "hidden";
+      style.pointerEvents = "none";
+      style.transform = "translateX(" + (dir > 0 ? 260 : -260) + "px) scale(0.6)";
+    } else if (!revealed && rel !== 0) {
+      // collapsed: tuck every other card behind the front one
+      style.pointerEvents = "none";
+      style.transform = "translateX(0) translateY(0) rotate(0deg) scale(0.9)";
+    } else if (rel === 0 && dragging) {
+      style.transform = "translateX(" + dragDx + "px) rotate(" + dragDx / 18 + "deg) scale(1)";
+    } else {
+      style.transform =
+        "translateX(" + dir * TSD_FAN_X[abs] * scale + "px) translateY(" + TSD_FAN_Y[abs] * scale +
+        "px) rotate(" + dir * TSD_FAN_ROTATE[abs] + "deg) scale(" + TSD_FAN_SCALE[abs] + ")";
+    }
+    return style;
+  };
 
   return (
-    <motion.section ref={ref} id="stack" className="relative py-28 md:py-44 px-6 md:px-14 theme-section">
-      <div className="max-w-xl mx-auto text-center">
-        <motion.span
-          className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.18em] uppercase mb-4"
-          style={{ color: mutedColor }}
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-        >
-          <span className="w-1 h-1 rounded-full" style={{ background: "currentColor" }} />
-          Tech stack
-        </motion.span>
+    <section ref={sectionRef} id="stack" className="tsd-sec" aria-labelledby="stack-heading">
+      <div className="tsd-top">
         <motion.h2
-          className="text-[clamp(1.8rem,5vw,3rem)] font-extrabold tracking-[-0.045em] leading-[1.1] mb-10"
-          style={{ color: textColor, fontFamily: "var(--font-display)" }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.1, ease: E }}
+          id="stack-heading"
+          className="tsd-title"
+          initial={{ opacity: 0, y: 26 }}
+          animate={sectionInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.9, ease: E }}
         >
-          What I build with
+          What I build with<span className="ink">.</span>
         </motion.h2>
-
-        <motion.div
-          className="flex justify-center -mx-4 md:mx-0 mb-8"
-          initial={{ opacity: 0, y: 16 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.2, ease: E }}
-        >
-        <motion.div
-          ref={trackRef}
-          role="radiogroup"
-          aria-label="Tech stack category"
-          className="relative inline-grid max-w-full p-1 rounded-2xl select-none"
-          style={{ background: trackBg, gridAutoFlow: "column", gridAutoColumns: "auto" }}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerCancel}
-          onLostPointerCapture={handlePointerCancel}
-        >
-          {/* bottom layer: idle labels at reduced opacity (--rs-ink, opacity 0.7) */}
-          {TECH_CATEGORIES.map((cat, i) => (
-            <motion.button
-              key={cat.label}
-              ref={(el) => { itemRefs.current[i] = el; }}
-              type="button"
-              role="radio"
-              aria-checked={i === active}
-              tabIndex={i === active ? 0 : -1}
-              onPointerDown={(e) => handlePointerDown(e, i)}
-              onKeyDown={handleKeyDown}
-              className="ts-tab ts-seg flex items-center justify-center font-medium rounded-xl whitespace-nowrap cursor-pointer"
-              style={{ color: inkIdle, opacity: i === active ? 0 : 0.7 }}
-            >
-              {cat.label}
-            </motion.button>
-          ))}
-
-          {/* top layer: the clipped "thumb" — same grid, same labels, full-opacity
-              active ink, revealed only where the clip-path window currently sits */}
-          <motion.div
-            aria-hidden="true"
-            className="absolute inset-1 grid pointer-events-none"
-            style={{ gridAutoFlow: "column", gridAutoColumns: "auto", background: thumbBg, clipPath }}
-          >
-            {TECH_CATEGORIES.map((cat) => (
-              <motion.span
-                key={cat.label}
-                className="ts-seg flex items-center justify-center font-medium rounded-xl whitespace-nowrap"
-                style={{ color: inkActive }}
-              >
-                {cat.label}
-              </motion.span>
-            ))}
-          </motion.div>
-        </motion.div>
-        </motion.div>
-
-        <motion.h3
-          key={"title-" + active}
-          className="text-sm font-semibold mb-1"
-          style={{ color: textColor }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-          {current.label} &amp; tools
-        </motion.h3>
-        <motion.p className="text-xs font-semibold tracking-wider mb-2" style={{ color: mutedColor }}>
-          {String(active + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-        </motion.p>
-        <div className="w-7 h-[3px] mx-auto mb-10 rounded-full overflow-hidden" style={{ background: "rgba(128,128,128,0.25)" }}>
-          <motion.div
-            className="h-full rounded-full"
-            style={{ background: accentColor }}
-            animate={{ width: progress + "%" }}
-            transition={{ duration: 0.3, ease: E }}
-          />
-        </div>
-
-        <motion.div
-          key={"grid-" + active}
-          className="flex flex-wrap justify-center gap-x-[3%] gap-y-7 md:gap-x-6 max-w-[420px] mx-auto"
-          style={{ "--ic-face": textColor, "--ic-a": iconSideA, "--ic-b": iconSideB, "--ic-accent": accentColor }}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, ease: E }}
-        >
-          {current.tools.map((tool, toolIndex) => (
-            <div key={tool.name} className="flex flex-col items-center gap-3 w-[30%] max-w-[110px]">
-              {/* 3D icon, no box around it; */}
-              <Icon3D
-                Icon={tool.Icon}
-                size={ICON3D_SIZE}
-                autoSpin={switched.current}
-                index={toolIndex}
-                logo={(TECH_LOGOS[tool.name] || {}).file ? "/logos/" + TECH_LOGOS[tool.name].file + ".svg" : undefined}
-                brand={(TECH_LOGOS[tool.name] || {}).side || "var(--ic-accent)"}
-                scale={(TECH_LOGOS[tool.name] || {}).scale || 1}
-              />
-              <motion.span className="text-[12.5px] font-medium text-center leading-tight" style={{ color: mutedColor }}>{tool.name}</motion.span>
-            </div>
-          ))}
-        </motion.div>
       </div>
-    </motion.section>
+
+      <div className="tsd-deck">
+        <div
+          ref={stageRef}
+          className={"tsd-stage" + (revealed ? "" : " collapsed")}
+          role="group"
+          aria-roledescription="carousel"
+          aria-label="Tech stack categories"
+          tabIndex={0}
+          onKeyDown={handleKeyDown}
+        >
+          {TECH_CATEGORIES.map((cat, i) => {
+            const isFront = tsdRelative(i, active, total) === 0;
+            return (
+              <div
+                key={cat.label}
+                className={"tsd-card " + (isFront ? "front" : "side") + (isFront && dragging ? " dragging" : "")}
+                style={cardStyle(i)}
+                role="group"
+                aria-roledescription="slide"
+                aria-label={i + 1 + " of " + total + ": " + cat.label}
+                aria-current={isFront ? "true" : undefined}
+                onPointerDown={(e) => handlePointerDown(e, i)}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerCancel}
+              >
+                <div className="tsd-card-rule" />
+                <div className="tsd-card-title">{cat.label}</div>
+                {/* 4 tools sit as a tidy 2x2 instead of 3 + 1 */}
+                <div className={"tsd-icons" + (cat.tools.length === 4 ? " two-col" : "")}>
+                  {cat.tools.slice(0, 6).map((tool) => (
+                    <div className="tsd-tool" key={tool.name}>
+                      <div className="tsd-tool-icon">
+                        <img src={"/logos/" + tool.file + ".svg"} alt="" width="34" height="34" loading="lazy" decoding="async" draggable={false} />
+                      </div>
+                      <div className="tsd-tool-name">{tool.name}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
   );
 }
+/* techstack-deck:end */
 
 /* ── Manifesto (transparent background) ──────────── */
 function Manifesto({ globalProgress, manifestoRef, isMobile }) {
