@@ -10,7 +10,7 @@ const FONT_HREF =
 
 const CSS = [
   ".ct-root,.ct-root *{box-sizing:border-box}",
-  ".ct-root{--ct-bg:#F6F5F2;--ct-fg:#141414;--ct-muted:#6B6762;--ct-accent:#E02B20;color-scheme:light;position:relative;isolation:isolate;min-height:100svh;display:grid;place-items:center;overflow:hidden;padding:1.5rem 1rem;background:var(--ct-bg);color:var(--ct-fg);font-family:'Plus Jakarta Sans','Noto Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}",
+  ".ct-root{--ct-bg:#F4F5F9;--ct-fg:#0D1222;--ct-muted:#5A6277;--ct-accent:#4338CA;color-scheme:light;position:relative;isolation:isolate;min-height:100svh;display:grid;place-items:center;overflow:hidden;padding:1.5rem 1rem;background:var(--ct-bg);color:var(--ct-fg);font-family:'Plus Jakarta Sans','Noto Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}",
   ".ct-root ::selection{background:var(--ct-accent);color:var(--ct-bg)}",
   ".ct-root .ct-morph{margin:0;display:grid;font-weight:800;font-size:clamp(3rem,14.2vw,13.5rem);letter-spacing:-.055em;line-height:1.15;padding:.1em .06em}",
   ".ct-root .ct-morph.ct-on{filter:url(#ct-goo) blur(.55px)}",

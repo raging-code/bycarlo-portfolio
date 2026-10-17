@@ -7,12 +7,12 @@
   --font-body:    var(--font-dmsans), 'DM Sans', system-ui, sans-serif;
 
   /* light */
-  --bg-primary:   #F6F5F2;
-  --text-primary: #141414;
-  --text-secondary: #6B6762;
-  --accent:       #E02B20;
-  --accent-2:     #C9A66B;
-  --border:       rgba(20,20,20,0.14);
+  --bg-primary:   #F4F5F9;
+  --text-primary: #0D1222;
+  --text-secondary: #5A6277;
+  --accent:       #4338CA;
+  --accent-2:     #5CD6C0;
+  --border:       rgba(13,18,34,0.14);
   color-scheme: light;
 }
 
@@ -54,7 +54,7 @@ body {
 
 ::selection {
   background: var(--accent);
-  color: #F6F5F2;
+  color: #F4F5F9;
 }
 
 button, a {
@@ -127,7 +127,7 @@ button, a {
   max-width: 100%;
   padding: 12px 20px;
   border-radius: 0;
-  color: var(--gn-ink, #141414);
+  color: var(--gn-ink, #0D1222);
   font-family: var(--font-body), system-ui, sans-serif;
   transition:
     width 0.6s cubic-bezier(0.65, 0, 0.2, 1),
@@ -163,7 +163,7 @@ button, a {
 /* Safari / Firefox fallback */
 .gnav-wrap .glass-surface--fallback {
   background: rgba(255, 255, 255, 0.55);
-  border: 1px solid rgba(20, 20, 20, 0.14);
+  border: 1px solid rgba(13, 18, 34, 0.14);
   box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.6),
     0 8px 24px -8px rgba(0, 0, 0, 0.25);
@@ -199,7 +199,7 @@ button, a {
   border-radius: 50%;
   object-fit: cover;
   user-select: none;
-  box-shadow: 0 0 0 1px var(--gn-line, rgba(20, 20, 20, 0.14));
+  box-shadow: 0 0 0 1px var(--gn-line, rgba(13, 18, 34, 0.14));
   transition: opacity 0.45s ease-in-out;
 }
 
@@ -308,7 +308,7 @@ button, a {
 }
 
 .logo-gradient {
-  color: #E02B20;
+  color: #4338CA;
 }
 
 .glow-bar-track {
@@ -326,12 +326,12 @@ button, a {
 /* techstack-deck:css:start */
 /* Tech stack: fanned card deck on a red band (cards straddle the red and the cream below). */
 .tsd-sec {
-  --tsd-bg: #F6F5F2;
-  --tsd-text: #141414;
-  --tsd-accent: #E02B20;
-  --tsd-card-1: #3C3C41; /* lit corner */
-  --tsd-card-2: #2D2D31; /* base */
-  --tsd-card-3: #1F1F22; /* shaded corner */
+  --tsd-bg: #F4F5F9;
+  --tsd-text: #0D1222;
+  --tsd-accent: #4338CA;
+  --tsd-card-1: #2C3354; /* lit corner */
+  --tsd-card-2: #1C2240; /* base */
+  --tsd-card-3: #121730; /* shaded corner */
   --tsd-pad: clamp(24px, 5.5vw, 80px);
   --tsd-top-pad: clamp(24px, 3vw, 48px); /* space above the heading: Services (red) sits right above, so this stays small */
   --tsd-s: 1; /* overall deck scale, raised on bigger screens below (the page reads it too) */
@@ -411,7 +411,7 @@ button, a {
   background:
     radial-gradient(120% 70% at 18% 0%, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0) 60%),
     linear-gradient(165deg, var(--tsd-card-1) 0%, var(--tsd-card-2) 48%, var(--tsd-card-3) 100%);
-  border: 1px solid rgba(246, 245, 242, 0.14);
+  border: 1px solid rgba(244, 245, 249, 0.14);
   padding: 28px 26px 26px;
   display: flex;
   flex-direction: column;
@@ -437,10 +437,10 @@ button, a {
   pointer-events: none;
 }
 .tsd-card.front {
-  border-color: rgba(246, 245, 242, 0.22);
+  border-color: rgba(244, 245, 249, 0.22);
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.55),
-    0 40px 70px -22px rgba(20, 20, 20, 0.55),
+    0 40px 70px -22px rgba(13, 18, 34, 0.55),
     0 12px 24px -4px rgba(0, 0, 0, 0.4);
 }
 .tsd-card.side {
@@ -511,7 +511,7 @@ button, a {
   line-height: 1.25;
   letter-spacing: 0.01em;
   text-align: center;
-  color: rgba(246, 245, 242, 0.78);
+  color: rgba(244, 245, 249, 0.78);
 }
 
 @media (max-width: 480px) {
@@ -543,14 +543,14 @@ button, a {
 /* navbar-glass-v4: exact "Glass" capsule (design 1) ───────────────────────── */
 
 .gnav-wrap {
-  --ng-tx: #141414;
-  --ng-bg: #F6F5F2;
-  --ng-mu: rgba(20, 20, 20, 0.58);
-  --ng-chip: rgba(20, 20, 20, 0.06);
-  --ng-gl: rgba(250, 249, 246, 0.6);
-  --ng-edge: rgba(20, 20, 20, 0.1);
+  --ng-tx: #0D1222;
+  --ng-bg: #F4F5F9;
+  --ng-mu: rgba(13, 18, 34, 0.58);
+  --ng-chip: rgba(13, 18, 34, 0.06);
+  --ng-gl: rgba(251, 251, 253, 0.6);
+  --ng-edge: rgba(13, 18, 34, 0.1);
   --ng-hi: rgba(255, 255, 255, 0.9);
-  --ng-shadow: rgba(40, 30, 20, 0.14);
+  --ng-shadow: rgba(13, 18, 34, 0.14);
 }
 
 /* floating, centered, always a capsule */
@@ -669,16 +669,16 @@ button, a {
 .ip-visual { position: relative; flex: none; width: 31cqw; aspect-ratio: 1; margin: 0 4cqw 0 4cqw; }
 .ip-ring { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); border-radius: 50%; aspect-ratio: 1; }
 .ip-r0 { width: 100%; border: 1.5px solid var(--accent);
-  background: radial-gradient(circle at 32% 48%, #efe5d6 0%, #f2ece2 45%, #f6f5f2 100%); }
+  background: radial-gradient(circle at 32% 48%, #E8EBF4 0%, #F0F2F8 45%, #F4F5F9 100%); }
 .ip-outer {
   position: absolute; left: 50%; top: 50%; width: 150%; aspect-ratio: 1;
   transform: translate(-50%, -50%); pointer-events: none;
   -webkit-mask-image: linear-gradient(to right, #000 62%, transparent 84%);
           mask-image: linear-gradient(to right, #000 62%, transparent 84%);
 }
-.ip-r1 { width: 77.6%; border: 1.2px solid rgba(201, 166, 107, 0.65); }
-.ip-r2 { width: 88.7%; border: 1.2px solid rgba(224, 43, 32, 0.38); }
-.ip-r3 { width: 100%;  border: 1px solid rgba(224, 43, 32, 0.14); }
+.ip-r1 { width: 77.6%; border: 1.2px solid rgba(92, 214, 192, 0.65); }
+.ip-r2 { width: 88.7%; border: 1.2px solid rgba(67, 56, 202, 0.38); }
+.ip-r3 { width: 100%;  border: 1px solid rgba(67, 56, 202, 0.14); }
 /* me.png is 1086x1448 with transparent padding; the figure itself occupies
    x 405-1064, y 424-1448. The wrapper is the figure's box and the image is
    offset inside it, so no re-cropping of the file is needed. */
@@ -764,8 +764,8 @@ html { scroll-behavior: auto; }
 
 /* projects-red:css:start */
 /* "Selected projects" continues the red the About brush ends on (same as AB_COLOR) */
-#work { background-color: #E02B20; }
-#work ::selection { background: #F6F5F2; color: #E02B20; }
+#work { background-color: #4338CA; }
+#work ::selection { background: #F4F5F9; color: #4338CA; }
 /* projects-red:css:end */
 
 /* about-gap:start */
@@ -778,17 +778,17 @@ html { scroll-behavior: auto; }
 /* about-gap:end */
 
 /* services:css:start */
-/* services-accordion: premium accordion on the site red (#E02B20) with cream (#F6F5F2). */
+/* services-accordion: premium accordion on the site red (#4338CA) with cream (#F4F5F9). */
 .svc-section {
   --svc-pull: 100px; /* tucks Services up toward Projects: bigger = closer, 0 = no overlap */
   position: relative;
   margin-top: calc(var(--svc-pull) * -1);
-  background: #E02B20;
-  color: #F6F5F2;
+  background: #4338CA;
+  color: #F4F5F9;
   /* extra top space keeps the heading clear of the floating navbar and the overlap above */
   padding: calc(var(--svc-pull) + clamp(72px, 10vw, 140px)) clamp(20px, 5vw, 64px) clamp(72px, 10vw, 140px);
 }
-.svc-section ::selection { background: #F6F5F2; color: #E02B20; }
+.svc-section ::selection { background: #F4F5F9; color: #4338CA; }
 .svc-wrap { max-width: 1180px; margin: 0 auto; }
 
 .svc-heading {
@@ -802,8 +802,8 @@ html { scroll-behavior: auto; }
 }
 
 .svc-list { list-style: none; margin: 0; padding: 0; }
-.svc-row { border-top: 1px solid rgba(246, 245, 242, 0.34); }
-.svc-row:last-child { border-bottom: 1px solid rgba(246, 245, 242, 0.34); }
+.svc-row { border-top: 1px solid rgba(244, 245, 249, 0.34); }
+.svc-row:last-child { border-bottom: 1px solid rgba(244, 245, 249, 0.34); }
 .svc-head { margin: 0; font: inherit; }
 
 .svc-trigger {
@@ -817,7 +817,7 @@ html { scroll-behavior: auto; }
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-.svc-trigger:focus-visible { outline: 2px solid #F6F5F2; outline-offset: 4px; border-radius: 8px; }
+.svc-trigger:focus-visible { outline: 2px solid #F4F5F9; outline-offset: 4px; border-radius: 8px; }
 
 .svc-title {
   flex: 1;
@@ -832,7 +832,7 @@ html { scroll-behavior: auto; }
 }
 @media (hover: hover) {
   .svc-trigger:hover .svc-title { transform: translateX(10px); }
-  .svc-trigger:hover .svc-icon { border-color: #F6F5F2; }
+  .svc-trigger:hover .svc-icon { border-color: #F4F5F9; }
 }
 
 /* plus / minus circle */
@@ -842,7 +842,7 @@ html { scroll-behavior: auto; }
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: 1px solid rgba(246, 245, 242, 0.5);
+  border: 1px solid rgba(244, 245, 249, 0.5);
   transition: background 0.35s, color 0.35s, border-color 0.35s, transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .svc-icon::before,
@@ -861,9 +861,9 @@ html { scroll-behavior: auto; }
   transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 .svc-row.is-open .svc-icon {
-  background: #F6F5F2;
-  color: #E02B20;
-  border-color: #F6F5F2;
+  background: #F4F5F9;
+  color: #4338CA;
+  border-color: #F4F5F9;
   transform: rotate(180deg);
 }
 .svc-row.is-open .svc-icon::after { transform: translate(-50%, -50%) rotate(0deg); }
