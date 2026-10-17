@@ -1215,7 +1215,7 @@ function Testimonials() {
   const inView = useInView(ref, { once: true, margin: "-10%" });
   const [active, setActive] = useState(0);
   const t = TESTIMONIALS[active];
-  const dotIdle = "rgba(0,0,0,0.14)";
+  const dotIdle = "rgba(13,16,24,0.14)";
   const textColor = LIGHT.text;
   const mutedColor = LIGHT.muted;
   const accentColor = LIGHT.accent;
