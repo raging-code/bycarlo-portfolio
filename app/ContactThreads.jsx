@@ -66,11 +66,11 @@ export default function ContactThreads() {
       const reach = small ? 120 : 160; /* cursor influence */
 
       const g = ctx.createLinearGradient(0, 0, W, 0);
-      g.addColorStop(0, "rgba(216,85,43,0.75)");
-      g.addColorStop(0.38, "rgba(232,102,56,0.8)");
-      g.addColorStop(0.52, "rgba(244,130,84,0.85)");
-      g.addColorStop(0.78, "rgba(240,138,93,0.8)");
-      g.addColorStop(1, "rgba(240,138,93,0.85)");
+      g.addColorStop(0, "rgba(163,42,11,0.75)");
+      g.addColorStop(0.38, "rgba(199,62,18,0.8)");
+      g.addColorStop(0.52, "rgba(232,96,31,0.85)");
+      g.addColorStop(0.78, "rgba(245,154,46,0.8)");
+      g.addColorStop(1, "rgba(255,194,75,0.85)");
       ctx.strokeStyle = g;
       ctx.lineWidth = small ? 0.9 : 1;
       ctx.lineCap = "round";
@@ -176,7 +176,7 @@ export default function ContactThreads() {
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(48% 55% at 50% 58%, rgba(216,85,43,.09), rgba(216,85,43,0) 70%), radial-gradient(34% 40% at 72% 52%, rgba(240,138,93,.15), rgba(240,138,93,0) 72%)",
+            "radial-gradient(48% 55% at 50% 58%, rgba(163,42,11,.09), rgba(163,42,11,0) 70%), radial-gradient(34% 40% at 72% 52%, rgba(255,194,75,.15), rgba(255,194,75,0) 72%)",
         }}
       />
       <canvas
