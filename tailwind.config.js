@@ -10,13 +10,14 @@ module.exports = {
         cormorant: ["var(--font-cormorant)", "Georgia", "serif"],
       },
       colors: {
-        bg:       "#F8F6F5",
-        fg:       "#1A0D08",
-        accent:   "#A32A0B",
-        gold:     "#FFC24B",
-        surface:  "#EEE9E6",
-        surface2: "#E0D8D3",
-        muted:    "#6B5D57",
+        bg:       "#EBE9E1",
+        fg:       "#2A0E07",
+        accent:   "#D23412",
+        gold:     "#FFA2B6", // signal (pink)
+        surface:  "#DFDCD0",
+        surface2: "#D3CFC2",
+        muted:    "#665549",
+        on:       "#FFF4EA", // text on accent bands
       },
     },
   },

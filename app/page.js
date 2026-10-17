@@ -20,13 +20,14 @@ import ContactMorphSection from "./ContactMorphSection";
 const E = [0.25, 1, 0.25, 1];
 
 const LIGHT = {
-  bg: "#F8F6F5",
-  surface: "#EEE9E6",
-  text: "#1A0D08",
-  muted: "#6B5D57",
-  accent: "#A32A0B",
-  accent2: "#FFC24B",
-  border: "rgba(26,13,8,0.14)",
+  bg: "#EBE9E1",
+  surface: "#DFDCD0",
+  text: "#2A0E07",
+  muted: "#665549",
+  accent: "#D23412",
+  accent2: "#FFA2B6",
+  on: "#FFF4EA",
+  border: "rgba(42,14,7,0.14)",
 };
 
 function interpolateHex(c1, c2, t) {
@@ -46,22 +47,22 @@ const PROJECTS = [
   {
     id: "01", title: "Helix Protocol", cat: "Web3 Platform",
     desc: "A next-gen DeFi dashboard with real-time data visualisation.",
-    tech: ["Solidity", "Next.js", "D3"], live: "#", colorAccent: "#A32A0B"
+    tech: ["Solidity", "Next.js", "D3"], live: "#", colorAccent: "#D23412"
   },
   {
     id: "02", title: "Mirage Events", cat: "Experience Portal",
     desc: "Immersive event microsite blending video and 3D ticketing.",
-    tech: ["Three.js", "GSAP", "Firebase"], live: "#", colorAccent: "#A32A0B"
+    tech: ["Three.js", "GSAP", "Firebase"], live: "#", colorAccent: "#D23412"
   },
   {
     id: "03", title: "Core Studio", cat: "Agency Rebrand",
     desc: "Brutalist portfolio for a creative studio moving into architecture.",
-    tech: ["Tailwind", "Framer Motion", "Storyblok"], live: "#", colorAccent: "#A32A0B"
+    tech: ["Tailwind", "Framer Motion", "Storyblok"], live: "#", colorAccent: "#D23412"
   },
   {
     id: "04", title: "Void Commerce", cat: "Headless Store",
     desc: "Product-first shopping with AI search and zero-click checkout.",
-    tech: ["Medusa", "Algolia", "Astro"], live: "#", colorAccent: "#A32A0B"
+    tech: ["Medusa", "Algolia", "Astro"], live: "#", colorAccent: "#D23412"
   },
 ];
 
@@ -104,13 +105,13 @@ function GlassNavbar() {
   const [scrolled, setScrolled] = useState(false);
 
   // Light-mode colors
-  const ink    = "#1A0D08";
-  const muted  = "rgba(26,13,8,0.60)";
-  const glass  = "rgba(248,246,245,0.72)";
-  const line   = "rgba(26,13,8,0.12)";
-  const chip   = "rgba(26,13,8,0.08)";
-  const ctaFg  = "#F8F6F5";
-  const accent = "#A32A0B";
+  const ink    = "#2A0E07";
+  const muted  = "rgba(42,14,7,0.60)";
+  const glass  = "rgba(235,233,225,0.72)";
+  const line   = "rgba(42,14,7,0.12)";
+  const chip   = "rgba(42,14,7,0.08)";
+  const ctaFg  = "#FFF4EA";
+  const accent = "#D23412";
 
   useEffect(() => {
     let raf = 0, secs = [];
@@ -237,7 +238,7 @@ function Cursor() {
 
 /* ── Device Mockup ───────────────────────────────── */
 function DeviceMockup({ accent, isMobile }) {
-  const acc = accent || "#A32A0B";
+  const acc = accent || "#D23412";
   const frameBg = LIGHT.surface;
   const screenBg = LIGHT.bg;
   const barColor = "rgba(0,0,0,0.05)";
@@ -290,7 +291,7 @@ function Hero({ globalProgress, isMobile }) {
     "--h-accent":  LIGHT.accent,
     "--h-accent2": LIGHT.accent2,
     "--h-border":  LIGHT.border,
-    "--h-on-accent": LIGHT.bg,
+    "--h-on-accent": LIGHT.on,
   };
   const ref = useRef(null);
   /* perf-patch: removed unused mouse state (it re-rendered the hero on every mouse move) */
@@ -304,7 +305,7 @@ function Hero({ globalProgress, isMobile }) {
       {/* hero-threads:start */}
       <div aria-hidden="true" className="absolute inset-0 z-0 pointer-events-none" style={{ background: "#FFFFFF" }}>
         <Threads
-          color="#A32A0B"
+          color="#D23412"
           thickness={0.6}
           softness={1}
           waves={1.3}
@@ -324,7 +325,7 @@ function Hero({ globalProgress, isMobile }) {
           seed={7}
         />
       </div>
-      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-40 z-[1] pointer-events-none" style={{ background: "linear-gradient(to bottom, rgba(255,255,255,0), #F8F6F5)" }} />
+      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-40 z-[1] pointer-events-none" style={{ background: "linear-gradient(to bottom, rgba(255,255,255,0), #EBE9E1)" }} />
       {/* hero-threads:end */}
       <div className="relative z-10 flex flex-col items-center gap-6 md:gap-8 text-center">
         <motion.h1
@@ -350,7 +351,7 @@ const AB_TAU = 0.16;        // glide time constant in seconds (was 0.09 per fram
 const AB_MAX_PX = 2.2e6;    // canvas pixel budget (device px); keeps big screens light
 const AB_MAX_DPR = 2;
 const AB_FULL = 0.995;      // from here the screen is solid red, so just fill it
-const AB_COLOR = "#A32A0B";
+const AB_COLOR = "#D23412";
 const AB_TOL_XY = 0.45;     // ribbon simplification: centre-line tolerance (css px)
 const AB_TOL_R = 0.22;      // ribbon simplification: radius tolerance (css px, before swell)
 const AB_TAU2 = 6.283185307179586;
@@ -736,10 +737,10 @@ function Projects({ globalProgress, isMobile }) {
 
   /* projects-red:start */
   // red section: cream text, cream accents (the old red accent would vanish on red)
-  const textColor = LIGHT.bg;
-  const mutedColor = "rgba(248,246,245,0.8)";
-  const accentColor = LIGHT.bg;
-  const borderColor = "rgba(248,246,245,0.45)";
+  const textColor = LIGHT.on;
+  const mutedColor = "rgba(255,244,234,0.8)";
+  const accentColor = LIGHT.on;
+  const borderColor = "rgba(255,244,234,0.45)";
   /* projects-red:end */
 
   return (
@@ -1215,7 +1216,7 @@ function Testimonials() {
   const inView = useInView(ref, { once: true, margin: "-10%" });
   const [active, setActive] = useState(0);
   const t = TESTIMONIALS[active];
-  const dotIdle = "rgba(26,13,8,0.14)";
+  const dotIdle = "rgba(42,14,7,0.14)";
   const textColor = LIGHT.text;
   const mutedColor = LIGHT.muted;
   const accentColor = LIGHT.accent;
