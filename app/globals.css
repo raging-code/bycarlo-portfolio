@@ -203,6 +203,16 @@ button, a {
   transition: opacity 0.45s ease-in-out;
 }
 
+/* gnav-logo--mark: the Carlo "C" is a wide (241x260), transparent-background SVG,
+   not a square photo, so it skips the circular crop/ring built for bcdlogo.png -
+   no border-radius, no cover-crop, no hairline box-shadow ring. object-fit:
+   contain keeps the whole glyph visible as the brand box resizes on scroll. */
+.gnav-logo--mark {
+  border-radius: 0;
+  object-fit: contain;
+  box-shadow: none;
+}
+
 .gnav-links {
   display: flex;
   align-items: center;
@@ -572,6 +582,9 @@ button, a {
 
 /* logo: same size as the static bar's scrolled state — only the hairline ring color is themed */
 .gnav-wrap.is-scrolled .gnav-logo { box-shadow: 0 0 0 1px var(--ng-edge); }
+
+/* gnav-logo--mark: no ring in the scrolled/themed state either - see note above */
+.gnav-wrap.is-scrolled .gnav-logo--mark { box-shadow: none; }
 
 /* links: same layout/sizing as the static bar's scrolled state — only colors are themed */
 .gnav-wrap.is-scrolled .gnav-link {
