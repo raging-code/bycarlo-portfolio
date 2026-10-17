@@ -303,7 +303,7 @@ function Hero({ globalProgress, isMobile }) {
       style={heroVars}
     >
       {/* hero-threads:start */}
-      <div aria-hidden="true" className="absolute inset-0 z-0 pointer-events-none" style={{ background: "#FFFFFF" }}>
+      <div aria-hidden="true" className="absolute inset-0 z-0 pointer-events-none" style={{ background: LIGHT.bg }}>
         <Threads
           color="#D23412"
           thickness={0.6}
@@ -325,7 +325,7 @@ function Hero({ globalProgress, isMobile }) {
           seed={7}
         />
       </div>
-      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-40 z-[1] pointer-events-none" style={{ background: "linear-gradient(to bottom, rgba(255,255,255,0), #EBE9E1)" }} />
+      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-40 z-[1] pointer-events-none" style={{ background: "linear-gradient(to bottom, rgba(235,233,225,0), #EBE9E1)" }} />
       {/* hero-threads:end */}
       <div className="relative z-10 flex flex-col items-center gap-6 md:gap-8 text-center">
         <motion.h1
