@@ -576,8 +576,14 @@ function AboutBrush({ trackRef }) {
       if (p <= 0 || !geo) return;
       ctx.fillStyle = AB_COLOR;
       if (p >= AB_FULL) { ctx.fillRect(0, 0, W, H); return; }
+      // ab-seam-fix: the ribbon is one big nonzero-winding union of many
+      // overlapping tangent-circle sub-paths, filled once. Anti-aliasing leaves
+      // thin, half-covered seam pixels where sub-paths only just overlap, which
+      // show up as hairline streaks against the dark fill. A second fill over the
+      // same path pushes those seam pixels to full coverage and removes them.
       ctx.beginPath();
       abRibbon(ctx, geo, p, abSwell(p));
+      ctx.fill();
       ctx.fill();
     };
 
@@ -905,6 +911,7 @@ function TechStack() {
   const [scale, setScale] = useState(1); // follows --tsd-s so the fan spreads with the card size
   const [dragging, setDragging] = useState(false);
   const [dragDx, setDragDx] = useState(0);
+  const [noRing, setNoRing] = useState(true); // tsd-no-tap-outline: true until a real Tab/arrow key is used
   const drag = useRef(null);
   const revealedRef = useRef(false);
   const timers = useRef([]);
@@ -956,6 +963,7 @@ function TechStack() {
   );
 
   const handlePointerDown = (e, i) => {
+    setNoRing(true); // tsd-no-tap-outline: a tap/click always hides the ring again
     if (tsdRelative(i, active, total) !== 0) {
       goTo(i);
       return;
@@ -995,6 +1003,7 @@ function TechStack() {
   };
 
   const handleKeyDown = (e) => {
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft" || e.key === "Tab") setNoRing(false); // tsd-no-tap-outline
     if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
     else if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
   };
@@ -1040,7 +1049,7 @@ function TechStack() {
       <div className="tsd-deck">
         <div
           ref={stageRef}
-          className={"tsd-stage" + (revealed ? "" : " collapsed")}
+          className={"tsd-stage" + (revealed ? "" : " collapsed") + (noRing ? " tsd-no-ring" : "")}
           role="group"
           aria-roledescription="carousel"
           aria-label="Tech stack categories"

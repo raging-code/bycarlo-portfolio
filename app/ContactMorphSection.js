@@ -21,7 +21,7 @@ const CSS = [
   ".ct-root .ct-wrap{display:grid;justify-items:center;text-align:center;max-width:100%;position:relative;z-index:1;top:-6vh}",
   ".ct-root .ct-lead{margin:0 0 clamp(.9rem,2.4vw,2rem);max-width:13em;font-weight:700;font-size:clamp(2.2rem,7.4vw,6.5rem);line-height:1.08;letter-spacing:-.04em;text-wrap:balance}",
   ".ct-root .ct-lead em{font-style:normal}",
-  ".ct-root .ct-top{margin:0 0 clamp(.4rem,2.6vw,2.2rem);display:grid;gap:0;font-family:'DM Sans',system-ui,sans-serif;font-weight:400;font-size:clamp(1rem,2.9vw,2.4rem);line-height:1.7;letter-spacing:0;color:var(--ct-fg)}",
+  /* ct-top-bigger */ ".ct-root .ct-top{margin:0 0 clamp(.4rem,2.6vw,2.2rem);display:grid;gap:0;font-family:'DM Sans',system-ui,sans-serif;font-weight:400;font-size:clamp(1.3rem,3.8vw,3.2rem);line-height:1.6;letter-spacing:0;color:var(--ct-fg)}",
   ".ct-root .ct-top span:last-child{color:var(--ct-accent)}",
   ".ct-root .ct-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0}",
   ".ct-root .ct-defs{position:absolute;width:0;height:0}",

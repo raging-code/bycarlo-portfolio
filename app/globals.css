@@ -386,6 +386,13 @@ button, a {
 .tsd-stage:focus { outline: none; }
 .tsd-stage:focus-visible { outline: 2px solid var(--tsd-text); outline-offset: -6px; border-radius: 28px; }
 
+/* tsd-no-tap-outline */
+/* :focus-visible alone isn't reliable on touch: some mobile browsers still
+   treat a tap as "visible" focus, which drew a square ring around the front
+   card. .tsd-no-ring is toggled from JS: on while idle / after a tap, off the
+   moment real keyboard (Tab/arrow) navigation happens. */
+.tsd-stage.tsd-no-ring:focus-visible { outline: none; }
+
 .tsd-card {
   position: absolute;
   width: 252px;
