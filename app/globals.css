@@ -913,3 +913,26 @@ html { scroll-behavior: auto; }
 .tsd-card-title { text-transform: uppercase; }
 /* cooper-hewitt:end */
 /* cooper-hewitt:applied */
+
+/* hero-v2:start */
+/* Hero headline: all caps, sized so the widest line ("BUILDING WHAT") always fits the screen */
+.hero-title {
+  color: var(--h-text);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  font-synthesis: none;
+  font-size: min(calc((100vw - 3rem) / 7.6), 10.5rem);
+}
+@media (min-width: 768px) {
+  .hero-title { font-size: min(calc((100vw - 10rem) / 7.6), 10.5rem); }
+}
+.hero-line { display: block; white-space: nowrap; }
+/* Red highlight hugs the capitals: cap height + 0.03em overshoot, no outer margin */
+.hero-hl {
+  color: #FFF4EA;
+  padding: 0 0.03em 0 0.01em;
+  background: linear-gradient(#D23412, #D23412) 0 0.01em / 100% 0.84em no-repeat;
+}
+/* hero-v2:end */
+/* hero-v2:applied */

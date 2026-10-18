@@ -2,7 +2,6 @@
 
 import { useRef, useState, useEffect, useCallback } from "react";
 import GlassSurface from "./GlassSurface";
-import Threads from "./Threads";
 import ContactThreads from "./ContactThreads";
 import {
   motion,
@@ -302,41 +301,18 @@ function Hero({ globalProgress, isMobile }) {
       className="relative min-h-svh flex flex-col justify-center items-center px-6 md:px-20 overflow-hidden pt-20"
       style={heroVars}
     >
-      {/* hero-threads:start */}
-      <div aria-hidden="true" className="absolute inset-0 z-0 pointer-events-none" style={{ background: LIGHT.bg }}>
-        <Threads
-          color="#D23412"
-          thickness={0.6}
-          softness={1}
-          waves={1.3}
-          split={0.04}
-          taper={0.85}
-          brightness={1.4}
-          parting={0}
-          enableMouseInteraction={true}
-          fade={0}
-          lineCount={94}
-          amplitude={0.9}
-          distance={0.45}
-          speed={0.4}
-          fray={0.3}
-          angle={11}
-          opacity={0.65}
-          seed={7}
-        />
-      </div>
-      <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-40 z-[1] pointer-events-none" style={{ background: "linear-gradient(to bottom, rgba(235,233,225,0), #EBE9E1)" }} />
-      {/* hero-threads:end */}
+      {/* hero-bg: plain background (threads removed) */}
+      <div aria-hidden="true" className="absolute inset-0 z-0 pointer-events-none" style={{ background: LIGHT.bg }} />
       <div className="relative z-10 flex flex-col items-center gap-6 md:gap-8 text-center">
         <motion.h1
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.4, ease: E }}
-          className="text-[clamp(2.6rem,9.5vw,8.5rem)] font-display font-extrabold leading-none tracking-[-0.03em] text-center"
+          className="hero-title font-display font-extrabold text-center"
         >
-          <span className="block" style={{ color: "var(--h-text)" }}>Building Systems</span>
-          <span className="block" style={{ color: "var(--h-text)" }}>That Make Ideas</span>
-          <span className="block" style={{ color: "var(--h-text)" }}>Work<span style={{ color: "var(--h-accent)" }}>.</span></span>
+          <span className="hero-line"><span className="hero-hl">Building</span> What</span>
+          <span className="hero-line">Moves You</span>
+          <span className="hero-line"><span className="hero-hl">Forward.</span></span>
         </motion.h1>
 
       </div>
@@ -1392,3 +1368,5 @@ export default function Page() {
 }
 
 /* cooper-hewitt:applied */
+
+/* hero-v2:applied */

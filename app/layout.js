@@ -3,14 +3,14 @@ import localFont from "next/font/local";
 import IntroAnimation from "./IntroAnimation";
 import SmoothScroll from "./SmoothScroll";
 
-// Cooper Hewitt (SIL OFL): one family drives both --font-display and --font-body
+// Cooper Hewitt, renamed web build "Hewitt Web" (SIL OFL, see ./fonts/OFL.txt): drives --font-display and --font-body
 const cooper = localFont({
   src: [
-    { path: "./fonts/CooperHewitt-Book.woff2", weight: "400", style: "normal" },
-    { path: "./fonts/CooperHewitt-Medium.woff2", weight: "500", style: "normal" },
-    { path: "./fonts/CooperHewitt-Semibold.woff2", weight: "600", style: "normal" },
-    { path: "./fonts/CooperHewitt-Bold.woff2", weight: "700", style: "normal" },
-    { path: "./fonts/CooperHewitt-Heavy.woff2", weight: "800", style: "normal" },
+    { path: "./fonts/HewittWeb-Book.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/HewittWeb-Medium.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/HewittWeb-Semibold.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/HewittWeb-Bold.woff2", weight: "700", style: "normal" },
+    { path: "./fonts/HewittWeb-Heavy.woff2", weight: "800", style: "normal" },
   ],
   variable: "--font-cooper",
   display: "swap",
@@ -49,3 +49,5 @@ export default function RootLayout({ children }) {
   );
 }
 // cooper-hewitt:applied
+
+// hero-v2:applied
