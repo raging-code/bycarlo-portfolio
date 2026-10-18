@@ -332,7 +332,7 @@ function Hero({ globalProgress, isMobile }) {
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.4, ease: E }}
-          className="text-[clamp(2.6rem,9.5vw,8.5rem)] font-display font-extrabold leading-none tracking-[-0.055em] text-center"
+          className="text-[clamp(2.6rem,9.5vw,8.5rem)] font-display font-extrabold leading-none tracking-[-0.03em] text-center"
         >
           <span className="block" style={{ color: "var(--h-text)" }}>Building Systems</span>
           <span className="block" style={{ color: "var(--h-text)" }}>That Make Ideas</span>
@@ -751,7 +751,7 @@ function Projects({ globalProgress, isMobile }) {
     >
       <div className="mb-20">
         <motion.h2
-          className="text-[clamp(1.8rem,5vw,3rem)] font-display font-extrabold tracking-[-0.045em] leading-[1.1]"
+          className="text-[clamp(1.8rem,5vw,3rem)] font-display font-extrabold uppercase tracking-[-0.025em] leading-[1.1]"
           style={{ color: textColor }}
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -780,7 +780,7 @@ function Projects({ globalProgress, isMobile }) {
                   {p.id}
                 </motion.span>
               </div>
-              <motion.h3 className="font-display font-extrabold text-[1.9rem] md:text-[2.15rem] leading-[1.05] tracking-[-0.045em] mt-2" style={{ color: textColor }}>
+              <motion.h3 className="font-display font-extrabold text-[1.9rem] md:text-[2.15rem] leading-[1.05] tracking-[-0.025em] mt-2" style={{ color: textColor }}>
                 {p.title}
               </motion.h3>
               <motion.p className="text-base leading-relaxed mt-2" style={{ color: mutedColor }}>
@@ -1134,7 +1134,7 @@ function Manifesto({ globalProgress, manifestoRef, isMobile }) {
               style={{
                 fontSize: "clamp(1.8rem, 6vw, 4rem)",
                 color: i % 2 === 0 ? textColor : accentColor,
-                letterSpacing: "-0.045em",
+                letterSpacing: "-0.025em",
               }}
               initial={{ y: "120%", opacity: 0 }}
               animate={inView ? { y: "0%", opacity: 1 } : {}}
@@ -1164,7 +1164,7 @@ function Story() {
       </motion.span>
       <div className="max-w-4xl">
         <motion.p
-          className="text-[clamp(1.5rem,4vw,2.8rem)] font-display font-semibold leading-[1.3] tracking-[-0.035em]"
+          className="text-[clamp(1.5rem,4vw,2.8rem)] font-display font-semibold leading-[1.3] tracking-[-0.02em]"
           style={{ color: textColor }}
           initial={{ opacity: 0, y: 40 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -1241,7 +1241,7 @@ function Testimonials() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.4, ease: E }}
           >
-            <motion.p className="text-[clamp(1.3rem,4vw,2.2rem)] font-display font-medium leading-[1.5] tracking-[-0.03em] relative z-10" style={{ color: textColor }}>
+            <motion.p className="text-[clamp(1.3rem,4vw,2.2rem)] font-display font-medium leading-[1.5] tracking-[-0.015em] relative z-10" style={{ color: textColor }}>
               &quot;{t.quote}&quot;
             </motion.p>
             <div className="mt-8 flex items-center gap-4">
@@ -1390,3 +1390,5 @@ export default function Page() {
     </>
   );
 }
+
+/* cooper-hewitt:applied */

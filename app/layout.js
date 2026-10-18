@@ -1,21 +1,18 @@
 import "./globals.css";
-import { Plus_Jakarta_Sans, DM_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import IntroAnimation from "./IntroAnimation";
 import SmoothScroll from "./SmoothScroll";
 
-// Display / headings
-const plusJakarta = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-jakarta",
-  weight: ["500", "600", "700", "800"],
-  display: "swap",
-});
-
-// Body / labels
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  variable: "--font-dmsans",
-  weight: ["400", "500", "600", "700"],
+// Cooper Hewitt (SIL OFL): one family drives both --font-display and --font-body
+const cooper = localFont({
+  src: [
+    { path: "./fonts/CooperHewitt-Book.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/CooperHewitt-Medium.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/CooperHewitt-Semibold.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/CooperHewitt-Bold.woff2", weight: "700", style: "normal" },
+    { path: "./fonts/CooperHewitt-Heavy.woff2", weight: "800", style: "normal" },
+  ],
+  variable: "--font-cooper",
   display: "swap",
 });
 
@@ -36,7 +33,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${plusJakarta.variable} ${dmSans.variable}`}
+      className={cooper.variable}
     >
       {/*
         Explicit meta is a belt-and-suspenders fallback for older Next.js builds
@@ -51,3 +48,4 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+// cooper-hewitt:applied

@@ -6,22 +6,22 @@
 import { useEffect, useRef } from "react";
 
 const FONT_HREF =
-  "https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400..800&family=Noto+Sans+Arabic:wght@400..800&family=Noto+Sans+Devanagari:wght@400..800&family=Noto+Sans+JP:wght@400..800&family=Noto+Sans+KR:wght@400..800&family=Noto+Sans+Thai:wght@400..800&family=DM+Sans:wght@400..600&family=Plus+Jakarta+Sans:wght@500..800&display=swap";
+  "https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400..800&family=Noto+Sans+Arabic:wght@400..800&family=Noto+Sans+Devanagari:wght@400..800&family=Noto+Sans+JP:wght@400..800&family=Noto+Sans+KR:wght@400..800&family=Noto+Sans+Thai:wght@400..800&display=swap";
 
 const CSS = [
   ".ct-root,.ct-root *{box-sizing:border-box}",
-  ".ct-root{--ct-bg:#EBE9E1;--ct-fg:#2A0E07;--ct-muted:#665549;--ct-accent:#D23412;color-scheme:light;position:relative;isolation:isolate;min-height:100svh;display:grid;place-items:center;overflow:hidden;padding:1.5rem 1rem;background:var(--ct-bg);color:var(--ct-fg);font-family:'Plus Jakarta Sans','Noto Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}",
+  ".ct-root{--ct-bg:#EBE9E1;--ct-fg:#2A0E07;--ct-muted:#665549;--ct-accent:#D23412;color-scheme:light;position:relative;isolation:isolate;min-height:100svh;display:grid;place-items:center;overflow:hidden;padding:1.5rem 1rem;background:var(--ct-bg);color:var(--ct-fg);font-family:var(--font-display),'Noto Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}",
   ".ct-root ::selection{background:var(--ct-accent);color:#FFF4EA}",
-  ".ct-root .ct-morph{margin:0;display:grid;font-weight:800;font-size:clamp(3rem,14.2vw,13.5rem);letter-spacing:-.055em;line-height:1.15;padding:.1em .06em}",
+  ".ct-root .ct-morph{margin:0;display:grid;font-weight:800;font-size:clamp(3rem,14.2vw,13.5rem);letter-spacing:-.03em;line-height:1.15;padding:.1em .06em}",
   ".ct-root .ct-morph.ct-on{filter:url(#ct-goo) blur(.55px)}",
   ".ct-root .ct-morph.ct-plain.ct-on{filter:none}",
   ".ct-root .ct-layer{grid-area:1/1;justify-self:center;display:block;white-space:nowrap;min-height:1.15em}",
   ".ct-root .ct-u{position:relative}",
   ".ct-root .ct-dot{color:var(--ct-accent)}",
   ".ct-root .ct-wrap{display:grid;justify-items:center;text-align:center;max-width:100%;position:relative;z-index:1;top:-6vh}",
-  ".ct-root .ct-lead{margin:0 0 clamp(.9rem,2.4vw,2rem);max-width:13em;font-weight:700;font-size:clamp(2.2rem,7.4vw,6.5rem);line-height:1.08;letter-spacing:-.04em;text-wrap:balance}",
+  ".ct-root .ct-lead{margin:0 0 clamp(.9rem,2.4vw,2rem);max-width:13em;font-weight:700;font-size:clamp(2.2rem,7.4vw,6.5rem);line-height:1.08;letter-spacing:-.02em;text-wrap:balance}",
   ".ct-root .ct-lead em{font-style:normal}",
-  /* ct-top-bigger */ ".ct-root .ct-top{margin:0 0 clamp(.4rem,2.6vw,2.2rem);display:grid;gap:0;font-family:'DM Sans',system-ui,sans-serif;font-weight:400;font-size:clamp(1.3rem,3.8vw,3.2rem);line-height:1.6;letter-spacing:0;color:var(--ct-fg)}",
+  /* ct-top-bigger */ ".ct-root .ct-top{margin:0 0 clamp(.4rem,2.6vw,2.2rem);display:grid;gap:0;font-family:var(--font-body),system-ui,sans-serif;font-weight:400;font-size:clamp(1.3rem,3.8vw,3.2rem);line-height:1.6;letter-spacing:0;color:var(--ct-fg)}",
   ".ct-root .ct-top span:last-child{color:var(--ct-accent)}",
   ".ct-root .ct-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0}",
   ".ct-root .ct-defs{position:absolute;width:0;height:0}",
@@ -33,7 +33,11 @@ const CSS = [
   "/* /ct-tweak-v2 */",
   "/* ct-one-line */",
   "@media (min-width:768px){.ct-root .ct-top{display:flex;flex-wrap:nowrap;justify-content:center;align-items:baseline;gap:0 .6em;white-space:nowrap}}",
-  "/* /ct-one-line */"
+  "/* /ct-one-line */",
+  "/* cooper-hewitt */",
+  ".ct-root .ct-lead,.ct-root .ct-top{text-transform:uppercase}",
+  ".ct-root .ct-top{letter-spacing:.02em}",
+  "@media (min-width:768px){.ct-root .ct-lead{max-width:18em}}"
 ].join("\n");
 
 /* loads the Google fonts once and resolves when the stylesheet is ready */
@@ -72,8 +76,8 @@ function ensureFonts() {
 /* ------------------------------------------------------------------ */
 function initMorph(root, fontsReady) {
   var $ = function (s) { return root.querySelector(s); };
-  var SANS = "'Plus Jakarta Sans','Noto Sans',system-ui,sans-serif";
-  var LAT = { font: SANS, ls: "-0.055em", fs: 1 };
+  var SANS = "var(--font-display),'Noto Sans',system-ui,sans-serif";
+  var LAT = { font: SANS, ls: "-0.03em", fs: 1 };
   function W(t, code, lang, o) {
     var w = { t: t, code: code, lang: lang };
     o = o || LAT;
@@ -280,3 +284,5 @@ export default function ContactMorphSection() {
     </section>
   );
 }
+
+/* cooper-hewitt:applied */

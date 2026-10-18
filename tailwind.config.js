@@ -4,8 +4,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        display:   ["var(--font-display)", "system-ui", "sans-serif"], // Plus Jakarta Sans (headings)
-        sans:      ["var(--font-body)", "system-ui", "sans-serif"],    // DM Sans (body)
+        display:   ["var(--font-display)", "system-ui", "sans-serif"], // Cooper Hewitt (headings)
+        sans:      ["var(--font-body)", "system-ui", "sans-serif"],    // Cooper Hewitt (body)
         mono:      ["var(--font-syne-mono)", "monospace"],
         cormorant: ["var(--font-cormorant)", "Georgia", "serif"],
       },

@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --font-display: var(--font-jakarta), 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-body:    var(--font-dmsans), 'DM Sans', system-ui, sans-serif;
+  --font-display: var(--font-cooper), 'Cooper Hewitt', system-ui, sans-serif;
+  --font-body:    var(--font-cooper), 'Cooper Hewitt', system-ui, sans-serif;
 
   /* light */
   --bg-primary:   #EBE9E1;
@@ -369,7 +369,7 @@ button, a {
   font-weight: 800;
   font-size: clamp(2.9rem, 9.2vw, 9.4rem);
   line-height: 0.9;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.03em;
   word-spacing: 0.07em;
   text-wrap: balance;
 }
@@ -468,7 +468,7 @@ button, a {
   font-family: var(--font-display);
   font-weight: 800;
   font-size: 30px;
-  letter-spacing: -0.04em;
+  letter-spacing: 0.01em;
   line-height: 1;
   color: var(--tsd-on);
 }
@@ -697,7 +697,7 @@ button, a {
 .ip-text { max-width: 36cqw; position: relative; z-index: 1; }
 .ip-title {
   margin: 0; font-family: var(--font-display); font-weight: 800;
-  font-size: clamp(44px, 5.7cqw, 112px); line-height: 0.92; letter-spacing: -0.045em;
+  font-size: clamp(44px, 5.7cqw, 112px); line-height: 0.92; letter-spacing: -0.02em;
   color: var(--text-primary);
 }
 .ip-dot { color: var(--accent); }
@@ -799,7 +799,7 @@ html { scroll-behavior: auto; }
   font-weight: 700;
   font-size: clamp(52px, 12.5vw, 176px);
   line-height: 0.88;
-  letter-spacing: -0.055em;
+  letter-spacing: -0.03em;
 }
 
 .svc-list { list-style: none; margin: 0; padding: 0; }
@@ -827,7 +827,7 @@ html { scroll-behavior: auto; }
   font-weight: 600;
   font-size: clamp(24px, 4.2vw, 56px);
   line-height: 1.05;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
   text-wrap: balance;
   transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
@@ -905,3 +905,11 @@ html { scroll-behavior: auto; }
   .contact-h2 { font-size: clamp(2.4rem, 9vw, 5.5rem); }
 }
 /* contact-threads:end */
+
+/* cooper-hewitt:start */
+/* ALL CAPS: intro title ("Hi, I'm Carlo."), Tech Stack heading and category titles */
+.ip-title,
+.tsd-title,
+.tsd-card-title { text-transform: uppercase; }
+/* cooper-hewitt:end */
+/* cooper-hewitt:applied */
