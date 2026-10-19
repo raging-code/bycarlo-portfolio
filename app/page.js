@@ -28,7 +28,6 @@ const LIGHT = {
   text: "#2A0E07",
   muted: "#665549",
   accent: "#D23412",
-  accent2: "#FFA2B6",
   on: "#FFF4EA",
   border: "rgba(42,14,7,0.14)",
 };
@@ -758,7 +757,7 @@ function IntroProfile() {
                   type="image/webp"
                 />
                 <img
-                  src="/png/me.png"
+                  src="/png/me-900.webp"
                   alt="Carlo"
                   draggable={false}
                   loading="lazy"
