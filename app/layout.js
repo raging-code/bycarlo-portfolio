@@ -4,14 +4,12 @@ import IntroAnimation from "./IntroAnimation";
 import SmoothScroll from "./SmoothScroll";
 
 // Cooper Hewitt, renamed web build "Hewitt Web" (SIL OFL, see ./fonts/OFL.txt): drives --font-display and --font-body
+// Only the 400 weight ships: --font-cooper is a system-fallback link in the
+// --font-display/--font-body stack (see globals.css) and is never painted
+// while HeroDisplay (Archivo) loads successfully, so the other 4 static
+// weights were pure dead weight. perf-optimize:trimmed
 const cooper = localFont({
-  src: [
-    { path: "./fonts/HewittWeb-Book.woff2", weight: "400", style: "normal" },
-    { path: "./fonts/HewittWeb-Medium.woff2", weight: "500", style: "normal" },
-    { path: "./fonts/HewittWeb-Semibold.woff2", weight: "600", style: "normal" },
-    { path: "./fonts/HewittWeb-Bold.woff2", weight: "700", style: "normal" },
-    { path: "./fonts/HewittWeb-Heavy.woff2", weight: "800", style: "normal" },
-  ],
+  src: [{ path: "./fonts/HewittWeb-Book.woff2", weight: "400", style: "normal" }],
   variable: "--font-cooper",
   display: "swap",
 });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback } from "react";
+import dynamic from "next/dynamic";
 import GlassSurface from "./GlassSurface";
 import ContactThreads from "./ContactThreads";
 import {
@@ -13,7 +14,12 @@ import {
   animate,
   AnimatePresence,
 } from "framer-motion";
-import ContactMorphSection from "./ContactMorphSection";
+// perf-optimize: last section on the page, own chunk, fetched only as the
+// user scrolls near it instead of bundled into the initial page JS.
+const ContactMorphSection = dynamic(() => import("./ContactMorphSection"), {
+  ssr: false,
+  loading: () => <div aria-hidden="true" style={{ minHeight: "100svh" }} />,
+});
 
 
 const E = [0.25, 1, 0.25, 1];
@@ -774,7 +780,22 @@ function IntroProfile({ isMobile }) {
             <span className="ip-ring ip-r0" aria-hidden="true" />
             <div className="ip-me">
               {/* perf-patch: about photo */}
-              <img src="/png/me.png" alt="Carlo" draggable={false} loading="lazy" decoding="async" width={1086} height={1448} />
+              <picture>
+                <source
+                  srcSet="/png/me-450.webp 450w, /png/me-900.webp 900w, /png/me-1800.webp 1800w"
+                  sizes="(max-width: 860px) 225px, 31vw"
+                  type="image/webp"
+                />
+                <img
+                  src="/png/me.png"
+                  alt="Carlo"
+                  draggable={false}
+                  loading="lazy"
+                  decoding="async"
+                  width={1086}
+                  height={1448}
+                />
+              </picture>
             </div>
           </motion.div>
 
@@ -1476,3 +1497,5 @@ export default function Page() {
 /* hero-red:applied */
 /* hero-pin:applied */
 /* hero-no-services:applied */
+
+/* perf-optimize:applied */
