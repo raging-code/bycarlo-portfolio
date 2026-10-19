@@ -17,7 +17,6 @@ const CSS = [
   ".ct-root .ct-morph.ct-plain.ct-on{filter:none}",
   ".ct-root .ct-layer{grid-area:1/1;justify-self:center;display:block;white-space:nowrap;min-height:1.15em}",
   ".ct-root .ct-u{position:relative}",
-  ".ct-root .ct-dot{color:var(--ct-accent)}",
   ".ct-root .ct-wrap{display:grid;justify-items:center;text-align:center;max-width:100%;position:relative;z-index:1;top:-6vh}",
   ".ct-root .ct-lead{margin:0 0 clamp(.9rem,2.4vw,2rem);max-width:13em;font-weight:700;font-size:clamp(2.2rem,7.4vw,6.5rem);line-height:1.08;letter-spacing:-.02em;text-wrap:balance}",
   ".ct-root .ct-lead em{font-style:normal}",
@@ -26,15 +25,9 @@ const CSS = [
   ".ct-root .ct-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;margin:0}",
   ".ct-root .ct-defs{position:absolute;width:0;height:0}",
   "@media (min-width:768px){.ct-root::after{content:\"\";position:absolute;inset:0;pointer-events:none;z-index:2;opacity:.025;background-image:url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E\")}}",
-  "/* ct-tweak-v2 */",
-  ".ct-root .ct-dot{color:inherit}",
   "@media (max-width:767px){.ct-root .ct-wrap{top:-15vh}}",
   "@media (min-width:768px){.ct-root .ct-lead{font-size:clamp(2rem,6.6vw,5.8rem);margin-bottom:0}.ct-root .ct-top{margin-top:-.2em}}",
-  "/* /ct-tweak-v2 */",
-  "/* ct-one-line */",
   "@media (min-width:768px){.ct-root .ct-top{display:flex;flex-wrap:nowrap;justify-content:center;align-items:baseline;gap:0 .6em;white-space:nowrap}}",
-  "/* /ct-one-line */",
-  "/* cooper-hewitt */",
   ".ct-root .ct-lead,.ct-root .ct-top{text-transform:uppercase}",
   ".ct-root .ct-top{letter-spacing:.02em}",
   "@media (min-width:768px){.ct-root .ct-lead{max-width:18em}}"
@@ -126,7 +119,7 @@ function initMorph(root, fontsReady) {
     el.textContent = "";
     el._u = [];
     var cs = (w.parts || Array.from(w.t));
-    cs.forEach(function (c, k) {
+    cs.forEach(function (c) {
       var s = document.createElement("span");
       s.className = "ct-u";
       s.textContent = c;
@@ -254,7 +247,7 @@ function initMorph(root, fontsReady) {
   document.addEventListener("visibilitychange", sync);
   if (document.fonts) {
     document.fonts.ready.then(function () { if (alive) measureK(); });
-    /* warm up every script so the first morph never swaps fonts mid-flight */
+    /* re-measure the droplet scale once the web fonts have loaded */
     fontsReady.then(function () {
       if (!alive) return;
       measureK();

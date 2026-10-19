@@ -2,7 +2,6 @@
 
 import { useRef, useState, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
-import GlassSurface from "./GlassSurface";
 import {
   m as motion,
   LazyMotion,
@@ -12,7 +11,6 @@ import {
   useInView,
   useMotionValue,
   useSpring,
-  animate,
   AnimatePresence,
 } from "framer-motion";
 // perf-optimize: last section on the page, own chunk, fetched only as the
@@ -35,19 +33,6 @@ const LIGHT = {
   on: "#FFF4EA",
   border: "rgba(42,14,7,0.14)",
 };
-
-function interpolateHex(c1, c2, t) {
-  const clamp = (v) => Math.max(0, Math.min(255, Math.round(v)));
-  const r1 = parseInt(c1.slice(1, 3), 16),
-    g1 = parseInt(c1.slice(3, 5), 16),
-    b1 = parseInt(c1.slice(5, 7), 16);
-  const r2 = parseInt(c2.slice(1, 3), 16),
-    g2 = parseInt(c2.slice(3, 5), 16),
-    b2 = parseInt(c2.slice(5, 7), 16);
-  return `rgb(${clamp(r1 + (r2 - r1) * t)},${clamp(g1 + (g2 - g1) * t)},${clamp(
-    b1 + (b2 - b1) * t
-  )})`;
-}
 
 const PROJECTS = [
   {
@@ -93,18 +78,6 @@ const NAV_LINKS = [
   { id: "services", label: "Services" },
 ];
 
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const mql = window.matchMedia("(max-width: 767px)");
-    setIsMobile(mql.matches);
-    const handler = (e) => setIsMobile(e.matches);
-    mql.addEventListener("change", handler);
-    return () => mql.removeEventListener("change", handler);
-  }, []);
-  return isMobile;
-}
-
 /* ── GlassNavbar – compact, flush at the top, glass capsule on scroll ── */
 function GlassNavbar() {
   const [active, setActive] = useState("");
@@ -142,7 +115,7 @@ function GlassNavbar() {
 
   return (
     <div className={"gnav-wrap" + (scrolled ? " is-scrolled" : "")}>
-      <motion.nav
+      <nav
         className="gnav"
         aria-label="Primary"
         style={{
@@ -155,23 +128,6 @@ function GlassNavbar() {
           "--gn-accent": accent,
         }}
       >
-        <div className="gnav-glass" aria-hidden="true">
-          <GlassSurface
-            width="100%"
-            height="100%"
-            borderRadius={scrolled ? 999 : 0}
-            backgroundOpacity={0.1}
-            brightness={50}
-            opacity={0.93}
-            blur={11}
-            displace={0.5}
-            distortionScale={-180}
-            redOffset={0}
-            greenOffset={10}
-            blueOffset={20}
-          />
-        </div>
-
         <a
           href="#"
           className="gnav-brand"
@@ -197,7 +153,7 @@ function GlassNavbar() {
         <div className="gnav-end">
           <a href="#contact" className="gnav-cta">Contact</a>
         </div>
-      </motion.nav>
+      </nav>
     </div>
   );
 }
@@ -247,7 +203,7 @@ function Cursor() {
 }
 
 /* ── Device Mockup ───────────────────────────────── */
-function DeviceMockup({ accent, isMobile }) {
+function DeviceMockup({ accent }) {
   const acc = accent || "#D23412";
   const frameBg = LIGHT.surface;
   const screenBg = LIGHT.bg;
@@ -256,7 +212,7 @@ function DeviceMockup({ accent, isMobile }) {
   return (
     <div className="mt-6 mb-12">
       <div className="relative mx-auto" style={{ maxWidth: "600px" }}>
-        <motion.div
+        <div
           className="rounded-xl overflow-hidden border-2 w-full aspect-video"
           style={{ borderColor: acc, backgroundColor: frameBg }}
         >
@@ -265,29 +221,29 @@ function DeviceMockup({ accent, isMobile }) {
             <div className="w-2.5 h-2.5 rounded-full bg-yellow-400 opacity-70" />
             <div className="w-2.5 h-2.5 rounded-full bg-green-400 opacity-70" />
           </div>
-          <motion.div className="flex-1 p-4 flex flex-col gap-2 h-full" style={{ backgroundColor: screenBg }}>
+          <div className="flex-1 p-4 flex flex-col gap-2 h-full" style={{ backgroundColor: screenBg }}>
             <div className="w-2/3 h-3 rounded" style={{ backgroundColor: acc, opacity: 0.3 }} />
             <div className="w-1/2 h-3 rounded" style={{ backgroundColor: acc, opacity: 0.15 }} />
             <div className="w-1/4 h-8 rounded mt-auto" style={{ backgroundColor: acc, opacity: 0.4 }} />
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
-        <motion.div
+        <div
           className="absolute bottom-[-24px] right-[-12px] w-24 rounded-2xl overflow-hidden border-2 z-10"
           style={{ borderColor: acc, backgroundColor: frameBg }}
         >
           <div className="flex justify-center py-1.5" style={{ backgroundColor: barColor }}>
             <div className="w-3 h-1 rounded-full bg-gray-500 opacity-60" />
           </div>
-          <motion.div className="h-32 p-2 flex flex-col gap-1.5" style={{ backgroundColor: screenBg }}>
+          <div className="h-32 p-2 flex flex-col gap-1.5" style={{ backgroundColor: screenBg }}>
             <div className="w-full h-2 rounded" style={{ backgroundColor: acc, opacity: 0.3 }} />
             <div className="w-3/4 h-2 rounded" style={{ backgroundColor: acc, opacity: 0.2 }} />
             <div className="w-1/2 h-4 rounded mt-auto" style={{ backgroundColor: acc, opacity: 0.4 }} />
-          </motion.div>
+          </div>
           <div className="flex justify-center py-1.5" style={{ backgroundColor: barColor }}>
             <div className="w-2 h-1 rounded-full bg-gray-500 opacity-60" />
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
@@ -772,7 +728,7 @@ function AboutBrush({ trackRef }) {
 /* about-brush:end */
 
 /* ── Intro Profile (about-hero v2) ─── */
-function IntroProfile({ isMobile }) {
+function IntroProfile() {
   const ref = useRef(null);
   const trackRef = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
@@ -781,7 +737,7 @@ function IntroProfile({ isMobile }) {
   return (
     <div ref={trackRef} className="ip-track">
       <div className="ip-pin">
-    <motion.section ref={ref} className="ip-section theme-section">
+    <section ref={ref} className="ip-section theme-section">
       <div className="ip-stage">
         <div className="ip-about">
           <motion.div
@@ -839,7 +795,7 @@ function IntroProfile({ isMobile }) {
           </div>
         </div>
       </div>
-    </motion.section>
+    </section>
       <AboutBrush trackRef={trackRef} />
       </div>
     </div>
@@ -847,7 +803,7 @@ function IntroProfile({ isMobile }) {
 }
 
 /* ── Projects (transparent background) ───────────── */
-function Projects({ globalProgress, isMobile }) {
+function Projects() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
 
@@ -860,7 +816,7 @@ function Projects({ globalProgress, isMobile }) {
   /* projects-red:end */
 
   return (
-    <motion.section
+    <section
       ref={ref}
       id="work"
       className="relative py-28 md:py-44 px-6 md:px-14 theme-section"
@@ -886,41 +842,41 @@ function Projects({ globalProgress, isMobile }) {
             transition={{ delay: i * 0.15 + 0.3, duration: 0.8, ease: E }}
             className="group"
           >
-            <DeviceMockup accent={p.colorAccent} isMobile={isMobile} />
+            <DeviceMockup accent={p.colorAccent} />
             <div>
               <div className="flex items-center justify-between">
-                <motion.span className="text-[13px] font-medium" style={{ color: accentColor }}>
+                <span className="text-[13px] font-medium" style={{ color: accentColor }}>
                   {p.cat}
-                </motion.span>
-                <motion.span className="text-xs tracking-widest opacity-50 font-semibold" style={{ color: mutedColor }}>
+                </span>
+                <span className="text-xs tracking-widest opacity-50 font-semibold" style={{ color: mutedColor }}>
                   {p.id}
-                </motion.span>
+                </span>
               </div>
-              <motion.h3 className="font-display font-extrabold text-[1.9rem] md:text-[2.15rem] leading-[1.05] tracking-[-0.025em] mt-2" style={{ color: textColor }}>
+              <h3 className="font-display font-extrabold text-[1.9rem] md:text-[2.15rem] leading-[1.05] tracking-[-0.025em] mt-2" style={{ color: textColor }}>
                 {p.title}
-              </motion.h3>
-              <motion.p className="text-base leading-relaxed mt-2" style={{ color: mutedColor }}>
+              </h3>
+              <p className="text-base leading-relaxed mt-2" style={{ color: mutedColor }}>
                 {p.desc}
-              </motion.p>
+              </p>
               <div className="flex flex-wrap gap-2 mt-4">
                 {p.tech.map((t) => (
-                  <motion.span key={t} className="text-[12.5px] px-3 py-1.5 rounded-full border" style={{ borderColor: borderColor, color: mutedColor }}>
+                  <span key={t} className="text-[12.5px] px-3 py-1.5 rounded-full border" style={{ borderColor: borderColor, color: mutedColor }}>
                     {t}
-                  </motion.span>
+                  </span>
                 ))}
               </div>
-              <motion.a
+              <a
                 href={p.live}
                 className="inline-flex items-center gap-2 mt-6 text-sm font-semibold transition-colors"
                 style={{ color: accentColor }}
               >
                 View project <span className="group-hover:translate-x-1 transition-transform">&#8594;</span>
-              </motion.a>
+              </a>
             </div>
           </motion.div>
         ))}
       </div>
-    </motion.section>
+    </section>
   );
 }
 
@@ -1213,7 +1169,8 @@ function TechStack() {
 /* techstack-deck:end */
 
 /* ── Manifesto (transparent background) ──────────── */
-function Manifesto({ globalProgress, manifestoRef, isMobile }) {
+function Manifesto() {
+  const manifestoRef = useRef(null);
   const inView = useInView(manifestoRef, { once: true, margin: "-5%" });
   const textColor = LIGHT.text;
   const accentColor = LIGHT.accent;
@@ -1228,7 +1185,7 @@ function Manifesto({ globalProgress, manifestoRef, isMobile }) {
   ];
 
   return (
-    <motion.section
+    <section
       ref={manifestoRef}
       id="manifesto"
       className="relative py-28 md:py-44 px-6 md:px-20 overflow-hidden theme-section"
@@ -1261,7 +1218,7 @@ function Manifesto({ globalProgress, manifestoRef, isMobile }) {
           </div>
         ))}
       </div>
-    </motion.section>
+    </section>
   );
 }
 
@@ -1274,7 +1231,7 @@ function Story() {
   const accentColor = LIGHT.accent;
 
   return (
-    <motion.section ref={ref} id="about" className="py-28 md:py-44 px-6 md:px-20 theme-section">
+    <section ref={ref} id="about" className="py-28 md:py-44 px-6 md:px-20 theme-section">
       <motion.span className="text-xs font-bold tracking-[0.18em] uppercase block mb-10" style={{ color: mutedColor }} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}>
         About
       </motion.span>
@@ -1317,12 +1274,12 @@ function Story() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.4 }}
           >
-            <motion.p className="text-3xl md:text-4xl font-display font-bold" style={{ color: accentColor }}>{s.n}</motion.p>
-            <motion.p className="text-xs tracking-wider uppercase mt-2" style={{ color: mutedColor }}>{s.label}</motion.p>
+            <p className="text-3xl md:text-4xl font-display font-bold" style={{ color: accentColor }}>{s.n}</p>
+            <p className="text-xs tracking-wider uppercase mt-2" style={{ color: mutedColor }}>{s.label}</p>
           </motion.div>
         ))}
       </div>
-    </motion.section>
+    </section>
   );
 }
 
@@ -1341,7 +1298,7 @@ function Testimonials() {
   const quoteY = useTransform(tScroll, [0, 1], [40, -40]);
 
   return (
-    <motion.section ref={ref} className="py-28 md:py-44 px-6 md:px-20 theme-section">
+    <section ref={ref} className="py-28 md:py-44 px-6 md:px-20 theme-section">
       <motion.span className="text-xs font-bold tracking-[0.18em] uppercase block mb-16" style={{ color: mutedColor }} initial={{ opacity: 0 }} animate={inView ? { opacity: 1 } : {}}>
         Testimonials
       </motion.span>
@@ -1357,23 +1314,23 @@ function Testimonials() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.4, ease: E }}
           >
-            <motion.p className="text-[clamp(1.3rem,4vw,2.2rem)] font-display font-medium leading-[1.5] tracking-[-0.015em] relative z-10" style={{ color: textColor }}>
+            <p className="text-[clamp(1.3rem,4vw,2.2rem)] font-display font-medium leading-[1.5] tracking-[-0.015em] relative z-10" style={{ color: textColor }}>
               &quot;{t.quote}&quot;
-            </motion.p>
+            </p>
             <div className="mt-8 flex items-center gap-4">
-              <motion.div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0" style={{ background: accentColor, color: "var(--bg-primary)" }}>
+              <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0" style={{ background: accentColor, color: "var(--bg-primary)" }}>
                 {t.name.split(" ").map((n) => n[0]).join("")}
-              </motion.div>
+              </div>
               <div>
-                <motion.p className="font-semibold" style={{ color: textColor }}>{t.name}</motion.p>
-                <motion.p className="text-xs tracking-wider" style={{ color: mutedColor }}>{t.role}</motion.p>
+                <p className="font-semibold" style={{ color: textColor }}>{t.name}</p>
+                <p className="text-xs tracking-wider" style={{ color: mutedColor }}>{t.role}</p>
               </div>
             </div>
           </motion.div>
         </AnimatePresence>
         <div className="flex gap-4 mt-12">
           {TESTIMONIALS.map((_, i) => (
-            <motion.button
+            <button
               key={i}
               onClick={() => setActive(i)}
               className="h-1.5 rounded-full transition-all duration-300"
@@ -1388,18 +1345,12 @@ function Testimonials() {
           ))}
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 }
 
 /* ── Contact (transparent background) ────────────── */
-function Contact({ isMobile }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-10%" });
-  const textColor = LIGHT.text;
-  const accentColor = LIGHT.accent;
-  const mutedColor = LIGHT.muted;
-
+function Contact() {
   const holder = useRef(null);
   const [near, setNear] = useState(false);
   useEffect(() => {
@@ -1493,29 +1444,21 @@ function Services() {
 /* services:end */
 
 export default function Page() {
-  const manifestoRef = useRef(null);
-  const containerRef = useRef(null);
-  const isMobile = useIsMobile();
-
-  // perf-patch: no section reads globalProgress, and the useScroll + useSpring pair that fed it
-  // ran a spring on every scroll tick. Kept as a prop so the section signatures stay the same.
-  const globalProgress = null;
-
   return (
     <LazyMotion features={domAnimation}>
       <Cursor />
       <GlassNavbar />
-      <main ref={containerRef} style={{ position: "relative", zIndex: 10 }}>
-        <Hero globalProgress={globalProgress} isMobile={isMobile} />
+      <main style={{ position: "relative", zIndex: 10 }}>
+        <Hero />
         <div className="after-hero">
-        <IntroProfile isMobile={isMobile} />
-        <Projects globalProgress={globalProgress} isMobile={isMobile} />
+        <IntroProfile />
+        <Projects />
         <Services />
         <TechStack />
-        <Manifesto globalProgress={globalProgress} manifestoRef={manifestoRef} isMobile={isMobile} />
+        <Manifesto />
         <Story />
         <Testimonials />
-        <Contact isMobile={isMobile} />
+        <Contact />
         </div>
       </main>
     </LazyMotion>
@@ -1531,3 +1474,4 @@ export default function Page() {
 
 /* perf-optimize:applied */
 /* perf-optimize-2:applied */
+/* cleanup:applied */

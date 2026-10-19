@@ -34,13 +34,6 @@ export default function RootLayout({ children }) {
       lang="en"
       className={cooper.variable}
     >
-      {/*
-        Explicit meta is a belt-and-suspenders fallback for older Next.js builds
-        that may not honour the viewport export above.
-      */}
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-      </head>
       <body>
         <SmoothScroll />
         <IntroAnimation />{children}</body>

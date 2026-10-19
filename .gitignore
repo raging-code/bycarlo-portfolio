@@ -32,3 +32,6 @@ pnpm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# cleanup patch backup (safe to delete once you are happy)
+/.cleanup-backup/
