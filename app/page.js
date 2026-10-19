@@ -282,35 +282,42 @@ function DeviceMockup({ accent, isMobile }) {
   );
 }
 
-/* ── Hero (hero-red) ─────────────────────────────── */
+/* ── Hero (hero-pin) ─────────────────────────────── */
+const HERO_WORDS = ["Forward","Ahead","Beyond","Next","Further","Faster"];
 const HERO_SERVICES = [
   "Website Development",
-  "Mobile & Web Apps",
-  "Business Systems",
-  "AI Automation & Integration",
   "IoT Solutions",
-  "Custom Full-Stack Development",
+  "Custom Full-Stack Development"
 ];
+const HERO_PIN = {"blur":14,"dim":0.25,"scale":0.96,"radius":36};
 
 function Hero() {
   const [go, setGo] = useState(false);
+  const frameRef = useRef(null);
   const titleRef = useRef(null);
   const colRef = useRef(null);
   const listRef = useRef(null);
+  const wordsRef = useRef(null);
 
+  /* headline fit, services rotator and word carousel */
   useEffect(() => {
-    const ht = titleRef.current, col = colRef.current, ul = listRef.current;
-    if (!ht || !col || !ul) return;
+    const ht = titleRef.current, col = colRef.current, ul = listRef.current, wd = wordsRef.current;
+    if (!ht || !col || !ul || !wd) return;
     const lis = Array.from(ul.children);
+    const ws = Array.from(wd.children);
     const N = HERO_SERVICES.length;
-    let idx = 0, interval = 0, reset = 0, start = 0, dead = false;
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let idx = 0, wi = 0, interval = 0, reset = 0, start = 0, wTimer = 0, wStart = 0, dead = false;
 
-    // scale the headline so its widest line exactly fills the column
+    // scale the headline so its widest line exactly fills the column, then size the word box
     const fit = () => {
+      wd.style.width = "";
       ht.style.fontSize = "100px";
       const w = Math.max(...Array.from(ht.querySelectorAll(".hf-l > span")).map((s) => s.getBoundingClientRect().width));
       const cw = col.getBoundingClientRect().width;
       if (w > 0 && cw > 0) ht.style.fontSize = Math.min((100 * cw) / w, 200) + "px";
+      ws.forEach((x) => { x.dataset.w = x.getBoundingClientRect().width; });
+      wd.style.width = ws[wi].dataset.w + "px";
     };
 
     // services rotator: the dark row is always the 3rd visible one
@@ -333,12 +340,26 @@ function Hero() {
       }
     };
 
+    // word carousel: old word's letters rise out, new word's letters rise in
+    const nextWord = () => {
+      const p = ws[wi];
+      wi = (wi + 1) % ws.length;
+      const n = ws[wi];
+      p.classList.remove("hf-in");
+      p.classList.add("hf-out");
+      n.classList.remove("hf-out");
+      n.classList.add("hf-in");
+      wd.style.width = n.dataset.w + "px";
+      clearTimeout(p._t);
+      p._t = setTimeout(() => p.classList.remove("hf-out"), 1500);
+    };
+
     const onResize = () => { fit(); step(); };
     window.addEventListener("resize", onResize);
 
     const fonts = document.fonts;
     const ready = fonts
-      ? Promise.all([fonts.load('600 100px HeroDisplay'), fonts.ready]).catch(() => {})
+      ? Promise.all([fonts.load("600 100px HeroDisplay"), fonts.ready]).catch(() => {})
       : Promise.resolve();
     ready.then(() => {
       if (dead) return;
@@ -347,26 +368,84 @@ function Hero() {
       // wait for the intro overlay to lift before the headline reveals
       start = setTimeout(() => { if (!dead) setGo(true); }, 700);
       interval = setInterval(tick, 2300);
+      if (!still) wStart = setTimeout(() => { wTimer = setInterval(nextWord, 2600); }, 1400);
     });
 
     return () => {
       dead = true;
       clearInterval(interval);
+      clearInterval(wTimer);
       clearTimeout(reset);
       clearTimeout(start);
+      clearTimeout(wStart);
+      ws.forEach((x) => clearTimeout(x._t));
       window.removeEventListener("resize", onResize);
     };
   }, []);
 
+  /* pinned hero: it stays put while About slides over it, blurring and dimming as it goes */
+  useEffect(() => {
+    const frame = frameRef.current;
+    if (!frame) return;
+    const sheet = document.querySelector(".after-hero");
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let raf = 0, last = -1;
+
+    const apply = () => {
+      raf = 0;
+      const h = frame.offsetHeight || window.innerHeight;
+      const p = Math.min(1, Math.max(0, window.scrollY / h));
+      if (p === last) return;
+      last = p;
+      const e = p * p * (3 - 2 * p); // smoothstep
+      frame.style.visibility = p >= 1 ? "hidden" : ""; // fully covered: stop painting it
+      if (!reduce) {
+        const f = [];
+        if (HERO_PIN.blur) f.push("blur(" + (e * HERO_PIN.blur).toFixed(2) + "px)");
+        if (HERO_PIN.dim) f.push("brightness(" + (1 - HERO_PIN.dim * e).toFixed(3) + ")");
+        frame.style.filter = e > 0 ? f.join(" ") : "";
+        frame.style.transform = e > 0 && HERO_PIN.scale < 1 ? "scale(" + (1 - (1 - HERO_PIN.scale) * e).toFixed(4) + ")" : "";
+      }
+      if (sheet && HERO_PIN.radius) {
+        const r = (HERO_PIN.radius * (1 - e)).toFixed(1);
+        sheet.style.borderRadius = r + "px " + r + "px 0 0";
+      }
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(apply); };
+
+    apply();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
-    <section className={"hf-frame" + (go ? " hf-go" : "")}>
+    <section ref={frameRef} className={"hf-frame" + (go ? " hf-go" : "")}>
       <div className="hf-hero">
         <div className="hf-grid">
           <div className="hf-col" ref={colRef}>
-            <h1 className="hf-title" ref={titleRef}>
+            <h1 className="hf-title" ref={titleRef} aria-label="Building what moves you forward.">
               <span className="hf-l"><span><span className="hf-hl">Building</span> What</span></span>
               <span className="hf-l"><span>Moves You</span></span>
-              <span className="hf-l"><span><span className="hf-hl hf-fw">Forward.</span></span></span>
+              <span className="hf-l">
+                <span>
+                  <span className="hf-hl hf-fw" aria-hidden="true">
+                    <span className="hf-wd" ref={wordsRef}>
+                      {HERO_WORDS.map((w, k) => (
+                        <span key={w} className={"hf-w" + (k === 0 ? " hf-in" : "")}>
+                          {Array.from(w + ".").map((c, i) => (
+                            <span key={i} className="hf-c" style={{ "--i": i }}>{c}</span>
+                          ))}
+                        </span>
+                      ))}
+                    </span>
+                  </span>
+                </span>
+              </span>
             </h1>
           </div>
         </div>
@@ -381,7 +460,6 @@ function Hero() {
     </section>
   );
 }
-
 
 /* about-brush:start */
 /* perf-patch: ribbon renderer, see apply-perf-patch.mjs */
@@ -1416,6 +1494,7 @@ export default function Page() {
       <GlassNavbar />
       <main ref={containerRef} style={{ position: "relative", zIndex: 10 }}>
         <Hero globalProgress={globalProgress} isMobile={isMobile} />
+        <div className="after-hero">
         <IntroProfile isMobile={isMobile} />
         <Projects globalProgress={globalProgress} isMobile={isMobile} />
         <Services />
@@ -1424,6 +1503,7 @@ export default function Page() {
         <Story />
         <Testimonials />
         <Contact isMobile={isMobile} />
+        </div>
       </main>
     </>
   );
@@ -1433,3 +1513,4 @@ export default function Page() {
 
 /* hero-v2:applied */
 /* hero-red:applied */
+/* hero-pin:applied */
