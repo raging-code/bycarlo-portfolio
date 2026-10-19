@@ -914,26 +914,102 @@ html { scroll-behavior: auto; }
 /* cooper-hewitt:end */
 /* cooper-hewitt:applied */
 
-/* hero-v2:start */
-/* Hero headline: all caps, sized so the widest line ("BUILDING WHAT") always fits the screen */
-.hero-title {
-  color: var(--h-text);
-  text-transform: uppercase;
-  letter-spacing: -0.02em;
-  line-height: 1;
-  font-synthesis: none;
-  font-size: min(calc((100vw - 3rem) / 7.6), 10.5rem);
-}
-@media (min-width: 768px) {
-  .hero-title { font-size: min(calc((100vw - 10rem) / 7.6), 10.5rem); }
-}
-.hero-line { display: block; white-space: nowrap; }
-/* Red highlight hugs the capitals: cap height + 0.03em overshoot, no outer margin */
-.hero-hl {
-  color: #FFF4EA;
-  padding: 0 0.03em 0 0.01em;
-  background: linear-gradient(#D23412, #D23412) 0 0.01em / 100% 0.84em no-repeat;
-}
-/* hero-v2:end */
 /* hero-v2:applied */
 
+/* hero-red:start */
+@font-face {
+  font-family: "HeroDisplay";
+  font-style: normal;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+  src: url("./fonts/ArchivoVF.woff2") format("woff2");
+}
+:root { --font-hero: "HeroDisplay", 'Cooper Hewitt', system-ui, sans-serif; }
+
+/* red frame around a cream, rounded window */
+.hf-frame {
+  --hf-pad: clamp(12px, 1.8vw, 26px);
+  --hf-r: clamp(20px, 2.6vw, 36px);
+  background: #D23412;
+  padding: var(--hf-pad);
+}
+.hf-hero {
+  position: relative;
+  min-height: calc(100svh - 2 * var(--hf-pad));
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  border-radius: var(--hf-r);
+  padding: 88px clamp(20px, 4.4vw, 64px) 120px;
+  background: #EBE9E1;
+  color: #2A0E07;
+}
+.hf-grid { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr); align-items: center; }
+.hf-col { min-width: 0; }
+
+.hf-title {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-hero);
+  font-weight: 600;
+  font-stretch: 112%;
+  text-transform: uppercase;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  white-space: nowrap;
+  color: #2A0E07;
+}
+.hf-l { display: block; overflow: hidden; padding-bottom: 0.04em; }
+.hf-l > span { display: inline-block; transform: translateY(110%); }
+.hf-go .hf-l > span { animation: hf-up 1s cubic-bezier(.22, 1, .36, 1) forwards; }
+.hf-go .hf-l:nth-child(2) > span { animation-delay: .1s; }
+.hf-go .hf-l:nth-child(3) > span { animation-delay: .2s; }
+.hf-fw { color: #D23412; }
+.hf-hl { display: inline-block; padding: 0 .05em; padding-top: .05em; line-height: .86; margin-left: -.05em; }
+
+/* services rotator: one dark row, the others light */
+.hf-rot {
+  position: absolute;
+  right: clamp(20px, 4.4vw, 64px);
+  bottom: clamp(24px, 5svh, 56px);
+  text-align: right;
+  font-family: var(--font-hero);
+  font-stretch: 112%;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: -0.035em;
+  font-size: clamp(1rem, 2.5vw, 2.4rem);
+  line-height: 1.3;
+  height: 3.9em;
+  overflow: hidden;
+  opacity: 0;
+}
+.hf-go .hf-rot { animation: hf-in .8s ease .9s forwards; }
+.hf-rot ul { list-style: none; margin: 0; padding: 0; transition: transform .8s cubic-bezier(.65, 0, .2, 1); }
+.hf-rot li { height: 1.3em; white-space: nowrap; color: rgba(42, 14, 7, .2); transition: color .6s; }
+.hf-rot li.on { color: #2A0E07; }
+
+@keyframes hf-up { to { transform: none; } }
+@keyframes hf-in { to { opacity: 1; transform: none; } }
+@media (max-width: 760px) {
+  .hf-hero { align-items: center; padding-top: 88px; }
+  .hf-rot { font-size: clamp(.8rem, 3.6vw, 1.2rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hf-l > span { animation: none !important; transform: none; }
+  .hf-rot { animation: none !important; opacity: 1; transform: none; }
+  .hf-rot ul { transition: none; }
+}
+
+/* the fixed navbar sits inside the cream window while at the top of the page */
+.gnav-wrap:not(.is-scrolled) .gnav {
+  padding: calc(clamp(12px, 1.8vw, 26px) + 18px) calc(clamp(12px, 1.8vw, 26px) + 26px);
+}
+@media (max-width: 640px) {
+  .gnav-wrap:not(.is-scrolled) .gnav {
+    padding: calc(clamp(12px, 1.8vw, 26px) + 14px) calc(clamp(12px, 1.8vw, 26px) + 14px);
+  }
+}
+/* hero-red:end */
+/* hero-red:applied */

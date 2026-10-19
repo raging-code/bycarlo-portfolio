@@ -282,44 +282,106 @@ function DeviceMockup({ accent, isMobile }) {
   );
 }
 
-/* ── Hero ────────────────────────────────────────── */
-function Hero({ globalProgress, isMobile }) {
-  const heroVars = {
-    "--h-text":    LIGHT.text,
-    "--h-muted":   LIGHT.muted,
-    "--h-accent":  LIGHT.accent,
-    "--h-accent2": LIGHT.accent2,
-    "--h-border":  LIGHT.border,
-    "--h-on-accent": LIGHT.on,
-  };
-  const ref = useRef(null);
-  /* perf-patch: removed unused mouse state (it re-rendered the hero on every mouse move) */
+/* ── Hero (hero-red) ─────────────────────────────── */
+const HERO_SERVICES = [
+  "Website Development",
+  "Mobile & Web Apps",
+  "Business Systems",
+  "AI Automation & Integration",
+  "IoT Solutions",
+  "Custom Full-Stack Development",
+];
+
+function Hero() {
+  const [go, setGo] = useState(false);
+  const titleRef = useRef(null);
+  const colRef = useRef(null);
+  const listRef = useRef(null);
+
+  useEffect(() => {
+    const ht = titleRef.current, col = colRef.current, ul = listRef.current;
+    if (!ht || !col || !ul) return;
+    const lis = Array.from(ul.children);
+    const N = HERO_SERVICES.length;
+    let idx = 0, interval = 0, reset = 0, start = 0, dead = false;
+
+    // scale the headline so its widest line exactly fills the column
+    const fit = () => {
+      ht.style.fontSize = "100px";
+      const w = Math.max(...Array.from(ht.querySelectorAll(".hf-l > span")).map((s) => s.getBoundingClientRect().width));
+      const cw = col.getBoundingClientRect().width;
+      if (w > 0 && cw > 0) ht.style.fontSize = Math.min((100 * cw) / w, 200) + "px";
+    };
+
+    // services rotator: the dark row is always the 3rd visible one
+    const step = () => {
+      const lh = ul.firstElementChild.offsetHeight;
+      lis.forEach((li, i) => li.classList.toggle("on", i === idx + 2));
+      ul.style.transform = "translateY(" + -idx * lh + "px)";
+    };
+    const tick = () => {
+      idx++;
+      step();
+      if (idx === N) {
+        reset = setTimeout(() => {
+          ul.style.transition = "none";
+          idx = 0;
+          step();
+          void ul.offsetWidth;
+          ul.style.transition = "";
+        }, 850);
+      }
+    };
+
+    const onResize = () => { fit(); step(); };
+    window.addEventListener("resize", onResize);
+
+    const fonts = document.fonts;
+    const ready = fonts
+      ? Promise.all([fonts.load('600 100px HeroDisplay'), fonts.ready]).catch(() => {})
+      : Promise.resolve();
+    ready.then(() => {
+      if (dead) return;
+      fit();
+      step();
+      // wait for the intro overlay to lift before the headline reveals
+      start = setTimeout(() => { if (!dead) setGo(true); }, 700);
+      interval = setInterval(tick, 2300);
+    });
+
+    return () => {
+      dead = true;
+      clearInterval(interval);
+      clearTimeout(reset);
+      clearTimeout(start);
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
 
   return (
-    <motion.section
-      ref={ref}
-      className="relative min-h-svh flex flex-col justify-center items-center px-6 md:px-20 overflow-hidden pt-20"
-      style={heroVars}
-    >
-      {/* hero-bg: plain background (threads removed) */}
-      <div aria-hidden="true" className="absolute inset-0 z-0 pointer-events-none" style={{ background: LIGHT.bg }} />
-      <div className="relative z-10 flex flex-col items-center gap-6 md:gap-8 text-center">
-        <motion.h1
-          initial={{ opacity: 0, y: 60 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.4, ease: E }}
-          className="hero-title font-display font-extrabold text-center"
-        >
-          <span className="hero-line"><span className="hero-hl">Building</span> What</span>
-          <span className="hero-line">Moves You</span>
-          <span className="hero-line"><span className="hero-hl">Forward.</span></span>
-        </motion.h1>
-
+    <section className={"hf-frame" + (go ? " hf-go" : "")}>
+      <div className="hf-hero">
+        <div className="hf-grid">
+          <div className="hf-col" ref={colRef}>
+            <h1 className="hf-title" ref={titleRef}>
+              <span className="hf-l"><span><span className="hf-hl">Building</span> What</span></span>
+              <span className="hf-l"><span>Moves You</span></span>
+              <span className="hf-l"><span><span className="hf-hl hf-fw">Forward.</span></span></span>
+            </h1>
+          </div>
+        </div>
+        <div className="hf-rot" aria-hidden="true">
+          <ul ref={listRef}>
+            {HERO_SERVICES.concat(HERO_SERVICES.slice(0, 3)).map((s, i) => (
+              <li key={i}>{s}</li>
+            ))}
+          </ul>
+        </div>
       </div>
-
-    </motion.section>
+    </section>
   );
 }
+
 
 /* about-brush:start */
 /* perf-patch: ribbon renderer, see apply-perf-patch.mjs */
@@ -1370,3 +1432,4 @@ export default function Page() {
 /* cooper-hewitt:applied */
 
 /* hero-v2:applied */
+/* hero-red:applied */
