@@ -12,6 +12,7 @@ const cooper = localFont({
   src: [{ path: "./fonts/HewittWeb-Book.woff2", weight: "400", style: "normal" }],
   variable: "--font-cooper",
   display: "swap",
+  preload: false, // perf-optimize-2: fallback only, never painted
 });
 
 export const metadata = {

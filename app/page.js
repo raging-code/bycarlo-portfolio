@@ -3,9 +3,10 @@
 import { useRef, useState, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import GlassSurface from "./GlassSurface";
-import ContactThreads from "./ContactThreads";
 import {
-  motion,
+  m as motion,
+  LazyMotion,
+  domAnimation,
   useScroll,
   useTransform,
   useInView,
@@ -18,7 +19,7 @@ import {
 // user scrolls near it instead of bundled into the initial page JS.
 const ContactMorphSection = dynamic(() => import("./ContactMorphSection"), {
   ssr: false,
-  loading: () => <div aria-hidden="true" style={{ minHeight: "100svh" }} />,
+  loading: () => <section id="contact" aria-label="Contact" style={{ minHeight: "100svh" }} />,
 });
 
 
@@ -119,12 +120,15 @@ function GlassNavbar() {
   const accent = "#D23412";
 
   useEffect(() => {
-    let raf = 0, secs = [];
+    let raf = 0, secs = [], lastSec = -1e9, tail = 0;
     const run = () => {
       raf = 0;
       const y = window.scrollY;
       setScrolled((prev) => (prev ? y > 6 : y > 24)); // spring-morph: hysteresis
-      if (!secs.length) secs = Array.from(document.querySelectorAll("section[id]"));
+      if (!secs.length || secs.some((s) => !s.isConnected)) secs = Array.from(document.querySelectorAll("section[id]"));
+      const nowT = performance.now();
+      if (nowT - lastSec < 100) { clearTimeout(tail); tail = setTimeout(onScroll, 110); return; }
+      lastSec = nowT;
       const mid = window.innerHeight / 2;
       let current = "";
       for (const s of secs) if (s.getBoundingClientRect().top < mid) current = s.id;
@@ -133,7 +137,7 @@ function GlassNavbar() {
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(run); }; /* perf-patch: once per frame */
     window.addEventListener("scroll", onScroll, { passive: true });
     run();
-    return () => { window.removeEventListener("scroll", onScroll); if (raf) cancelAnimationFrame(raf); };
+    return () => { window.removeEventListener("scroll", onScroll); clearTimeout(tail); if (raf) cancelAnimationFrame(raf); };
   }, []);
 
   return (
@@ -207,6 +211,7 @@ function Cursor() {
   const [hover, setHover] = useState(false);
 
   useEffect(() => {
+    if (window.matchMedia("(pointer: coarse)").matches) return undefined;
     const move = (e) => {
       mx.set(e.clientX);
       my.set(e.clientY);
@@ -320,6 +325,7 @@ function Hero() {
 
     // word carousel: old word's letters rise out, new word's letters rise in
     const nextWord = () => {
+      if (document.hidden || (frameRef.current && frameRef.current.style.visibility === "hidden")) return;
       const p = ws[wi];
       wi = (wi + 1) % ws.length;
       const n = ws[wi];
@@ -332,7 +338,13 @@ function Hero() {
       p._t = setTimeout(() => p.classList.remove("hf-out"), 1500);
     };
 
-    const onResize = () => { fit(); };
+    let lastW = window.innerWidth, rt = 0;
+    const onResize = () => {
+      if (window.innerWidth === lastW) return; // mobile URL-bar resizes: width unchanged
+      lastW = window.innerWidth;
+      clearTimeout(rt);
+      rt = setTimeout(fit, 120);
+    };
     window.addEventListener("resize", onResize);
 
     const fonts = document.fonts;
@@ -352,6 +364,7 @@ function Hero() {
       clearInterval(wTimer);
       clearTimeout(start);
       clearTimeout(wStart);
+      clearTimeout(rt);
       ws.forEach((x) => clearTimeout(x._t));
       window.removeEventListener("resize", onResize);
     };
@@ -363,7 +376,9 @@ function Hero() {
     if (!frame) return;
     const sheet = document.querySelector(".after-hero");
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let raf = 0, last = -1;
+    const HERO_LITE_NO_BLUR = true; // false = keep the blur on touch / low-end devices too
+    const lite = HERO_LITE_NO_BLUR && (window.matchMedia("(pointer: coarse)").matches || (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4);
+    let raf = 0, last = -1, lastR = -1;
 
     const apply = () => {
       raf = 0;
@@ -374,15 +389,18 @@ function Hero() {
       const e = p * p * (3 - 2 * p); // smoothstep
       frame.style.visibility = p >= 1 ? "hidden" : ""; // fully covered: stop painting it
       if (!reduce) {
-        const f = [];
-        if (HERO_PIN.blur) f.push("blur(" + (e * HERO_PIN.blur).toFixed(2) + "px)");
-        if (HERO_PIN.dim) f.push("brightness(" + (1 - HERO_PIN.dim * e).toFixed(3) + ")");
-        frame.style.filter = e > 0 ? f.join(" ") : "";
+        // dim = black overlay at the same alpha: identical to brightness(), no filter pass
+        if (HERO_PIN.dim) frame.style.setProperty("--hf-dim", (HERO_PIN.dim * e).toFixed(3));
+        const bl = !HERO_PIN.blur || lite ? 0 : Math.round(e * HERO_PIN.blur * 2) / 2; // half-px steps
+        frame.style.filter = bl > 0 ? "blur(" + bl + "px)" : "";
         frame.style.transform = e > 0 && HERO_PIN.scale < 1 ? "scale(" + (1 - (1 - HERO_PIN.scale) * e).toFixed(4) + ")" : "";
       }
       if (sheet && HERO_PIN.radius) {
-        const r = (HERO_PIN.radius * (1 - e)).toFixed(1);
-        sheet.style.borderRadius = r + "px " + r + "px 0 0";
+        const r = Math.round(HERO_PIN.radius * (1 - e)); // whole px: far fewer big-layer repaints
+        if (r !== lastR) {
+          lastR = r;
+          sheet.style.borderRadius = r + "px " + r + "px 0 0";
+        }
       }
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(apply); };
@@ -431,7 +449,7 @@ function Hero() {
 /* about-brush:start */
 /* perf-patch: ribbon renderer, see apply-perf-patch.mjs */
 const AB_TAU = 0.16;        // glide time constant in seconds (was 0.09 per frame, ~0.18s at 60Hz)
-const AB_MAX_PX = 2.2e6;    // canvas pixel budget (device px); keeps big screens light
+const AB_MAX_PX = typeof navigator !== "undefined" && ((navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4) ? 1.1e6 : 2.2e6;    // canvas pixel budget (device px); keeps big screens light
 const AB_MAX_DPR = 2;
 const AB_FULL = 0.995;      // from here the screen is solid red, so just fill it
 const AB_COLOR = "#D23412";
@@ -1382,9 +1400,22 @@ function Contact({ isMobile }) {
   const accentColor = LIGHT.accent;
   const mutedColor = LIGHT.muted;
 
-  return (
-    <ContactMorphSection />
-  );
+  const holder = useRef(null);
+  const [near, setNear] = useState(false);
+  useEffect(() => {
+    const el = holder.current;
+    if (near || !el) return undefined;
+    if (typeof IntersectionObserver === "undefined") { setNear(true); return undefined; }
+    const io = new IntersectionObserver(
+      (es) => { if (es.some((e) => e.isIntersecting)) { setNear(true); io.disconnect(); } },
+      { rootMargin: "100% 0px 100% 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [near]);
+
+  if (near) return <ContactMorphSection />;
+  return <section id="contact" ref={holder} aria-label="Contact" style={{ minHeight: "100svh" }} />;
 }
 
 /* ── Page root ───────────────────────────────────── */
@@ -1471,7 +1502,7 @@ export default function Page() {
   const globalProgress = null;
 
   return (
-    <>
+    <LazyMotion features={domAnimation}>
       <Cursor />
       <GlassNavbar />
       <main ref={containerRef} style={{ position: "relative", zIndex: 10 }}>
@@ -1487,7 +1518,7 @@ export default function Page() {
         <Contact isMobile={isMobile} />
         </div>
       </main>
-    </>
+    </LazyMotion>
   );
 }
 
@@ -1499,3 +1530,4 @@ export default function Page() {
 /* hero-no-services:applied */
 
 /* perf-optimize:applied */
+/* perf-optimize-2:applied */

@@ -108,8 +108,8 @@ function initMorph(root, fontsReady) {
   var morph = $('[data-ct="morph"]'), A = $('[data-ct="la"]'), B = $('[data-ct="lb"]');
   var turb = $('[data-ct="turb"]'), disp = $('[data-ct="disp"]'), live = $('[data-ct="live"]');
   var front = A, back = B, cur = 0, to = 0, phase = "hold", t0 = 0, holdLeft = HOLD, said = true, K = 3;
-  var raf = 0, alive = true;
-  if (reduce) morph.classList.add("ct-plain");
+  var raf = 0, alive = true, paused = false, pausedAt = 0, warmed = {};
+  if (reduce || (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4) morph.classList.add("ct-plain");
 
   var clamp = function (x) { return x < 0 ? 0 : x > 1 ? 1 : x; };
   var ease = function (x) { return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
@@ -163,6 +163,16 @@ function initMorph(root, fontsReady) {
     said = false;
     morph.classList.add("ct-on");
   }
+  function warm(i) {
+    var e = warmed[i];
+    if (e) return e;
+    e = warmed[i] = { done: false };
+    var fin = function () { e.done = true; };
+    if (WORDS[i].font === SANS || !document.fonts || !document.fonts.load) { fin(); return e; }
+    var fam = WORDS[i].font.replace(/var\([^)]*\),?/g, "");
+    fontsReady.then(function () { return document.fonts.load("800 80px " + fam, WORDS[i].t); }).then(fin, fin);
+    return e;
+  }
   var last = performance.now();
   function frame(now) {
     if (!alive) return;
@@ -204,7 +214,9 @@ function initMorph(root, fontsReady) {
       }
     } else {
       holdLeft -= dt;
-      if (holdLeft <= 0) start((cur + 1) % N);
+      var nx = (cur + 1) % N;
+      var wm = warm(nx);
+      if (holdLeft <= 0 && (wm.done || holdLeft < -2500)) start(nx);
     }
     raf = requestAnimationFrame(frame);
   }
@@ -217,21 +229,43 @@ function initMorph(root, fontsReady) {
     raf = requestAnimationFrame(frame);
   });
   window.addEventListener("resize", measureK);
+  var onScreen = true;
+  function pause() {
+    if (paused || !alive) return;
+    paused = true;
+    pausedAt = performance.now();
+    cancelAnimationFrame(raf);
+    raf = 0;
+  }
+  function resume() {
+    if (!paused || !alive) return;
+    paused = false;
+    raf = requestAnimationFrame(function (t) {
+      t0 += t - pausedAt; // do not let a morph "finish" while it was off-screen
+      last = t;
+      raf = requestAnimationFrame(frame);
+    });
+  }
+  var sync = function () { if (onScreen && !document.hidden) resume(); else pause(); };
+  var io = typeof IntersectionObserver !== "undefined"
+    ? new IntersectionObserver(function (es) { onScreen = es[es.length - 1].isIntersecting; sync(); }, { rootMargin: "20% 0px" })
+    : null;
+  if (io) io.observe(root);
+  document.addEventListener("visibilitychange", sync);
   if (document.fonts) {
     document.fonts.ready.then(function () { if (alive) measureK(); });
     /* warm up every script so the first morph never swaps fonts mid-flight */
     fontsReady.then(function () {
       if (!alive) return;
       measureK();
-      WORDS.forEach(function (w) {
-        document.fonts.load("800 80px " + w.font, w.t).catch(function () {});
-      });
     });
   }
 
   return function () {
     alive = false;
     cancelAnimationFrame(raf);
+    if (io) io.disconnect();
+    document.removeEventListener("visibilitychange", sync);
     window.removeEventListener("resize", measureK);
     A.textContent = "";
     B.textContent = "";
