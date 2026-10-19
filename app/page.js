@@ -284,11 +284,6 @@ function DeviceMockup({ accent, isMobile }) {
 
 /* ── Hero (hero-pin) ─────────────────────────────── */
 const HERO_WORDS = ["Forward","Ahead","Beyond","Next","Further","Faster"];
-const HERO_SERVICES = [
-  "Website Development",
-  "IoT Solutions",
-  "Custom Full-Stack Development"
-];
 const HERO_PIN = {"blur":14,"dim":0.25,"scale":0.96,"radius":36};
 
 function Hero() {
@@ -296,18 +291,15 @@ function Hero() {
   const frameRef = useRef(null);
   const titleRef = useRef(null);
   const colRef = useRef(null);
-  const listRef = useRef(null);
   const wordsRef = useRef(null);
 
   /* headline fit, services rotator and word carousel */
   useEffect(() => {
-    const ht = titleRef.current, col = colRef.current, ul = listRef.current, wd = wordsRef.current;
-    if (!ht || !col || !ul || !wd) return;
-    const lis = Array.from(ul.children);
+    const ht = titleRef.current, col = colRef.current, wd = wordsRef.current;
+    if (!ht || !col || !wd) return;
     const ws = Array.from(wd.children);
-    const N = HERO_SERVICES.length;
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let idx = 0, wi = 0, interval = 0, reset = 0, start = 0, wTimer = 0, wStart = 0, dead = false;
+    let wi = 0, start = 0, wTimer = 0, wStart = 0, dead = false;
 
     // scale the headline so its widest line exactly fills the column, then size the word box
     const fit = () => {
@@ -318,26 +310,6 @@ function Hero() {
       if (w > 0 && cw > 0) ht.style.fontSize = Math.min((100 * cw) / w, 200) + "px";
       ws.forEach((x) => { x.dataset.w = x.getBoundingClientRect().width; });
       wd.style.width = ws[wi].dataset.w + "px";
-    };
-
-    // services rotator: the dark row is always the 3rd visible one
-    const step = () => {
-      const lh = ul.firstElementChild.offsetHeight;
-      lis.forEach((li, i) => li.classList.toggle("on", i === idx + 2));
-      ul.style.transform = "translateY(" + -idx * lh + "px)";
-    };
-    const tick = () => {
-      idx++;
-      step();
-      if (idx === N) {
-        reset = setTimeout(() => {
-          ul.style.transition = "none";
-          idx = 0;
-          step();
-          void ul.offsetWidth;
-          ul.style.transition = "";
-        }, 850);
-      }
     };
 
     // word carousel: old word's letters rise out, new word's letters rise in
@@ -354,7 +326,7 @@ function Hero() {
       p._t = setTimeout(() => p.classList.remove("hf-out"), 1500);
     };
 
-    const onResize = () => { fit(); step(); };
+    const onResize = () => { fit(); };
     window.addEventListener("resize", onResize);
 
     const fonts = document.fonts;
@@ -364,18 +336,14 @@ function Hero() {
     ready.then(() => {
       if (dead) return;
       fit();
-      step();
       // wait for the intro overlay to lift before the headline reveals
       start = setTimeout(() => { if (!dead) setGo(true); }, 700);
-      interval = setInterval(tick, 2300);
       if (!still) wStart = setTimeout(() => { wTimer = setInterval(nextWord, 2600); }, 1400);
     });
 
     return () => {
       dead = true;
-      clearInterval(interval);
       clearInterval(wTimer);
-      clearTimeout(reset);
       clearTimeout(start);
       clearTimeout(wStart);
       ws.forEach((x) => clearTimeout(x._t));
@@ -448,13 +416,6 @@ function Hero() {
               </span>
             </h1>
           </div>
-        </div>
-        <div className="hf-rot" aria-hidden="true">
-          <ul ref={listRef}>
-            {HERO_SERVICES.concat(HERO_SERVICES.slice(0, 3)).map((s, i) => (
-              <li key={i}>{s}</li>
-            ))}
-          </ul>
         </div>
       </div>
     </section>
@@ -1514,3 +1475,4 @@ export default function Page() {
 /* hero-v2:applied */
 /* hero-red:applied */
 /* hero-pin:applied */
+/* hero-no-services:applied */
