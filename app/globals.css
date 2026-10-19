@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --font-display: var(--font-cooper), 'Cooper Hewitt', system-ui, sans-serif;
-  --font-body:    var(--font-cooper), 'Cooper Hewitt', system-ui, sans-serif;
+  --font-display: "HeroDisplay", var(--font-cooper), 'Cooper Hewitt', system-ui, sans-serif;
+  --font-body:    "HeroDisplay", var(--font-cooper), 'Cooper Hewitt', system-ui, sans-serif;
 
   /* light */
   --bg-primary:   #EBE9E1;
@@ -1013,3 +1013,4 @@ html { scroll-behavior: auto; }
 }
 /* hero-red:end */
 /* hero-red:applied */
+/* font-sitewide:applied */
