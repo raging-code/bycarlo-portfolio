@@ -20,7 +20,6 @@ const ContactMorphSection = dynamic(() => import("./ContactMorphSection"), {
   loading: () => <section id="contact" aria-label="Contact" style={{ minHeight: "100svh" }} />,
 });
 
-
 const E = [0.25, 1, 0.25, 1];
 
 const LIGHT = {
@@ -402,7 +401,6 @@ function Hero() {
   );
 }
 
-/* about-brush:start */
 /* perf-patch: ribbon renderer, see apply-perf-patch.mjs */
 const AB_TAU = 0.16;        // glide time constant in seconds (was 0.09 per frame, ~0.18s at 60Hz)
 const AB_MAX_PX = typeof navigator !== "undefined" && ((navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4) ? 1.1e6 : 2.2e6;    // canvas pixel budget (device px); keeps big screens light
@@ -725,7 +723,6 @@ function AboutBrush({ trackRef }) {
 
   return <canvas ref={canvasRef} className="ip-brush" aria-hidden="true" />;
 }
-/* about-brush:end */
 
 /* ── Intro Profile (about-hero v2) ─── */
 function IntroProfile() {
@@ -807,13 +804,11 @@ function Projects() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
 
-  /* projects-red:start */
   // red section: cream text, cream accents (the old red accent would vanish on red)
   const textColor = LIGHT.on;
   const mutedColor = "rgba(255,244,234,0.8)";
   const accentColor = LIGHT.on;
   const borderColor = "rgba(255,244,234,0.45)";
-  /* projects-red:end */
 
   return (
     <section
@@ -880,8 +875,6 @@ function Projects() {
   );
 }
 
-
-/* techstack-deck:start */
 /* ── Tech stack: fanned card deck ───────────────────
    One card per category. Drag the front card sideways, click a card behind it,
    or focus the deck and use the arrow keys.
@@ -1166,7 +1159,6 @@ function TechStack() {
     </section>
   );
 }
-/* techstack-deck:end */
 
 /* ── Manifesto (transparent background) ──────────── */
 function Manifesto() {
@@ -1370,7 +1362,6 @@ function Contact() {
 }
 
 /* ── Page root ───────────────────────────────────── */
-/* services:start */
 /* ── Services (accordion on red: premium, clean, mobile-first) ─────────────── */
 const SERVICES = [
   {
@@ -1441,7 +1432,6 @@ function Services() {
     </section>
   );
 }
-/* services:end */
 
 export default function Page() {
   return (
@@ -1464,14 +1454,3 @@ export default function Page() {
     </LazyMotion>
   );
 }
-
-/* cooper-hewitt:applied */
-
-/* hero-v2:applied */
-/* hero-red:applied */
-/* hero-pin:applied */
-/* hero-no-services:applied */
-
-/* perf-optimize:applied */
-/* perf-optimize-2:applied */
-/* cleanup:applied */

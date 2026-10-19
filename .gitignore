@@ -35,3 +35,6 @@ next-env.d.ts
 
 # cleanup patch backup (safe to delete once you are happy)
 /.cleanup-backup/
+
+# cleanup-2 backup (safe to delete once you are happy)
+/.cleanup-backup-2/

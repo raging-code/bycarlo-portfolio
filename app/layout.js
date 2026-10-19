@@ -7,7 +7,7 @@ import SmoothScroll from "./SmoothScroll";
 // Only the 400 weight ships: --font-cooper is a system-fallback link in the
 // --font-display/--font-body stack (see globals.css) and is never painted
 // while HeroDisplay (Archivo) loads successfully, so the other 4 static
-// weights were pure dead weight. perf-optimize:trimmed
+// weights were pure dead weight.
 const cooper = localFont({
   src: [{ path: "./fonts/HewittWeb-Book.woff2", weight: "400", style: "normal" }],
   variable: "--font-cooper",
@@ -40,6 +40,3 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
-// cooper-hewitt:applied
-
-// hero-v2:applied
